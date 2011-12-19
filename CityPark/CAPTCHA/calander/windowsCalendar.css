@@ -1,0 +1,60 @@
+/* CSS Document */
+/* CSS Document Created by Bob McKay, www.FreshMango.com */
+/* You may reuse, redistribute and rework this as long as you keep my details in */
+/* Protected under this licesnse: http://creativecommons.org/licenses/by/2.5/ */
+
+#calendar {
+	width: 141px;
+	padding: 0;
+	margin: 0;
+	border-left: 1px solid #A2ADBC;
+	color: #616B76;
+	text-align: center;
+	background-color: #fff;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-style: normal;
+}
+#calendar caption a {
+	color: #fff;	
+	text-decoration: none;
+}	
+#calendar caption {
+	color: #fff;
+	margin: 0;
+	padding: 3px 0px 3px 0px;
+	width: 141px;
+	text-align: center;
+	font-weight: bolder;
+	background-color: #009;
+}
+#calendar th {
+	color: #666;
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	border-top: 1px solid #ccc;
+	background-color: #ccc;
+}
+#calendar a.today {
+	font-weight: bold;
+	border-top: 1px solid #f00;
+	border-bottom: 1px solid #f00;
+}
+#calendar td {
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	width: 20px;
+	height: 20px;
+	text-align: center;
+}
+#calendar td a {
+	color: #666;
+	text-decoration: none;
+	font-weight: bold;
+	display: block;
+	padding: 1px 0px 1px 0px;
+}
+#calendar td a:hover {
+	color: #fff;
+	background-color: #0cf!important;
+}

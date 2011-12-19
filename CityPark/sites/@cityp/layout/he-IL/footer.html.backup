@@ -1,0 +1,27 @@
+		
+		</div>
+	</div>
+</div>
+<div class="footer">
+	<div class="infooter1"></div>
+	<div class="infooter2">
+		<div class="footer_links">
+			<a href="#" title="">חידוש העור</a> | 
+			<a href="#" title="">ניקוי</a> | 
+			<a href="#" title="">קמטים</a> | 
+			<a href="#" title="">הגנה</a> | 
+			<a href="#" title="">לחויות</a> | 
+			<a href="#" title="">הבהרה</a> | 
+			<a href="#" title="">אקנה</a>
+		</div>
+		<div class="copy">
+			כל הזכויות שמורות ל - <span>סיטיפארק בע"מ</span>
+		</div>
+		<div class="dooble">
+			d<span>oo</span>ble <a href="http://www.dooble.co.il" title="בניית אתרים">בניית אתרים</a>
+		</div>
+	</div>
+</div>
+<script type="text/javascript" src="http://www.waze.co.il/js/WazeEmbeddedMapNoJQuery.js?version=7.70"></script>
+</body>
+</html>

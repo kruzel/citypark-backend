@@ -1,0 +1,44 @@
+﻿#pager{
+float:right;
+width:100%;
+}
+#pager ul.pages {
+display:block;
+border:none;
+text-transform:uppercase;
+font-size:10px;
+margin:0;
+padding:0;
+line-height:12px;
+}
+
+#pager ul.pages li {
+list-style:none;
+float:right;
+display:block;
+border:1px solid #badded;
+text-decoration:none;
+margin:0 5px 0 0;
+padding:5px;
+}
+#pager ul.pages li a{
+color:#555;
+}
+
+#pager ul.pages li:hover {
+border:1px solid #72b2cf;
+}
+
+#pager ul.pages li.pgEmpty {
+border:1px solid #badded;
+color:#eee;
+}
+
+#pager ul.pages li.pgCurrent {
+border:1px solid #72b2cf;
+font-weight:700;
+background-color:#72b2cf;
+}
+#pager ul.pages li.pgCurrent a{
+color:#fff;
+}

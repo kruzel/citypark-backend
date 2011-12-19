@@ -1,0 +1,321 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" xmlns:fb="http://www.facebook.com/2008/fbml" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>[title]</title>
+<meta name="keywords" content="[keywords]" />
+<meta name="description" content="[description]" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="Content-Language" content="he" />
+<meta name="ROBOTS" content="INDEX,FOLLOW" />
+<meta name="copyright" content="Dooble.co.il" />
+<meta name="Author" content="Dooble.co.il" />
+<meta name="rating" content="General" />
+<link rel="shortcut icon" href="/sites/cityp/layout/he-IL/images/favicon.ico" />
+<link rel="stylesheet" type="text/css" href="sites/cityp/layout/he-IL/style/jquery-ui-1.8.5.custom.css" />
+<link rel="stylesheet" type="text/css" href="sites/cityp/layout/he-IL/style/pager.css" />
+<link rel="stylesheet" type="text/css" href="/sites/cityp/layout/he-IL/js/jquery.fancybox-1.3.1.css" />
+<link rel="stylesheet" media="screen" type="text/css" href="/sites/cityp/layout/he-IL/style/style.css" />
+<script type="text/javascript" src="/sites/cityp/layout/he-IL/js/jquery.js"></script>
+<script type="text/javascript" src="/sites/cityp/layout/he-IL/js/jquery.fancybox-1.3.1.js"></script>
+<script type="text/javascript" src="/sites/cityp/layout/he-IL/js/jquery-ui.js"></script>
+<script type="text/javascript" src="/sites/cityp/layout/he-IL/js/jquery.metadata.js"></script>
+<script type="text/javascript" src="/sites/cityp/layout/he-IL/js/jq.paging.js"></script>
+<script type="text/javascript" src="http://tile.cloudmade.com/wml/latest/web-maps-lite.js"></script>
+ <script type="text/javascript" src="/js/filemanager.asp" ></script>
+<script type="text/javascript" src="/js/validate.asp"></script>
+<script type="text/javascript" src="/js/ajax.asp"></script>
+<script type="text/javascript" src="/sites/cityp/layout/he-IL/js/citypark.js"></script>
+<script src="http://static.ak.connect.facebook.com/js/api_lib/v0.4/FeatureLoader.js.php/en_US" type="text/javascript"></script>
+
+<script src="/sites/cityp/layout/he-IL/js/orbit/jquery.orbit.min.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+	$(window).load(function() {
+		$('#featured').orbit({
+			'bullets': true,
+			'timer' : true,
+			'animation' : 'vertical-slide',
+			'directionalNav': false
+		});
+
+	});
+
+</script>
+<script type="text/javascript" src="/js/jcarousellite_1.0.1.pack.js"></script>
+<script type="text/javascript">
+    $(function () {
+		$("#accordion").accordion({ header: "h3",autoHeight: false });
+        $(".newsticker-jcarousellite").jCarouselLite({
+            vertical: true,
+            hoverPause: true,
+            visible: 1,
+            auto: 3000,
+            speed: 1000
+        });
+    });
+</script>
+<!-- Attach our CSS -->
+<link rel="stylesheet" href="/sites/cityp/layout/he-IL/js/orbit/orbit.css">	
+<!--[if IE]>
+	<style type="text/css">
+		.timer { display: none !important; }
+		div.caption { background:transparent; filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000,endColorstr=#99000000);zoom: 1; }
+	</style>
+<![endif]-->
+</head>
+<body>
+<div class="wrapper">
+	<div class="container">
+		<div class="header">
+		<div class="sign_in">
+			[shortloginblock]
+		</div>
+			<a href="/" title="CityPark"><img src="/sites/cityp/layout/he-IL/images/logo.gif" alt="CityPark" title="CityPark" class="logo" /></a>
+		</div>
+		<div class="content">
+		<b style="color:#2698D6;">דיווחים אחרונים</b>
+		<a href="Parkingtweet.asp">[parkingtweet]</a>
+			[menus47]
+		<div class="HPsearch">
+			הקלק כתובת מדוייקת לחיפוש חניה:
+			<form action="" method="post" class="_validate" onsubmit="return false;">
+				<input type="hidden" name="mode" value="search" />
+				<div class="input1"><input type="text" class="ininput1"  AUTOCOMPLETE=OFF name="freetext" id="searchtext" /></div>
+				<div id="ac" class="autocomp"></div>
+				<img src="/sites/cityp/layout/he-IL/images/button.gif" class="button" id="searchaction"/>
+			</form>
+		</div>
+	
+		<div class="advance" id="panel">
+			<table border="0" cellspacing="0" cellpadding="0" class="selects" valign="top">
+				<tr>
+					<td>
+						התחלת חניה
+					</td>
+					<td class="selects">
+						סיום חניה
+					</td>
+					<td class="selects">
+						סוג חניה
+					</td>
+					<td class="selects">
+						בסיס השכרה
+					</td>
+					<td class="selects">
+					    מחיר מקסימאלי 
+					</td>
+					<td class="selects">
+						לכל
+					</td>
+					<td class="selects">
+						
+					</td>
+					<td class="selects">
+					
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input type="text" name="start_date" id="start_date" class="_date" style="width:110px;"/>
+						<img src="/sites/cityp/layout/he-IL/images/calender.gif" alt="" title="" width="17" height="14" style="margin-right:-25px;display:inline;position:relative;"/>
+						<select name="start_time">
+							<option value="start_time1">01:00</option>
+							<option value="start_time2">02:00</option>
+							<option value="start_time3">03:00</option>
+							<option value="start_time4">04:00</option>
+							<option value="start_time5">05:00</option>
+							<option value="start_time6">06:00</option>
+							<option value="start_time1">07:00</option>
+							<option value="start_time2">08:00</option>
+							<option value="start_time3">09:00</option>
+							<option value="start_time4">10:00</option>
+							<option value="start_time5">11:00</option>
+							<option value="start_time6">12:00</option>
+							<option value="start_time1">13:00</option>
+							<option value="start_time2">14:00</option>
+							<option value="start_time3">15:00</option>
+							<option value="start_time4">16:00</option>
+							<option value="start_time5">17:00</option>
+							<option value="start_time6">18:00</option>
+							<option value="start_time1">19:00</option>
+							<option value="start_time2">20:00</option>
+							<option value="start_time3">21:00</option>
+							<option value="start_time4">22:00</option>
+							<option value="start_time5">23:00</option>
+							<option value="start_time6">24:00</option>
+						</select>
+					</td>
+					<td class="selects">
+						<input type="text" name="end_date" id="end_date" class="_date" style="width:110px;"/>
+						<img src="/sites/cityp/layout/he-IL/images/calender.gif" alt="" title="" width="17" height="14" style="margin-right:-25px;display:inline;position:relative;"/>
+						<select name="end_time">
+							<option value="start_time1">01:00</option>
+							<option value="start_time2">02:00</option>
+							<option value="start_time3">03:00</option>
+							<option value="start_time4">04:00</option>
+							<option value="start_time5">05:00</option>
+							<option value="start_time6">06:00</option>
+							<option value="start_time1">07:00</option>
+							<option value="start_time2">08:00</option>
+							<option value="start_time3">09:00</option>
+							<option value="start_time4">10:00</option>
+							<option value="start_time5">11:00</option>
+							<option value="start_time6">12:00</option>
+							<option value="start_time1">13:00</option>
+							<option value="start_time2">14:00</option>
+							<option value="start_time3">15:00</option>
+							<option value="start_time4">16:00</option>
+							<option value="start_time5">17:00</option>
+							<option value="start_time6">18:00</option>
+							<option value="start_time1">19:00</option>
+							<option value="start_time2">20:00</option>
+							<option value="start_time3">21:00</option>
+							<option value="start_time4">22:00</option>
+							<option value="start_time5">23:00</option>
+							<option value="start_time6">24:00</option>
+						</select>
+					</td>
+					<td class="selects">
+						<select name="type">
+							<option value="type3" selected=selected>הכל</option>
+							<option value="type2"> חנייה בחינם</option>
+							<option value="type1" >חנייה בתשלום</option>
+						</select>
+					</td>
+					<td class="basis">
+					<input type="checkbox" name="hourly"/> שעתי
+					<input type="checkbox" name="Daily"/> יומי
+					<input type="checkbox" name="weekly"/> שבועי
+					<input type="checkbox" name="monthly"/> חודשי
+					<input type="checkbox" name="yearly"/> שנתי
+                    	<!--select name="time">
+							<option value="type1">שעתי</option>
+							<option value="type2">יומי</option>
+							<option value="type1">שבועי</option>
+							<option value="type2">חודשי</option>
+						</select-->
+					</td>
+					<td class="selects">
+                    <select name="price">
+							<option value="1">₪ 1</option>
+							<option value="5">₪ 5</option>
+							<option value="10">₪ 10</option>
+							<option value="20">₪ 20</option>
+							<option value="50">₪ 50</option>
+							<option value="500">₪ 500</option>
+							<option value="1000">₪ 1000</option>
+						</select>
+					</td>
+					<td class="selects">
+                    	<select name="time">
+							<option value="basis1">השהות</option>
+							<option value="basis2">שעה</option>
+							<option value="basis3">יום</option>
+							<option value="basis4">שבוע</option>
+							<option value="basis4">חודש</option>
+						</select>
+
+					</td>
+					<td class="selects">
+					</td>
+				</tr>
+			</table><br/>
+			<input type="checkbox" name="limit"/> ללא הגבלת שעות
+			<input type="checkbox" name="barrier"/> חניה עם מחסום
+			<input type="checkbox" name="underground"/> חניה תת קרקעית
+			<input type="checkbox" name="walls"/> חניה מקורה
+			<input type="checkbox" name="street"/> הנחת תושב
+			<input type="checkbox" name="disabled"/> חניה מתאימה לנכים
+			&nbsp;&nbsp;&nbsp;&nbsp;
+			מרחק מהיעד
+			<select name="Distance" id="distance">
+				<option value="300">עד 300 מטר</option>
+				<option value="500">עד 500 מטר</option>
+				<option value="750">עד 750 מטר</option>
+				<option value="800">עד 1000 מטר</option>
+				<option value="850" selected="selected" >עד 1500 מטר</option>
+			</select>
+			<img id="searchaction2" class="button" style="float:left;margin:20px 0px 0px 20px;" src="/sites/cityp/layout/he-IL/images/button.gif">
+		<br/><br/></div>
+		<div class="buttons2">
+			<a href="#" title="חיפוש מתקדם" class="btn-slide2">חיפוש מתקדם</a>
+			<a href="#" title="מחשבון מחיר חניה" onclick="calcu();return false" class="calculator">מחשבון מחיר חניה <img src="/sites/cityp/layout/he-IL/images/calculator.gif" alt="חיפוש מתקדם" title="חיפוש מתקדם" width="15" height="20"/></a>
+		</div>
+		<div style="display:none;clear:both;" id="calc">
+		
+		
+		<div class="popup">
+			<h3>מחשבון מחיר חניה</h3>
+			<img src="/sites/cityp/layout/he-IL/images/calc22.png" alt="מחשבון מחיר חניה" title="מחשבון מחיר חניה" style="float: right;">
+			<div style="float: right; width: 340px; height: auto;">
+				<table width="100%" cellspacing="5" cellpadding="0" border="0" dir="rtl">
+					<tbody>
+						<tr>
+							<td style="color:#0E6495;font-weight:bold;">בחר עיר:</td>
+							<td style="color:#0E6495;font-weight:bold;">שעת חניה:</td>
+							<td>&nbsp;</td>
+						</tr>
+						<tr>
+							<td>				
+								<select class="calccity" >
+									<option value='5.3'>תל אביב</option>
+									<option value='4'>אילת </option>
+									<option value='3.5'>אשדוד </option>
+									<option value='5'>באר שבע </option>
+									<option value='4.9'>בני ברק </option>
+									<option value='4'>בת ים </option>
+									<option value='3'>גבעת שמואל</option>
+									<option value='3'>גבעתיים </option>
+									<option value='1.5'>הוד השרון </option>
+									<option value='5.1'>הרצליה </option>
+									<option value='3'>חדרה </option>
+									<option value='5.2'>חיפה </option>
+									<option value='4'>טבריה </option>
+									<option value='5.2'>ירושלים </option>
+									<option value='5'>כפר סבא </option>
+									<option value='5.7'>כפר שמריהו</option>
+									<option value='3'>כרמיאל </option>
+									<option value='3'>מגדל העמק</option>
+									<option value='3.8'>נהריה </option>
+									<option value='3.3'>נס ציונה </option>
+									<option value='3'>נצרת </option>
+									<option value='3.4'>נצרת עילית </option>
+									<option value='4.4'>נתניה </option>
+									<option value='4'>עכו </option>
+									<option value='3'>עפולה </option>
+									<option value='3.6'>פתח תקווה </option>
+									<option value='3'>צפת </option>
+									<option value='4.3'>קריית אונו </option>
+									<option value='3'>קריית טבעון</option>
+									<option value='3'>קריית מוצקין</option>
+									<option value='4'>ראש העין </option>
+									<option value='5.3'>ראשון לציון </option>
+									<option value='4.2'>רחובות </option>
+									<option value='4.4'>רמת גן </option>
+									<option value='5.2'>רמת השרון </option>
+									<option value='5'>רעננה </option>
+								</select>
+							</td>
+							<td>				
+								<select class="yemama"> 
+									<option value="1.92">לפנות בוקר</option>
+									<option value="1.85">בוקר</option>
+									<option value="1.65">לפני הצהריים</option>
+									<option value="1.6">צהריים</option> 
+									<option value="1.75">אחר הצהריים</option>
+									<option value="1.9">ערב</option>
+									<option value="1.95">לילה</option>
+								</select>
+							</td>
+							<td><div class="valu_calc" onclick="clc()">חשב</div></td>
+						
+						</tr>
+						<tr>
+							<td colspan="3"><span class="valu"></span></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		</div>

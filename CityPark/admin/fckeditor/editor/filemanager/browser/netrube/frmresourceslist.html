@@ -1,0 +1,415 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!--
+ * FCKeditor - The text editor for internet
+ * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * 
+ * Licensed under the terms of the GNU Lesser General Public License:
+ * 		http://www.opensource.org/licenses/lgpl-license.php
+ * 
+ * For further information visit:
+ * 		http://www.fckeditor.net/
+ * 
+ * "Support Open Source software. What about a donation today?"
+ * 
+ * File Name: frmresourceslist.html
+ * 	This page shows all resources available in a folder in the File Browser.
+ * 
+ * File Authors:
+ * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+ *		NetRube (netrube@gmail.com)
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<link href="browser.css" type="text/css" rel="stylesheet" />
+	<script type="text/javascript" src="js/common.js"></script>
+	<script type="text/javascript">
+	
+	function h2oDisplayNormal(h2oObj,h2oID) { 
+	var h2oImgStart='<img src="'; 
+	var h2oImgEnd='" border="0" />'; 
+	var h2oMyOutput=document.getElementById("h2o_"+h2oID); 
+	h2oMyOutput.style.display="block"; 
+	h2oMyOutput.innerHTML=h2oImgStart+h2oObj+h2oImgEnd; 
+	} 
+	function h2oDisplayNone(h2oObj) { 
+	var h2oMyOutput=document.getElementById("h2o_"+h2oObj); 
+	h2oMyOutput.style.display="none"; 
+	h2oMyOutput.innerHTML="";  
+		} 
+
+var oListManager = new Object() ;
+
+oListManager.Clear = function()
+{
+	document.body.innerHTML = '' ;
+}
+
+function enSize(n)
+{
+	n = Number(n) ;
+	return n > 943718 ? (n / 1048576).toFixed(2) + " MB" : n > 921 ? (n / 1024).toFixed(2) + " KB" : n + " Byte";
+}
+
+oListManager.GetFolderRowHtml = function( folderName, folderPath, folderSize )
+{
+	// Build the link to view the folder.
+	var sLink = '<a href="#" title="Open Folder" onclick="OpenFolder(\'' + folderPath.replace( /'/g, '\\\'') + '\');return false;">' ;
+	var dLink = '<a href="#" title="Delete Folder" onclick="DeleteFolder(\'' + folderName.replace( /'/g, '\\\'') + '\');return false;">' ;
+	var rLink = '<a href="#" title="Rename Folder" onclick="RenameFolder(\'' + folderName.replace( /'/g, '\\\'') + '\');return false;">' ;
+
+	return '<div class="folders">' +
+				sLink +
+				'<img style="float:left;" alt="" src="images/Folder.gif" width="16" height="16" border="0"></a>' +
+			'&nbsp;' +
+			'<p style="float:left;line-height:20px;margin:0;padding:0 0 0 10px;">' +
+				sLink + 
+				folderName + 
+				'</a></p>' +
+			'<p style="float:left;line-height:20px;margin:0;padding:0 0 0 10px;">' +
+				enSize( folderSize ) + '</p>' +
+				dLink +
+				'<img style="float:right;padding:0 0 0 10px;" src="images/delete.gif" width="16" height="16" border="0" alt="Delete Folder" title="Delete Folder"></a>' +
+				'</a>' +
+			'&nbsp;' +
+				rLink +
+				'<img style="float:right;" src="images/rename.gif" width="16" height="16" border="0" alt="Rename Folder" title="Rename Folder"></a>' +
+				'</a>' +
+		'</div>' ;
+}
+
+oListManager.GetFileRowHtml = function( fileName, fileUrl, fileSize )
+{
+	// Build the link to view the folder.
+	var sLink = '<a href="#" title="Select file" onclick="OpenFile(\'' + fileUrl.replace( /'/g, '\\\'') + '\');return false;">' ;
+	var vLink = '<a href="' + fileUrl.replace( /'/g, '\\\'') + '" target="_blank"" title="View file">' ;
+	var dLink = '<a href="#" title="Delete file" onclick="DeleteFile(\'' + fileName.replace( /'/g, '\\\'') + '\');return false;">' ;
+	var rLink = '<a href="#" title="Rename file" onclick="RenameFile(\'' + fileName.replace( /'/g, '\\\'') + '\');return false;">' ;
+
+	// Get the file icon.
+	var sIcon = oIcons.GetIcon( fileName ) ;
+
+/*	return '<tr>' +
+			'<td width="16">' +
+				sLink + 
+				'<img alt="" src="images/icons/' + sIcon + '.gif" width="16" height="16" border="0"></a>' +
+			'</td><td>&nbsp;' +
+				sLink + 
+				fileName + 
+				'</a>' +
+			'</td><td align="right" nowrap>&nbsp;' +
+				enSize( fileSize ) + '&nbsp;' +
+			'</td>*/ 
+			/*================================================== 
+Modification to display thumb nails  
+Modifed date: 20/07/2006 
+Modified by: http://www.h2odevelopments.co.uk 
+==================================================*/ 
+var imgH="120"; 
+var imgW="120"; 
+var h2oOutput=""; 
+h2oOutput='<div class="fmbox">'; 
+if(sIcon=="gif" || sIcon=="jpg" || sIcon=="png") { 
+ 
+h2oOutput+= sLink + '<img src="'+fileUrl+'" alt="'+fileName+'" height="'+imgH+'" width="'+imgW+'" border="0" /></a>'; 
+
+			
+		//=== Start of remove if you don't want to display full image on rollover 
+//var h2oFunc='h2oDisplayNormal(this.src,&#39;'+fileName+'&#39;)'; 
+//h2oOutput+=' onmouseover="'+h2oFunc+'"'; 
+//h2oOutput+=' onmouseout="h2oDisplayNone(&#39;'+fileName+'&#39;)"'; 
+//=== End of remove if you don't want to display full image on rollover 
+ 
+h2oOutput+='<div class="fmboxfilename"><b>'+fileName+'</b></div>';  
+} else { 
+h2oOutput+= '<div style="line-height:20px;height:20px;padding:0 8px;">' + sLink + fileName + '</a></div>'; 
+} 
+h2oOutput+=	'<div class="fmboxfilesize">Size:' + enSize( fileSize ) + '</div>' +
+				'<div class="fmboxdetales">'+
+				vLink +
+				'<img src="images/view.gif" width="16" height="16" border="0" alt="View file" title="View file"></a>' +
+				'</a>' +
+				dLink +
+				'<img src="images/delete.gif" width="16" height="16" border="0" alt="Delete file" title="Delete file"></a>' +
+				'</a>' +
+				rLink +
+				'<img src="images/rename.gif" width="16" height="16" border="0" alt="Rename file" title="Rename file"></a>' +
+				'</a></div>'; 
+h2oOutput+='</div>'; 
+
+return h2oOutput; 
+
+/*================================================== 
+End of modifications 
+==================================================*/
+		
+}
+
+function OpenFolder( folderPath )
+{
+	// Load the resources list for this folder.
+	window.parent.frames['frmFolders'].LoadFolders( folderPath ) ;
+}
+
+function OpenFile( fileUrl )
+{
+	if ( oConnector.BackField )
+		window.top.opener.getElementById( oConnector.BackField ).value = fileUrl ;
+	else
+		window.top.opener.SetUrl( fileUrl ) ;
+	window.top.close() ;
+	window.top.opener.focus() ;
+}
+
+function DeleteFolder( folderUrl )
+{
+	if ( !confirm( 'Do you really delete the folder "' + folderUrl + '" ?' ) ) return false;
+	
+	oConnector.SendCommand( 'DeleteFolder', 'FolderName=' + escape( folderUrl ) , DeleteFolderCallBack ) ;
+}
+
+function DeleteFolderCallBack( fckXml )
+{
+	var oNode = fckXml.SelectSingleNode( 'Connector/Error' ) ;
+	var iErrorNumber = parseInt( oNode.attributes.getNamedItem('number').value ) ;
+	var iOriginalNumber = parseInt( oNode.attributes.getNamedItem('originalNumber').value ) ;
+	var sErrorDescription = String( oNode.attributes.getNamedItem('originalDescription').value ) ;
+	
+	switch ( iErrorNumber )
+	{
+		case 0 :
+			Refresh() ;
+			break ;
+		case 201 :
+			alert( 'You have no permissions to delete the folder' ) ;
+			break ;
+		case 202 :
+			alert( 'Invalid folder name' ) ;
+			break ;
+		case 203 :
+			alert( 'Folder not exists' ) ;
+			break ;
+		default :
+			alert( 'Error deleting folder. \nError number: ' + iErrorNumber + '(' + iOriginalNumber + ') \nError description: ' + sErrorDescription ) ;
+			break ;
+	}
+}
+
+function DeleteFile(fileUrl)
+{
+	if ( !confirm( 'Do you really delete the file "' + fileUrl + '" ?' ) ) return false;
+	
+	oConnector.SendCommand( 'DeleteFile', 'FileName=' + escape( fileUrl ) , DeleteFileCallBack ) ;
+}
+
+function DeleteFileCallBack( fckXml )
+{
+	var oNode = fckXml.SelectSingleNode( 'Connector/Error' ) ;
+	var iErrorNumber = parseInt( oNode.attributes.getNamedItem('number').value ) ;
+	var iOriginalNumber = parseInt( oNode.attributes.getNamedItem('originalNumber').value ) ;
+	var sErrorDescription = String( oNode.attributes.getNamedItem('originalDescription').value ) ;
+	
+	switch ( iErrorNumber )
+	{
+		case 0 :
+			Refresh() ;
+			break ;
+		case 301 :
+			alert( 'You have no permissions to delete the file' ) ;
+			break ;
+		case 302 :
+			alert( 'Invalid file name' ) ;
+			break ;
+		case 303 :
+			alert( 'File not exists' ) ;
+			break ;
+		default :
+			alert( 'Error deleting file. \nError number: ' + iErrorNumber + '(' + iOriginalNumber + ') \nError description: ' + sErrorDescription ) ;
+			break ;
+	}
+}
+
+function RenameFolder( folderName )
+{
+	var newName = prompt('Please enter the new folder name for "' + folderName + '":', folderName);
+	
+	if ((newName != null) && (newName != '') && (newName != folderName)) {
+		oConnector.SendCommand( 'RenameFolder', "FolderName=" + escape( folderName ) + "&NewName=" + escape ( newName ), RenameFolderCallBack ) ;
+	}
+}
+
+function RenameFolderCallBack( fckXml )
+{
+	var oNode = fckXml.SelectSingleNode( 'Connector/Error' ) ;
+	var iErrorNumber = parseInt( oNode.attributes.getNamedItem('number').value ) ;
+	var iOriginalNumber = parseInt( oNode.attributes.getNamedItem('originalNumber').value ) ;
+	var sErrorDescription = String( oNode.attributes.getNamedItem('originalDescription').value ) ;
+	
+	switch ( iErrorNumber )
+	{
+		case 0 :
+			Refresh() ;
+			break ;
+		case 401 :
+			alert( 'You have no permissions to rename the folder' ) ;
+			break ;
+		case 402 :
+			alert( 'Invalid folder name' ) ;
+			break ;
+		case 403 :
+			alert( 'Folder not exists' ) ;
+			break ;
+		default :
+			alert( 'Error renaming folder. \nError number: ' + iErrorNumber + '(' + iOriginalNumber + ') \nError description: ' + sErrorDescription ) ;
+			break ;
+	}
+}
+
+function RenameFile( fileName )
+{
+	var newName = prompt('Please enter the new file name for "' + fileName + '":', fileName);
+	
+	if ((newName != null) && (newName != '') && (newName != fileName)) {
+		oConnector.SendCommand( 'RenameFile', "FileName=" + escape( fileName ) + "&NewName=" + escape( newName ), RenameFileCallBack ) ;
+	}
+}
+
+function RenameFileCallBack( fckXml )
+{
+	var oNode = fckXml.SelectSingleNode( 'Connector/Error' ) ;
+	var iErrorNumber = parseInt( oNode.attributes.getNamedItem('number').value ) ;
+	var iOriginalNumber = parseInt( oNode.attributes.getNamedItem('originalNumber').value ) ;
+	var sErrorDescription = String( oNode.attributes.getNamedItem('originalDescription').value ) ;
+	
+	switch ( iErrorNumber )
+	{
+		case 0 :
+			Refresh() ;
+			break ;
+		case 501 :
+			alert( 'You have no permissions to rename the file' ) ;
+			break ;
+		case 502 :
+			alert( 'Invalid file name' ) ;
+			break ;
+		case 503 :
+			alert( 'File not exists' ) ;
+			break ;
+		default :
+			alert( 'Error renaming file. \nError number: ' + iErrorNumber + '(' + iOriginalNumber + ') \nError description: ' + sErrorDescription ) ;
+			break ;
+	}
+}
+
+function LoadResources( resourceType, folderPath )
+{
+	oListManager.Clear() ;
+	oConnector.ResourceType = resourceType ;
+	oConnector.CurrentFolder = folderPath
+	oConnector.SendCommand( 'GetFoldersAndFiles', null, GetFoldersAndFilesCallBack ) ;
+}
+
+function Refresh()
+{
+	LoadResources( oConnector.ResourceType, oConnector.CurrentFolder ) ;
+}
+
+function GetFoldersAndFilesCallBack( fckXml )
+{
+	if ( oConnector.CheckError( fckXml ) != 0 )
+		return ;
+
+//	var dTimer = new Date() ;
+
+	// Get the current folder path.
+	var oNode = fckXml.SelectSingleNode( 'Connector/CurrentFolder' ) ;
+	var sCurrentFolderPath	= oNode.attributes.getNamedItem('path').value ;
+	var sCurrentFolderUrl	= oNode.attributes.getNamedItem('url').value ;
+	
+	var sHTML = '<div>' ;
+
+
+	// Add the Folders.	
+	var oNodes = fckXml.SelectNodes( 'Connector/Folders/Folder' ) ;
+	for ( var i = 0 ; i < oNodes.length ; i++ )
+	{
+		var sFolderName = oNodes[i].attributes.getNamedItem('name').value ;
+		var sFolderSize = oNodes[i].attributes.getNamedItem('size').value ;
+		sHTML += oListManager.GetFolderRowHtml( sFolderName, sCurrentFolderPath + sFolderName + "/", sFolderSize ) ;
+	}
+
+	// Add the Files.	
+	var oNodes = fckXml.SelectNodes( 'Connector/Files/File' ) ;
+	for ( var i = 0 ; i < oNodes.length ; i++ )
+	{
+		var sFileName = oNodes[i].attributes.getNamedItem('name').value ;
+		var sFileSize = oNodes[i].attributes.getNamedItem('size').value ;
+		sHTML += oListManager.GetFileRowHtml( sFileName, sCurrentFolderUrl + sFileName, sFileSize ) ;
+	}
+
+	sHTML += '</div>' ;
+
+	document.body.innerHTML = sHTML ;
+
+//	window.top.document.title = 'Finished processing in ' + ( ( ( new Date() ) - dTimer ) / 1000 ) + ' seconds' ;
+}
+
+window.onload = function()
+{
+	window.top.IsLoadedResourcesList = true ;
+}
+	</script>
+	<style>
+	.fmbox{
+	width:140px;
+	height:auto;
+	background:#eee;
+	border:1px solid #ccc;
+	float:left;
+	margin:0 10px 10px 0;
+	display:inline;
+	}
+	.fmbox img{
+	padding:1px;
+	background:#fff;
+	border:1px solid #aaa;
+	margin:8px;
+	display:inline;
+	cursor:pointer;
+	}
+	.fmbox img:hover{
+	border:1px solid #00aaff;
+	}
+	.fmboxfilename{
+	padding:0 8px;
+	line-height:20px;
+	height:20px;
+	}
+	.fmboxfilesize{
+	padding:0 8px;
+	line-height:20px;
+	height:20px;
+	}
+	.fmboxdetales{
+	padding:5px 8px 3px 8px;
+	line-height:20px;
+	height:20px;
+	}
+	.fmboxdetales img{
+	float:left;
+	margin:0 5px 0 0;
+	display:inline;
+	background:transparent;
+	border:0;
+	}
+	.fmboxdetales img:hover{
+	border:0;
+	}
+	.folders{
+	height:30px;
+	line-height:30px;
+	}
+	</style>
+</head>
+<body class="FileArea" bottommargin="10" leftmargin="10" topmargin="10" rightmargin="10">
+</body>
+</html>

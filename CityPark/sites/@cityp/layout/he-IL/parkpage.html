@@ -1,0 +1,237 @@
+		<div id="changeBG" class="searchBottom searchBottom2"></div>
+		<div class="text">
+		<div class="intext">
+			<h1 class="headline_text">[name] - [street_name] [house_number], [City]</h1>
+			<div class="border"></div>
+			<div class="right">
+				<div class="right1">
+					<div class="top2"></div>
+					<div class="middle2">
+						<p>תיאור החניה:</p>
+						<div class="parkingDiv">
+							[comment]
+						</div>
+						<p>סוג החניה:</p>
+						<div class="parkingDiv">
+							[Heniontype]
+						</div>
+						<p>בסיס השכרת חניה:</p>
+						<div class="parkingDiv">
+							<span id="payment"><input type="checkbox" checked="[payment]" disabled=""/>חינם</span>
+							<span id="hourly"><input type="checkbox" checked="[hourly]" disabled=""/> שעתי</span>
+							<span id="Daily"><input type="checkbox" checked="[Daily]" disabled=""/> יומי</span>
+							<span id="weekly"><input type="checkbox" checked="[weekly]" disabled=""/> שבועי</span>
+							<span id="monthly"><input type="checkbox" checked="[monthly]" disabled=""/> חודשי</span>
+							<span id="yearly"><input type="checkbox" checked="[yearly]" disabled=""/> שנתי</span>
+						</div>
+						<p>מחיר לטווח קצר:</p>
+						<div class="parkingDiv">
+						[parkranges]
+						<p>מחיר לטווח ארוך:</p>
+						<div class="parkingDiv">
+						ש"ח[price] לכל [pricefortime] עבור: [cartype] :סוג מנוי [manuytype] ב:-[payments] תשלומים
+							
+						</div>
+						<p>אמצעי תשלום:</p>
+						<div class="parkingDiv">
+							<span id="cc"><input type="checkbox" checked="[cc]" disabled=""/>כרטיס אשראי</span>
+							<span id="cash"><input type="checkbox" checked="[cash]" disabled="" /> מזומן</span>
+							<span id="cheak"><input type="checkbox" checked="[cheak]" disabled="" /> המחאות</span>
+							<span id="paypal"><input type="checkbox" checked="[paypal]" disabled="" /> PayPal</span>
+						</div>
+					</div>
+					</div>
+					<div class="bottom2"></div>
+					<div id="i[id]" class="infopage" style="display:none;">[latitude],[longitude],[name]</div>
+				</div>
+				<div class="right2">
+					<div class="mapTop2"></div>
+					<div class="mapMiddle2" id="map" rel="d" style="width:375px;height:284px;border-right:1px solid #bfbfbf;border-left:1px solid #bfbfbf;border-top:0px;border-bottom:0px;"></div>
+					<div class="mapBottom2"></div>
+					<div class="top4"></div>
+					<div class="middle4">
+						<table cellspacing="3" cellpadding="0" border="0" class="info" style="visibility: hidden;">
+							<tr>
+								<td><img src="/sites/cityp/layout/he-IL/images/icon1.gif" alt="שם איש הקשר" title="שם איש הקשר" width="17" height="19"/></td>
+								<td>[contactname]</td>
+							</tr>
+							<tr>
+								<td><img src="/sites/cityp/layout/he-IL/images/icon2.gif" alt="טלפון" title="טלפון" width="20" height="15"/></td>
+								<td>[tel]</td>
+							</tr>
+							<tr>
+								<td><img src="/sites/cityp/layout/he-IL/images/icon3.gif" alt="דואל" title="דואל" width="22" height="15"/></td>
+								<td><a href="mailto:[email]" title="שלח מייל">[email]</a></td>
+							</tr>
+						</table>
+						<table cellspacing="5" cellpadding="0" border="0" class="icons">
+							<tr>
+								<td><a title="חניה בתשלום" id="paymentx" class="toshav_off"></a></td>
+								<td><a title="ללא הגבלת שעות" id="nolimit" class="nolimit_off"></a></td>
+								<td><a title="חניה מתאימה לנכים" id="criple" class="criple_off"></a></td>
+							</tr>
+							<tr>
+								<td><a title="חניה עם מחסום" id="withlock" class="withlock_off"></a></td>
+								<td><a title="חניון" id="jenion" class="jenion_off"></a></td>
+								<td><a title="חניה מקורה" id="roof" class="roof_off"></a></td>
+								<td><a title="חניה תת-קרקעית" id="underground" class="underground_off"></a></td>
+							</tr>
+						</table>
+					</div>
+					<div class="bottom4"></div>
+				</div>
+			</div>
+			
+		<div class="left">
+			<div id="sm_ga">
+			<div class="map_top"></div>
+			<div class="map_middle" >
+				<div id="featured"> 
+					<img src="[Image]" alt="" title="" width="225" height="224" style="float:right"/>
+					<img src="[Image2]" alt="" title="" width="225" height="224" style="float:right"/>
+				</div>
+			</div>
+			<div class="map_bottom"></div>
+			</div>
+			<a href="#" onclick="contact([parkingID],'[onlymail]');return false;" title="השכר חניה" class="parking2">צור קשר</a>
+			<a href="#" onclick="order([parkingID]);return false;" title="מצא חניה" class="parking2">הזמן חניה</a>
+			<a href="#" onclick="coupon([parkingID]);return false;" title="קופון" class="parking2">קופון</a>
+			
+		</div>
+		
+<div id="contact[parkingID]" style="display:none;">
+<div class="popup">
+	<h3>צור קשר</h3>
+	<table border="0" width="95%">
+	<tr>
+		<td rowspan="2" valign="top">
+			<textarea rows="3" style="-moz-border-radius:5px;border:1px solid #BFBFBF;text-align:right;-webkit-border-radius:5px;" name="Message"></textarea>
+			
+		</td>
+		<td rowspan="2" valign="top">:הערות</td>
+		<td><input name="Name" style="-moz-border-radius:5px;border:1px solid #BFBFBF;text-align:right;-webkit-border-radius:5px;"></td>
+		<td>:שם מלא</td>
+	</tr>
+	<tr>
+		<td valign="top"><input name="Email" style="-moz-border-radius:5px;border:1px solid #BFBFBF;text-align:right;-webkit-border-radius:5px;"></td>
+		<td valign="top">:דוא&quot;ל</td>
+	</tr>
+	<tr>
+		<td rowspan="2" colspan="2" valign="top"><input type="submit" value="שלח" id="send"></td>
+		<td valign="top"><input name="Phone" style="-moz-border-radius:5px;border:1px solid #BFBFBF;text-align:right;-webkit-border-radius:5px;"></td>
+		<td valign="top">:טלפון</td>
+	</tr>
+	<tr>
+		<td valign="top"><input name="Adress" style="-moz-border-radius:5px;border:1px solid #BFBFBF;text-align:right;-webkit-border-radius:5px;"></td>
+		<td valign="top">:כתובת</td>
+	</tr>
+</table>
+</div>
+</div>
+<div id="coupon[parkingID]" style="display:none;">
+<div style="width:480px;float:right;border:5px solid #2698D6;height:191px;text-align:right;padding:5px;-moz-border-radius:10px;-webkit-border-radius:10px;positon:relative;">
+	<div class="coupon">
+		<div style="width:300px;height:150px;float:left;margin:13px 0 0 45px;color:#fff;direction:rtl;font-size:14px;">
+		<h3 style="color:#fff;font-size:18px;">קופון - [street_name]</span><span id="house_number[parkingID]">, [house_number]</span><span id="City[parkingID]"> [City]</h3>
+		[tel]
+		10% הנחה ממחיר מחירון לאחסנה מעל חודש ימים
+		[coupon_text]<br />
+		<a target="_blank" href="printcoupon.asp?ID=[parkingID]" style="color:#fff;text-decoration:underline; -moz-border-radius: 5px 5px 5px 5px;background: none repeat scroll 0 0 #2799D8;bottom: 20px;color: #FFFFFF;left: 50px;padding: 3px 5px;position: absolute;text-decoration: underline;">הדפס קופון</a>
+		</div>
+	</div>
+</div>
+</div>
+
+<div id="order[parkingID]" style="display:none;">
+<form action="contactform.asp?mode=sendmailtocust&mail=[email]" method="post">
+<div class="popup">
+	<h3>הזמן חניה - [name], [street_name] [house_number]</h3>
+	<table border="0" width="99%" align="right" style="margin:0px auto;text-align:right;">
+	<tr>
+		<td>
+		<select name="time">
+			<option>00:00</option>
+			<option>01:00</option>
+			<option>02:00</option>
+			<option>03:00</option>
+			<option>04:00</option>
+			<option>05:00</option>
+			<option>06:00</option>
+			<option>07:00</option>
+			<option>08:00</option>
+			<option>09:00</option>
+			<option>10:00</option>
+			<option>11:00</option>
+			<option>12:00</option>
+			<option>13:00</option>
+			<option>14:00</option>
+			<option>15:00</option>
+			<option>16:00</option>
+			<option>17:00</option>
+			<option>18:00</option>
+			<option>19:00</option>
+			<option>20:00</option>
+			<option>21:00</option>
+			<option>22:00</option>
+			<option>23:00</option>
+		</select>
+		</td>
+		
+		<td>שעה</td>
+		<td><input type="text" class="dateselect" style="-moz-border-radius:5px;border:1px solid #BFBFBF;text-align:right;-webkit-border-radius:5px;"></td><td>תאריך</td>
+	</tr>
+	<tr>
+		<td rowspan="2" valign="top">
+			<textarea rows="3" style="-moz-border-radius:5px;border:1px solid #BFBFBF;text-align:right;-webkit-border-radius:5px;" name="Message"></textarea>
+			
+		</td>
+		<td rowspan="2" valign="top">:הערות</td>
+		<td height="20"><input name="Name" style="-moz-border-radius:5px;border:1px solid #BFBFBF;text-align:right;-webkit-border-radius:5px;"></td>
+		<td>:שם מלא</td>
+	</tr>
+	<tr>
+		<td valign="top" height="20"><input name="Email" class="required email" style="-moz-border-radius:5px;border:1px solid #BFBFBF;text-align:right;-webkit-border-radius:5px;"></td>
+		<td valign="top" height="20">:דוא&quot;ל</td>
+	</tr>
+	<tr>
+		<td valign="top" style="font-size:11px;">אני מאשר את  <a href="תנאי-השימוש" target="_blank" style="text-decoration: underline;">התקנון</a> ותנאי השירות</td>
+		<td align="center"><input name="Name" type="checkbox" class="required"></td>
+		
+		<td valign="top" height="20"><input name="Phone" style="-moz-border-radius:5px;border:1px solid #BFBFBF;text-align:right;-webkit-border-radius:5px;"></td>
+		<td valign="top">:טלפון</td>
+	</tr>
+	<tr>
+	<td  colspan="2" valign="top"><input type="submit" value="שלח" id="send"></td>
+		<td valign="top"><input name="Adress" style="-moz-border-radius:5px;border:1px solid #BFBFBF;text-align:right;-webkit-border-radius:5px;"></td>
+		<td valign="top">:כתובת</td>
+	</tr>
+</table>
+</div>
+</form>
+</div>
+<div style="float:right;width:100%;height:90px;padding:10px 0px 10px 0px;">
+	<div style="width:728px;height:90px;float:right;border:1px solid #ddd;margin:0 19px 0 0;">[Campaign41]</div>
+</div>
+<div style="float:right;font-size:16px;color:#2598D6;margin:10px 19px 0px 0px;width:100%;font-weight:bold">בחר נקודת עניין קרובה</div>
+<script type="text/javascript">$(document).ready(function(){
+	if ("[payment]".replace(/\s/g,"") == 0) $("#payment").hide();
+	if ("[hourly]".replace(/\s/g,"") == "") $("#hourly").hide();
+	if ("[Daily]".replace(/\s/g,"") == "") $("#Daily").hide();
+	if ("[weekly]".replace(/\s/g,"") == "") $("#weekly").hide();
+	if ("[monthly]".replace(/\s/g,"") == "") $("#monthly").hide();
+	if ("[yearly]".replace(/\s/g,"") == "") $("#yearly").hide();
+	if ("[Image2]".replace(/\s/g,"") == "") $("#sm_ga").hide();
+	if (eval("[onlymail]".replace(/\s/g,"").toLowerCase())) $("table.info").css("visibility","visible");
+	if (eval("[withlock]".replace(/\s/g,"").toLowerCase())) $("#withlock").addClass("withlock_on");
+	if (eval("[underground]".replace(/\s/g,"").toLowerCase())) $("#underground").addClass("underground_on");
+	if (eval("[roof]".replace(/\s/g,"").toLowerCase())) $("#roof").addClass("roof_on");
+	if (eval("[jenion]".replace(/\s/g,"").toLowerCase())) $("#jenion").addClass("jenion_on");
+	if (eval("[criple]".replace(/\s/g,"").toLowerCase())) $("#criple").addClass("criple_on");
+	if (eval("[nolimit]".replace(/\s/g,"").toLowerCase())) $("#nolimit").addClass("nolimit_on");
+	if ("[payment]".replace(/\s/g,"") == 0) $("#paymentx").addClass("toshav_on");
+	if ("[cc]".replace(/\s/g,"") == "") $("#cc").hide();
+	if ("[cash]".replace(/\s/g,"") == "") $("#cash").hide();
+	if ("[cheak]".replace(/\s/g,"") == "") $("#cheak").hide();
+	if ("[paypal]".replace(/\s/g,"") == "") $("#paypal").hide();
+});
+</script>

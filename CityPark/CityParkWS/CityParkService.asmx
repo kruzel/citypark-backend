@@ -1,0 +1,1 @@
+﻿<%@ WebService Language="C#" CodeBehind="CityParkService.asmx.cs" Class="CityParkWS.CityParkService" %>

@@ -1,0 +1,20 @@
+html, body {
+	font-family: serif;
+	font-size: 12pt;
+}
+pre, code, kbd {
+	font-size: 10pt;
+}
+#background, #site-title, #menu, #credits {
+	display: none;
+}
+h1, #main {
+	position: static;
+	overflow: visible;
+}
+#print-sig {
+	display: block;
+	text-align: right;
+	font-style: italic;
+	font-weight: bold;
+}

@@ -1,0 +1,1 @@
+<!--#include file="config.asp"--><%if request("sid") <> "" then	response.write siteIdend ifif request("conf") <> "" then	response.write getConfig(request("conf")) end if%>

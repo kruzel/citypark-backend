@@ -1,0 +1,45 @@
+<script type="text/javascript">
+function ShowHide(obj){
+obj.animate({"height": "toggle"}, { duration: 1000 });
+}
+</script>
+<div id="formcontainer">
+<center>
+    <div id="formheader">
+        <div id="formtitle">הוספת כפתור</div>
+        <div id="formsave">[Submit Type="submit",style="width:40px;height:42px;border:0px;background:url(/sites/cms/layout/images/save.gif) no-repeat;"]</div>
+        <div id="formcancel"><img src="/sites/cms/layout/images/cancel.gif" border="0" alt="" /></div>
+    </div>
+    <div id="formcontent">
+        <div id="formrightfieldsbig">
+            <table dir="rtl" cellpadding="5" cellspacing="0" width="99%" style="margin-top:10px;">
+                <tr>
+                    <td width="75" align="right" valign="top">שם הכפתור</td>
+                    <td align="right" valign="top">[MenuName style="width:250px;",class="required"]</td>
+                </tr>
+                <tr>
+                    <td width="75" align="right" valign="top">שפה</td>
+                    <td align="right" valign="top">[LangID Type="Combo",Table="Lang",style="width:254px;",class="validate-selection"]</td>
+                </tr>
+                <tr>
+                    <td width="75" align="right" valign="top">שייך לתפריט</td>
+                    <td align="right" valign="top">[MenuCategoryID Type="Combo",Table="MenuCategory",style="width:254px;",class="validate-selection"]</td>
+                </tr>
+                <tr>
+                    <td width="75" align="right" valign="top">כפתור אב</td>
+                    <td align="right" valign="top">[MenuFatherName style="width:250px;",class="required"]</td>
+                </tr>
+                <tr>
+                    <td width="75" align="right" valign="top">קישור</td>
+                    <td align="right" valign="top">[MenuLink style="width:250px;direction:ltr;",class="required"]</td>
+                </tr>
+                <tr>
+                    <td align="right" valign="top"></td>
+                    <td align="right" valign="top">[Submit Type="submit",value="שמירה",style="padding:0 10px;"]</td>
+                </tr>
+            </table>
+        </div>
+        <div id="clearboth"></div>
+    </div>
+</center>
+</div>

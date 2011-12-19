@@ -1,0 +1,10 @@
+c:\Projects\CityPark\CityPark\bin\CityPark.dll
+c:\Projects\CityPark\CityPark\bin\CityPark.pdb
+c:\Projects\CityPark\CityPark\obj\Debug\ResolveAssemblyReference.cache
+c:\Projects\CityPark\CityPark\obj\Debug\CityPark.dll
+c:\Projects\CityPark\CityPark\obj\Debug\CityPark.pdb
+C:\inetpub\wwwroot\CityPark\bin\CityPark.dll
+C:\inetpub\wwwroot\CityPark\bin\CityPark.pdb
+C:\inetpub\wwwroot\CityPark\obj\Debug\ResolveAssemblyReference.cache
+C:\inetpub\wwwroot\CityPark\obj\Debug\CityPark.dll
+C:\inetpub\wwwroot\CityPark\obj\Debug\CityPark.pdb

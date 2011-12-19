@@ -1,0 +1,10 @@
+C:\Inetpub\wwwroot\CityParkWS\bin\CityParkWS.dll
+C:\Inetpub\wwwroot\CityParkWS\bin\CityParkWS.pdb
+C:\Inetpub\wwwroot\CityParkWS\obj\Debug\ResolveAssemblyReference.cache
+C:\Inetpub\wwwroot\CityParkWS\obj\Debug\CityParkWS.dll
+C:\Inetpub\wwwroot\CityParkWS\obj\Debug\CityParkWS.pdb
+C:\inetpub\wwwroot\CityPark\CityParkWS\bin\CityParkWS.dll
+C:\inetpub\wwwroot\CityPark\CityParkWS\bin\CityParkWS.pdb
+C:\inetpub\wwwroot\CityPark\CityParkWS\obj\Debug\ResolveAssemblyReference.cache
+C:\inetpub\wwwroot\CityPark\CityParkWS\obj\Debug\CityParkWS.dll
+C:\inetpub\wwwroot\CityPark\CityParkWS\obj\Debug\CityParkWS.pdb

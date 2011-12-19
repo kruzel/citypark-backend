@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> 
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>[title]</title>
+<meta name="keywords" content="[keywords]" />
+<meta name="description" content="[description]" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="Content-Language" content="he" />
+<meta name="ROBOTS" content="INDEX,FOLLOW" />
+<meta name="copyright" content="Dooble.co.il" />
+<meta name="Author" content="Dooble.co.il" />
+<meta name="rating" content="General" />
+<link rel="stylesheet" type="text/css" href="sites/cityp/layout/he-IL/style/jquery-ui-1.8.5.custom.css" />
+<link rel="stylesheet" type="text/css" href="sites/cityp/layout/he-IL/style/pager.css" />
+[header-includes]
+
+</head>
+<body>
+<div class="wrapper">
+	<div class="container">
+		<div class="header">
+		<div class="sign_in">
+			[shortloginblock]
+		</div>
+			<a href="/" title="CityPark"><img src="/sites/cityp/layout/he-IL/images/logo.gif" alt="CityPark" title="CityPark" class="logo" /></a>
+		</div>
+		<div class="content">
+	[menus47]
+<div class="HPsearch">
+	הקלק כתובת מדוייקת לחיפוש חניה:
+	<form action="#" method="post" class="_validate">
+		<input type="hidden" name="mode" value="search" />
+		<div class="input1"><input type="text" class="ininput1"  AUTOCOMPLETE=OFF name="freetext" id="searchtext" /></div>
+		<div id="ac" class="autocomp"></div>
+		<img src="/sites/cityp/layout/he-IL/images/button.gif" class="button" id="searchaction"/>
+	</form>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".btn-slide2").click(function(){
+		$("#panel").slideToggle("slow");
+		$(this).toggleClass("active2"); return false;
+	});
+});
+</script>
+<div class="advance" id="panel">
+	<table border="0" cellspacing="0" cellpadding="0" class="selects" valign="top">
+		<tr>
+			<td>
+				התחלת חניה
+			</td>
+			<td class="selects">
+				סיום חניה
+			</td>
+			<td class="selects">
+				סוג חניה
+			</td>
+			<td class="selects">
+				בסיס השכרה
+			</td>
+			<td class="selects">
+				מחיר מקסימלי
+			</td>
+			<td class="selects">
+				לכל
+			</td>
+			<td class="selects">
+				נקודות עניין קרובות
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<input type="text" name="start_date" class="_date" style="width:110px;"/>
+				<img src="/sites/cityp/layout/he-IL/images/calender.gif" alt="" title="" width="17" height="14" style="margin-right:-25px;display:inline;position:relative;"/>
+				<select name="start_time">
+					<option value="start_time1">07:00</option>
+					<option value="start_time2">08:00</option>
+					<option value="start_time3">09:00</option>
+					<option value="start_time4">10:00</option>
+					<option value="start_time5">11:00</option>
+					<option value="start_time6">12:00</option>
+				</select>
+			</td>
+			<td class="selects">
+				<input type="text" name="end_date" class="_date" style="width:110px;"/>
+				<img src="/sites/cityp/layout/he-IL/images/calender.gif" alt="" title="" width="17" height="14" style="margin-right:-25px;display:inline;position:relative;"/>
+				<select name="end_time">
+					<option value="end_time1">07:00</option>
+					<option value="end_time2">08:00</option>
+					<option value="end_time3">09:00</option>
+					<option value="end_time4">10:00</option>
+					<option value="end_time5">11:00</option>
+					<option value="end_time6">12:00</option>
+				</select>
+			</td>
+			<td class="selects">
+				<select name="type">
+					<option value="type1">חניה פרטית</option>
+					<option value="type2">חניון</option>
+					<option value="type3">חניית נכים</option>
+					<option value="type4">חניה בתשלום</option>
+				</select>
+			</td>
+			<td class="selects">
+				<select name="basis">
+					<option value="basis1">יומי</option>
+					<option value="basis2">שבועי</option>
+					<option value="basis3">חודשי</option>
+					<option value="basis4">שנתי</option>
+				</select>
+			</td>
+			<td class="selects">
+				<select name="price">
+					<option value="price1">1000</option>
+					<option value="price2">2000</option>
+					<option value="price3">3000</option>
+					<option value="price4">4000</option>
+				</select>
+			</td>
+			<td class="selects">
+				<select name="every">
+					<option value="every1">שעה</option>
+					<option value="every2">שעתיים</option>
+					<option value="every3">שלוש שעות</option>
+					<option value="every4">ארבע שעות</option>
+				</select>
+			</td>
+			<td class="selects">
+				<select name="place">
+					<option value="place1">אטרקציות לילדים</option>
+					<option value="place2">קניון</option>
+					<option value="place3">מסעדות</option>
+					<option value="place4">ים</option>
+				</select>
+			</td>
+		</tr>
+	</table><br/>
+	<input type="checkbox" name="free"/> חניה חינם
+	<input type="checkbox" name="limit"/> ללא הגבלת שעות
+	<input type="checkbox" name="Barrier"/> חניה עם מחסום
+	<input type="checkbox" name="underground"/> חניה תת קרקעית
+	<input type="checkbox" name="walls"/> חניה מקורה
+	<input type="checkbox" name="street"/> חניה ברחוב
+	<input type="checkbox" name="Disabled"/> חניה מתאימה לנכים
+	&nbsp;&nbsp;&nbsp;&nbsp;
+	מרחק מהיעד
+	<select name="Distance">
+		<option value="750">עד 750 מטר</option>
+		<option value="Distance2">עד 800 מטר</option>
+		<option value="Distance3">עד 850 מטר</option>
+		<option value="Distance4">עד 900 מטר</option>
+	</select><br/><br/>
+</div>
+<div class="buttons2">
+	<a href="#" title="חיפוש מתקדם" class="btn-slide2">חיפוש מתקדם</a>
+	<a href="#" title="מחשבון מחיר חניה" class="calculator">מחשבון מחיר חניה <img src="/sites/cityp/layout/he-IL/images/calculator.gif" alt="חיפוש מתקדם" title="חיפוש מתקדם" width="15" height="20"/></a>
+</div>

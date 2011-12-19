@@ -1,0 +1,11 @@
+﻿<object runat="server" scope="Session" progid="Scripting.Dictionary" id="CartContainer"></object>
+
+
+<SCRIPT LANGUAGE=VBScript RUNAT=Server>
+Sub Session_OnStart
+CartContainer.Add "1","1"
+
+end sub
+Sub Session_OnEnd
+end sub
+</SCRIPT>

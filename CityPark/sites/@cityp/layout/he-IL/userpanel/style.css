@@ -1,0 +1,29 @@
+.checkout1 input {
+-moz-border-radius:5px 5px 5px 5px;
+-webkit-border-radius:5px 5px 5px 5px;
+background:none repeat scroll 0 0 #F5F5F5;
+border:1px solid #69B6D7;
+color:#555555;
+font-family:arial;
+height:20px;
+line-height:20px;
+margin:5px 0;
+padding:3px;
+text-align:right;
+}
+input.send {
+background:#92C64D;
+border:0 none;
+color:#FFFFFF;
+cursor:pointer;
+float:left;
+font-family:arial;
+font-size:18px;
+height:37px;
+line-height:37px;
+margin:10px 0;
+text-align:center;
+width:93px;
+-moz-border-radius:5px 5px 5px 5px;
+-webkit-border-radius:5px 5px 5px 5px;
+}

@@ -1,0 +1,49 @@
+<script type="text/javascript">
+function ShowHide(obj){
+obj.animate({"height": "toggle"}, { duration: 1000 });
+}
+</script>
+<div id="formcontainer">
+<center>
+    <div id="formheader">
+        <div id="formtitle">הוספת חדשות רצות</div>
+        <div id="formsave">[Submit Type="submit",style="width:40px;height:42px;border:0px;background:url(/sites/cms/layout/images/save.gif) no-repeat;"]</div>
+        <div id="formcancel"><img src="/sites/cms/layout/images/cancel.gif" border="0" alt="" /></div>
+    </div>
+    <div id="formcontent">
+        <div id="formrightfieldsbig">
+            <table dir="rtl" cellpadding="5" cellspacing="0" width="99%" style="margin-top:10px;">
+                <tr>
+                    <td width="75" align="right" valign="top">כותרת</td>
+                    <td align="right" valign="top">[RunNewsName style="width:200px;",class="required"]</td>
+                </tr>
+                <tr>
+                    <td align="right" valign="top">תוכן החדשות</td>
+                    <td align="right" valign="top">[RunNewsContent Type="editor",style="width:99%;height:350px;border:1px solid #ccc;"]</td>
+                </tr>
+                <tr>
+                    <td width="75" align="right" valign="top">קישור חיצוני</td>
+                    <td align="right" valign="top">[RunNewsLink Value="http://",style="width:250px;direction:ltr;",class="required"]</td>
+                </tr>
+                <tr>
+                    <td width="75" align="right" valign="top">קישור פנימי</td>
+                    <td align="right" valign="top">[RunNewsNewsLink Type="combo",Options="עמוד הבית|אודות|צור קשר",style="width:254px;",class="validate-selection"]</td>
+                </tr>
+                <tr>
+                    <td width="75" align="right" valign="top">שפה</td>
+                    <td align="right" valign="top">[LangID Type="combo",Table="Lang",style="width:254px;",class="validate-selection"]</td>
+                </tr>
+                <tr>
+                    <td width="75" align="right" valign="top">סדר הופעה</td>
+                    <td align="right" valign="top">[RunNewsOrder style="width:20px;",class="required"]</td>
+                </tr>
+                <tr>
+                    <td align="right" valign="top"></td>
+                    <td align="right" valign="top">[Submit Type="submit",value="שמירה",style="padding:0 10px;"]</td>
+                </tr>
+            </table>
+        </div>
+        <div id="clearboth"></div>
+    </div>
+</center>
+</div>

@@ -1,0 +1,173 @@
+<div id="park[parkingID]" class="parkme" >
+<div id="i[parkingID]" class="info" style="display:none;">[latitude],[longitude],[name]</div>
+<div class="sons_top"></div>
+<div class="sons_middle">
+	<div class="sons_inmiddle">
+		<div style="width:149px;height:155px;float:right;">
+			<div style="width:149px;background:url(/sites/cityp/layout/he-il/images/imageframe.gif) no-repeat center top;min-height:115px;float:right;text-align:center;">
+				<a href="park.asp?id=[parkingID]" title="[name]"><img id="image[parkingID]" src="[Image]" alt="" width="140" height="85" style="float:none;margin:5px 0px 0px 0px;"/></a>
+			</div>
+			<div id="Current_Pnuyot[parkingID]" class="Current_off"></div>
+		</div>
+		<script type="text/javascript">$(document).ready(function() { if ("[Image]".replace(/\s/g,"") == "") $("#image[parkingID]").hide(); });</script>
+		<div class="sons_text">
+			<a href="park.asp?id=[parkingID]"><h2><span id="street_name[parkingID]">[street_name]</span><span id="house_number[parkingID]">, [house_number]</span><span id="City[parkingID]">, [City]</span></h2></a>
+			<script type="text/javascript">$(document).ready(function() { if ("[house_number]".replace(/\s/g,"") == "") $("#house_number[parkingID]").hide(); });</script>
+			<script type="text/javascript">$(document).ready(function() { if ("[street_name]".replace(/\s/g,"") == "") $("#street_name[parkingID]").hide(); });</script>
+			<script type="text/javascript">$(document).ready(function() { if ("[City]".replace(/\s/g,"") == "") $("#City[parkingID]").hide(); });</script>
+            <p><b>[name]</b></p>
+			[comment]
+			<div class="options">
+				<a title="חניה עם מחסום" id="withlock[parkingID]" class="withlock_off"></a>
+				<a title="חניון" id="jenion[parkingID]" class="jenion_off"></a>
+				<a title="חניה מקורה" id="roof[parkingID]" class="roof_off"></a>
+				<a title="חניה תת-קרקעית" id="underground[parkingID]" class="underground_off"></a>
+				<a title="חניה בתשלום" id="payment[parkingID]" class="toshav_off"></a>
+				<a title="ללא הגבלת שעות" id="nolimit[parkingID]" class="nolimit_off"></a>
+				<a title="חניה מתאימה לנכים" id="criple[parkingID]" class="criple_off"></a>
+				<script type="text/javascript">$(document).ready(function() { if (eval("[withlock]".replace(/\s/g,"").toLowerCase())) $("#withlock[parkingID]").addClass("withlock_on"); });</script>
+				<script type="text/javascript">$(document).ready(function() { if (eval("[underground]".replace(/\s/g,"").toLowerCase())) $("#underground[parkingID]").addClass("underground_on"); });</script>
+				<script type="text/javascript">$(document).ready(function() { if (eval("[roof]".replace(/\s/g,"").toLowerCase())) $("#roof[parkingID]").addClass("roof_on"); });</script>
+				<script type="text/javascript">$(document).ready(function() { if (eval("[jenion]".replace(/\s/g,"").toLowerCase())) $("#jenion[parkingID]").addClass("jenion_on"); });</script>
+				<script type="text/javascript">$(document).ready(function() { if (eval("[criple]".replace(/\s/g,"").toLowerCase())) $("#criple[parkingID]").addClass("criple_on"); });</script>
+				<script type="text/javascript">$(document).ready(function() { if (eval("[nolimit]".replace(/\s/g,"").toLowerCase())) $("#nolimit[parkingID]").addClass("nolimit_on"); });</script>
+				<script type="text/javascript">$(document).ready(function() { if ("[payment]".replace(/\s/g,"") == 0) $("#payment[parkingID]").addClass("toshav_on"); });</script>
+				<script type="text/javascript">$(document).ready(function() { if (eval("[Current_Pnuyot]".replace(/\s/g,"").toLowerCase())) $("#Current_Pnuyot[parkingID]").addClass("Current_on"); });</script>
+
+			</div>
+		</div>
+		<div class="sons_buttons">
+			<span onclick="contact([parkingID],'[onlymail]')">
+				<img src="/sites/cityp/layout/he-IL/images/phone.gif" alt="צור קשר" title="צור קשר" width="22" height="16"/>
+				צור קשר
+			</span>
+			<span onclick="order([parkingID])">
+				<img src="/sites/cityp/layout/he-IL/images/car.gif" alt="הזמן חניה" title="הזמן חניה" width="21" height="18"/>
+				הזמן חניה
+			</span>
+			<span onclick="coupon([parkingID])">
+				<img src="/sites/cityp/layout/he-IL/images/pic7.gif" alt="קופון" title="קופון" width="22" height="21"/>
+				קופון
+			</span>
+			<iframe src="http://www.facebook.com/plugins/like.php?href=http://www.citypark.co.il/park.asp?id=[parkingID]&amp;layout=button_count&amp;show_faces=false&amp;width=120&amp;action=like&amp;colorscheme=light&amp;height=30&amp;locale=en_US" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:120px; height:30px;" allowTransparency="true"></iframe>		</div>
+	</div>
+</div>
+
+<div id="contact[parkingID]" style="display:none;">
+<form action="contactform.asp?mode=sendmailtocust&mail=[email]" method="post">
+<div style="width:480px;float:right;border:5px solid #2698D6;height:200px;text-align:right;padding:5px;-moz-border-radius:10px;-webkit-border-radius:10px;">
+	<h3>צור קשר</h3>
+	<table border="0" width="95%">
+	
+	<tr>
+		<td rowspan="2" valign="top">
+			<textarea rows="3" style="-moz-border-radius:5px;border:1px solid #BFBFBF;text-align:right;-webkit-border-radius:5px;" name="Message"></textarea>
+			
+		</td>
+		<td rowspan="2" valign="top">:הערות</td>
+		<td><input name="Name" style="-moz-border-radius:5px;border:1px solid #BFBFBF;text-align:right;-webkit-border-radius:5px;" class="required"></td>
+		<td>:שם מלא</td>
+	</tr>
+	<tr>
+		<td valign="top"><input name="Email" class="required email" style="-moz-border-radius:5px;border:1px solid #BFBFBF;text-align:right;-webkit-border-radius:5px;"></td>
+		<td valign="top">:דוא&quot;ל</td>
+	</tr>
+	<tr>
+		<td rowspan="2" colspan="2" valign="top"><input type="submit" value="שלח" id="send"></td>
+	
+		<td valign="top"><input name="Phone" style="-moz-border-radius:5px;border:1px solid #BFBFBF;text-align:right;-webkit-border-radius:5px;" class="required"></td>
+		<td valign="top">:טלפון</td>
+	</tr>
+	<tr>
+	
+		<td valign="top"><input name="Adress" style="-moz-border-radius:5px;border:1px solid #BFBFBF;text-align:right;-webkit-border-radius:5px;"></td>
+		<td valign="top">:כתובת</td>
+	</tr>
+</table>
+</div>
+</form>
+
+</div>
+<div id="coupon[parkingID]" style="display:none;">
+<div style="width:480px;float:right;border:5px solid #2698D6;height:191px;text-align:right;padding:5px;-moz-border-radius:10px;-webkit-border-radius:10px;positon:relative;">
+	<div class="coupon">
+		<div style="width:300px;height:150px;float:left;margin:13px 0 0 45px;color:#fff;direction:rtl;font-size:14px;">
+		<h3 style="color:#fff;font-size:18px;width:230px;"><span>קופון - [street_name]</span><span id="house_number[parkingID]">, [house_number]</span><span id="City[parkingID]"> [City]</h3>
+		[tel]<br />
+		
+		[coupon_text]<br />
+		<a target="_blank" href="printcoupon.asp?ID=[parkingID]" style="color:#fff;text-decoration:underline; -moz-border-radius: 5px 5px 5px 5px;background: none repeat scroll 0 0 #2799D8;bottom: 20px;color: #FFFFFF;left: 50px;padding: 3px 5px;position: absolute;text-decoration: underline;">הדפס קופון</a>
+		</div>
+	</div>
+</div>
+</div>
+
+<div id="order[parkingID]" style="display:none;">
+<form action="contactform.asp?mode=sendmailtocust&mail=[email]" method="post">
+<div class="popup">
+	<h3>הזמן חניה - [name], [street_name] [house_number]</h3>
+	<table border="0" width="99%" align="right" style="margin:0px auto;text-align:right;">
+	<tr>
+		<td>
+		<select name="time">
+			<option>00:00</option>
+			<option>01:00</option>
+			<option>02:00</option>
+			<option>03:00</option>
+			<option>04:00</option>
+			<option>05:00</option>
+			<option>06:00</option>
+			<option>07:00</option>
+			<option>08:00</option>
+			<option>09:00</option>
+			<option>10:00</option>
+			<option>11:00</option>
+			<option>12:00</option>
+			<option>13:00</option>
+			<option>14:00</option>
+			<option>15:00</option>
+			<option>16:00</option>
+			<option>17:00</option>
+			<option>18:00</option>
+			<option>19:00</option>
+			<option>20:00</option>
+			<option>21:00</option>
+			<option>22:00</option>
+			<option>23:00</option>
+		</select>
+		</td>
+		
+		<td>שעה</td>
+		<td><input type="text" class="dateselect" style="-moz-border-radius:5px;border:1px solid #BFBFBF;text-align:right;-webkit-border-radius:5px;"></td><td>תאריך</td>
+	</tr>
+	<tr>
+		<td rowspan="2" valign="top">
+			<textarea rows="3" style="-moz-border-radius:5px;border:1px solid #BFBFBF;text-align:right;-webkit-border-radius:5px;" name="Message"></textarea>
+			
+		</td>
+		<td rowspan="2" valign="top">:הערות</td>
+		<td height="20"><input name="Name" style="-moz-border-radius:5px;border:1px solid #BFBFBF;text-align:right;-webkit-border-radius:5px;"></td>
+		<td>:שם מלא</td>
+	</tr>
+	<tr>
+		<td valign="top" height="20"><input name="Email" class="required email" style="-moz-border-radius:5px;border:1px solid #BFBFBF;text-align:right;-webkit-border-radius:5px;"></td>
+		<td valign="top" height="20">:דוא&quot;ל</td>
+	</tr>
+	<tr>
+		<td valign="top" style="font-size:11px;">אני מאשר את  <a href="תנאי-השימוש" target="_blank" style="text-decoration: underline;">התקנון</a> ותנאי השירות</td>
+		<td align="center"><input name="Name" type="checkbox" class="required"></td>
+		
+		<td valign="top" height="20"><input name="Phone" style="-moz-border-radius:5px;border:1px solid #BFBFBF;text-align:right;-webkit-border-radius:5px;"></td>
+		<td valign="top">:טלפון</td>
+	</tr>
+	<tr>
+	<td  colspan="2" valign="top"><input type="submit" value="שלח" id="send"></td>
+		<td valign="top"><input name="Adress" style="-moz-border-radius:5px;border:1px solid #BFBFBF;text-align:right;-webkit-border-radius:5px;"></td>
+		<td valign="top">:כתובת</td>
+	</tr>
+</table>
+</div>
+</form>
+</div>
+<div class="sons_bottom"></div>
+</div>

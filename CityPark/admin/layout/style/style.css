@@ -1,0 +1,334 @@
+﻿/* Body */
+body{
+	background:#fff;
+	font-family:arial;
+	font-size:13px;
+	color:#717171;
+	text-align:right;
+	margin-top: 0px;
+	height: auto;
+	min-height: 100%;
+	width:100%;
+	padding:0px;
+	margin:0px;
+}
+
+/* הגדרות כלליות */
+a { color:#1CB8DF ; text-decoration:none; }
+a:hover { text-decoration:none; color: #000;  } 
+p{ margin:0px; padding:0px; line-height:1.30em;}
+a img { border:0px solid;}
+form { margin:0px; }
+hr { background:none; height:1px; border:0px; border-top:1px solid #ccc; }
+html {min-height:100%;}
+h1{
+	font-size: 16px;
+	color: #3C5B9B;
+	padding:0px 10px 0px 0px;
+	margin:0px;
+	width:100%;
+	height:27px;
+	line-height:27px;
+	}
+
+h2{
+	font-size: 16px;
+	color: #323464;
+	padding:0px;
+	margin:0px;
+}
+#mainul{
+ list-style-position:inside;
+ line-height:30px;
+ vertical-align:top;
+ padding-right:20px;
+ padding-left:20px;
+ margin:0px;
+}
+#mainul li
+{
+    font-size:12px;  
+    font-weight:bold; 
+    border-bottom:1px dotted #ccc;
+} 
+/* Container */
+#container {
+	direction:rtl;
+	width:100%;
+	height:100%;
+	text-align:center;
+	padding:0px;
+	border-collapse:collapse;
+	margin: 0px auto;
+	background:transparent;
+}
+
+/* Header */
+#header {
+	margin:0px;
+	height:85px;
+	width:100%;
+	text-align: right;
+	border-collapse:collapse;
+	background:url(../images/headerbg.gif) repeat-x center bottom;
+}
+
+/* Content */
+#content {
+	background:#fff;
+	float:right;
+	width:100%;
+	height:100%;
+	border-collapse:collapse;
+	text-align:right;
+	min-height:338px;
+	direction:rtl;
+}
+
+/* footer */
+#footer {
+	float:right;
+	width:100%;
+	color: #787d81;
+	text-align: center;
+	font-weight:bold;
+	height: 42px;
+	line-height:42px;
+	border-collapse:collapse;
+	margin:10px 0px 0px 0px;
+	background:#fff
+}
+
+#MenuContainer27 {
+}
+
+#MenuContainer27 table#nav { /* table is generated via shopa_navigation_create.asp */
+ padding:0px;
+ width:100%;
+ border-collapse:collapse;
+ z-index:1000;
+ height:28px;
+ margin:0px;
+ float:right;
+}
+
+#MenuContainer27 table#nav td {
+     font-family:Arial;
+     padding:0px;
+     height:28px;
+     padding-left:0px;
+     text-align:right;
+     border-left:1px solid #ccc;
+     background:#F0F0F0;
+     width:107px;
+}
+ 
+#MenuContainer27 table#nav td a {
+ display:block;
+ text-align:center;
+ padding:0px;
+ text-decoration:none;
+ font-size:12px;
+ color:#717171;
+ font-weight:bold;
+ line-height:28px;
+ width:100%;
+}
+
+#MenuContainer27 table#nav td.last{
+    width:auto;
+} 
+#MenuContainer27 table#nav td.last a{
+    color:#26BADE;
+}
+#MenuContainer27 table#nav td:hover {
+ background:#E5E5E5;
+}
+ 
+#MenuContainer27 table#nav td.active {
+ padding:0px;
+ margin:0px;
+ background:#7AA2AE;
+}
+#MenuContainer27 table#nav td.active a {
+ color:#023246;
+}
+
+/* Horizontal navigation drop down menu
+   do not remove or modify styles listed 
+   under "Do Not Change" */
+#MenuContainer27 table#nav ul {
+	/* Do not change  */
+	position:absolute;
+	left: -999em;
+	padding:0px;
+	margin:0px;
+	list-style-type:none;
+	height:28px;
+	text-align:right;
+	z-index:1000;
+	width:100%;
+}
+
+/* Do not change  */
+#MenuContainer27 #nav td:hover ul { left: auto; }
+#MenuContainer27 #nav td.sfhover ul { left: auto; }
+
+#MenuContainer27 #nav ul li { /* submenu */	/* Do not change */
+	display:block;
+	margin:0px;
+	height:28px;
+	padding:0px;
+	background:#000;
+	line-height:28px;
+	width:107px;
+	text-align:right;
+	border-left:0px solid #ccc;
+	border-right:0px solid #ccc;
+	border-bottom:1px solid #ccc;
+}
+
+#MenuContainer27 #nav td ul li:hover {
+    background:#777;
+}
+
+#MenuContainer27 table#nav ul li a:hover { color:#fff; }
+#MenuContainer27 table#nav ul li a { /* submenu links */
+	/* Do not change */
+	display:block;
+	text-align:right;
+	padding-right:10px;
+	margin:0px;
+	height:28px;
+	line-height:28px;
+	font-size:12px;
+	border:0px;
+	color:#fff;
+	width:97px;
+}
+/* Validation */
+.validation-advice
+{
+    color:Red;
+    font-size:11px;
+}
+#formcontainer
+{
+     background:#F0F0F0;
+     height:auto;
+     border:1px solid #CCCCCC;
+     margin:10px 15px;
+     padding:15px;
+}
+#formheader
+{
+    width:99%;
+    height:43px;
+    background:#fff;
+    line-height:43px;
+    border:1px solid #ccc;
+}
+#formtitle
+{
+    width:200px;
+    float:right;
+    line-height:43px;
+    text-align:right;
+    padding-right:10px;
+    color:#25BAE2;
+    font-size:22px;
+}
+#formsave
+{
+    width:43px;
+    float:left;
+    line-height:43px;
+}
+#formcancel
+{
+    width:43px;
+    float:left;
+    line-height:43px;
+}
+#formcontent
+{
+    width:99%;
+    height:auto;
+    margin-top:10px;
+}
+#formrightfields
+{
+    width:64%;
+    min-height:300px;
+    height:auto;
+    background:#fff;
+    border:1px solid #ccc;
+    float:right;
+    padding-bottom:10px;
+}
+#formrightfieldsbig
+{
+    width:100%;
+    min-height:300px;
+    height:auto;
+    background:#fff;
+    border:1px solid #ccc;
+    float:right;
+    padding-bottom:10px;
+}
+#formleftfields
+{
+    width:34%;
+    min-height:300px;
+    height:auto;
+    float:left;
+}
+#formleftfieldsheader
+{
+     width:100%;
+     min-height:25px;
+     height:auto;
+     line-height:25px;
+     background:#fff;
+     border:1px solid #ccc;
+     margin-bottom:10px;
+     text-align:right;
+}
+#formleftfieldstitle
+{
+     padding-right:10px;
+     width:60%;
+     float:right;
+     font-weight:bold;
+}
+#formleftfieldsopen
+{
+     padding-left:10px;
+     width:25%;
+     float:left;
+     text-align:left;
+}
+.slidingdivdesc
+{
+    display:none;
+    margin:0px:padding:0px;
+    clear:both;   
+}
+#formleftfieldstable
+{
+     margin-right:10px;
+     margin-bottom:10px;
+}
+#formsubmit
+{
+     width:100%;
+     min-height:25px;
+     height:auto;
+     line-height:25px;
+     margin-bottom:10px;
+     text-align:right;
+}
+#clearboth
+{
+     clear:both;   
+}

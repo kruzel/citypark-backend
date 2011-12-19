@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ *
+ * == BEGIN LICENSE ==
+ *
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
+ *
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ *
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ *
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ *
+ * == END LICENSE ==
+ *
+ * This is the sample templates definitions file. It makes the "templates"
+ * command completely customizable.
+ *
+ * See FCKConfig.TemplatesXmlPath in the configuration file.
+-->
+<Templates imagesBasePath="images/">
+	<Template title="Image and Title" image="template1.gif">
+		<Description>One main image with a title and text that surround the image.</Description>
+		<Html>
+			<![CDATA[
+				<img style="MARGIN-RIGHT: 10px" height="100" alt="" width="100" align="left"/>
+				<h3>Type the title here</h3>
+				Type the text here
+			]]>
+		</Html>
+	</Template>
+	<Template title="מאמרים" image="template2.gif">
+		<Description>תבנית להצגת מאמרים הכוללת כותרת, תוכן ותמונה</Description>
+		<Html>
+			<![CDATA[
+				<table cellspacing="1" cellpadding="1" width="700" align="center" border="0">
+    <tbody>
+        <tr>
+            <td>
+            <h1>חברת I-Feel תייצג את מוצרי JUNG בישראל</h1>
+            <div>בכך מצטרפת החברה לקבוצת החברות המספקות מוצרי בית חכם בתקן האירופאי בשיטת INSTABUS.</div>
+            <div>חברת I-Feel, משווקת מגוון מוצרים בתחום הבית החכם בטכנולוגיות שונות המספקות מענה לצרכים השונים.</div>
+            <div>בין המוצרים ניתן למצוא מערכות של היצרניות AHI, Superna, T-Control ו-.CentaLite</div>
+            </td>
+            <td valign="top">
+            <div><img alt="" src="http://www.i-feel.co.il/imgs/uploads/logo_jung_neu_2006.jpg" /></div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+			]]>
+		</Html>
+	</Template>
+	<Template title="midot" image="template3.gif">
+		<Description>midot newletter.</Description>
+		<html>
+		<![CDATA[
+<table width="100%" dir="rtl" style="font-size:13px;" cellpadding="10" cellspacing="10" border="0">
+	<tr>
+		<td>
+			<img src="http://www.midot.org.il/sites/midot/layout/he-IL/images/logo.gif" alt="" align="right" />
+			<div style="float:right;width:280px;padding:10px 10px 0 0">מידות מבקשת לקדם אפקטיביות כאמת מידה עיקרית במערך שיקוליהם של משקיעים חברתיים ובניהול עמותות, וזאת באמצעות דירוג ארגונים ללא מטרות רווח וביצוע דוחות תחום.</div>
+			
+			<table cellpadding="0" align="left" border="0">
+				<tr>
+					<td width="103" height="33" background="http://www.midot.org.il/sites/midot/layout/he-IL/images/head5.gif">
+						<a style="width:73px;padding:0 30px 0 0;display:block;color:#FFFFFF;float:left;font-size:16px;text-decoration:none;" title="עמותות" alt="עמותות" href="http://www.midot.org.il/עמותות">עמותות</a>
+					</td>
+					<td width="103" height="33" background="http://www.midot.org.il/sites/midot/layout/he-IL/images/head5.gif">
+						<a style="width:73px;padding:0 30px 0 0;display:block;color:#FFFFFF;float:left;font-size:16px;text-decoration:none;" title="משקיעים" alt="משקיעים" href="http://www.midot.org.il/משקיעים-חברתיים">משקיעים</a>
+					</td>
+				</tr>
+			</table>
+			
+		</td>
+	</tr>
+	<tr>
+		<td bgcolor="#F0F6F9" height="500" valign="top">
+			<table cellpadding="0" cellspacing="0" border="0">
+				<tr>
+					<td width="70%" valign="top">
+						<font size="5">28.02.2011</font><br/>
+						טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט 
+						טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט 
+						טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט 
+					</td>
+					<td width="30%" align="left" valign="top">
+						<img src="http://www.midot.org.il/Sites/midot/content/Images/community.jpg" alt="" width="248" />
+					</td>
+				</tr>
+				<tr>
+					<td valign="top">
+						<table cellpadding="0" cellspacing="0" border="0" width="100%">
+							<tr>
+								<td style="border-bottom:1px solid #c4cdd2;">
+									<h2 style="line-height:37px;padding:0 20px 0 0;width:400px;background:#5093c0;margin:0;color:#fff;">כותרת</h2>
+								</td>
+							</tr>
+							<tr>
+								<td style="padding:10px 0;">
+									<table cellpadding="0" cellspacing="0" border="0" width="100%">
+										<tr>
+											<td width="169" valign="top">
+												<table cellpadding="0" cellspacing="0" border="0" width="169" height="117">
+													<tr>
+														<td background="http://www.midot.org.il/sites/midot/layout/he-IL/images/pic_bg.gif">
+															<a href="#"><img src="http://www.midot.org.il/Sites/midot/content/Images/community.jpg" alt="" width="153" height="102" style="margin:8px 8px 5px 8px;border:0;" /></a>
+														</td>
+													</tr>
+												</table>											
+											</td>
+											<td valign="top" style="padding:0 10px; 0 0">
+												טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט 
+												טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט 
+												טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט 
+												טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט 
+											</td>
+										</tr>
+										<tr>
+											<td></td>
+											<td>
+												<a style="float:left;font-weight:bold;padding:0 10px 0 0;text-decoration:none;color:#003964;" href="#">להמשך קריאה</a>
+												<img src="http://www.midot.org.il/Sites/midot/layout/he-IL/Images/icon.gif" alt="" width="17" height="17" style="float:left;" />
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td style="border-bottom:1px solid #c4cdd2;">
+									<h2 style="line-height:37px;padding:0 20px 0 0;width:400px;background:#5093c0;margin:0;color:#fff;">כותרת</h2>
+								</td>
+							</tr>
+							<tr>
+								<td style="padding:10px 0;">
+									<table cellpadding="0" cellspacing="0" border="0" width="100%">
+										<tr>
+											<td width="169" valign="top">
+												<table cellpadding="0" cellspacing="0" border="0" width="169" height="117">
+													<tr>
+														<td background="http://www.midot.org.il/sites/midot/layout/he-IL/images/pic_bg.gif">
+															<a href="#"><img src="http://www.midot.org.il/Sites/midot/content/Images/community.jpg" alt="" width="153" height="102" style="margin:8px 8px 5px 8px;border:0;" /></a>
+														</td>
+													</tr>
+												</table>											
+											</td>
+											<td valign="top" style="padding:0 10px; 0 0">
+												טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט 
+												טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט 
+												טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט 
+												טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט 
+												טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט 
+												טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט 
+												טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט 
+												טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט 
+												טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט 
+												טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט 
+												טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט 
+												טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט 
+											</td>
+										</tr>
+										<tr>
+											<td></td>
+											<td>
+												<a style="float:left;font-weight:bold;padding:0 10px 0 0;text-decoration:none;color:#003964;" href="#">להמשך קריאה</a>
+												<img src="http://www.midot.org.il/Sites/midot/layout/he-IL/Images/icon.gif" alt="" width="17" height="17" style="float:left;" />
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+					<td valign="top">
+						<table cellpadding="0" cellspacing="0" border="0" align="left" style="margin:20px 0 0 0;">
+							<tr>
+								<td background="http://www.midot.org.il/sites/midot/layout/he-IL/images/table_head.gif" style="color:#fff;font-size:17px;height:41px;line-height:37px;padding:0 10px 0 0;font-family:tahoma;">
+									כותרת
+								</td>
+							</tr>
+							<tr>
+								<td style="background:#FFFFFF;border-left:1px solid #DDE8EE;border-right:1px solid #DDE8EE;float:right;padding:5px 20px 15px;width:207px;">
+									<table style="width:100%;" cellpadding="0" cellspacing="0" border="0">
+										<tr>
+											<td style="padding-bottom:16px;border-bottom:1px solid #C8D5DE;">
+												<img src="http://www.midot.org.il/Sites/midot/layout/he-IL/Images/icon.gif" alt="" width="17" height="17" style="float:right;margin:16px 0 0 0;" />
+												<a href="#" style="float:right;font-weight:bold;margin:16px 10px 0;text-decoration:none;color:#003B65;">כותרת</a>
+												<div style="float:right;width:100%;">
+													<img src="http://www.midot.org.il/Sites/midot/content/Images/community.jpg" alt="" width="72" height="48" style="float:right;margin:5px 0 5px 5px;">
+													<p style="float:right;width:130px;margin:0;">טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט </p>
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td style="padding-bottom:16px;border-bottom:1px solid #C8D5DE;">
+												<img src="http://www.midot.org.il/Sites/midot/layout/he-IL/Images/icon.gif" alt="" width="17" height="17" style="float:right;margin:16px 0 0 0;" />
+												<a href="#" style="float:right;font-weight:bold;margin:16px 10px 0;text-decoration:none;color:#003B65;">כותרת</a>
+												<div style="float:right;width:100%;">
+													<img src="http://www.midot.org.il/Sites/midot/content/Images/community.jpg" alt="" width="72" height="48" style="float:right;margin:5px 0 5px 5px;">
+													<p style="float:right;width:130px;margin:0;">טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט </p>
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<td style="padding-bottom:16px;">
+												<img src="http://www.midot.org.il/Sites/midot/layout/he-IL/Images/icon.gif" alt="" width="17" height="17" style="float:right;margin:16px 0 0 0;" />
+												<a href="#" style="float:right;font-weight:bold;margin:16px 10px 0;text-decoration:none;color:#003B65;">כותרת</a>
+												<div style="float:right;width:100%;">
+													<img src="http://www.midot.org.il/Sites/midot/content/Images/community.jpg" alt="" width="72" height="48" style="float:right;margin:5px 0 5px 5px;">
+													<p style="float:right;width:130px;margin:0;">טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט טקסט </p>
+												</div>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<td style="height:4px;" background="http://www.midot.org.il/sites/midot/layout/he-IL/images/bottom123.gif"></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td background="http://www.midot.org.il/sites/midot/layout/he-IL/images/footer.png" height="52" align="right">
+			<div style="width:100%;float:right;">
+				<div>כל הזכויות שמורות למידות שיקוף ודירוג מלכ"רים | לקידום אפקטיביות כאמת מידה עיקרית במערך שיקוליהם של משקיעים חברתיים ובניהול עמותות</div>
+			</div>
+			<div style="float:right;width:100%;">
+				<a target="_blank" title="" href="http://www.facebook.com/pages/mydwt-syqwp-wdyrwg-mlkrym-lswt-twb-twb-ywtr/121320081270943" style="text-decoration:none;color:#003B65;">
+					<img height="23" width="23" title="לעמוד הפייסבוק של מידות" alt="לעמוד הפייסבוק של מידות" border="0" src="http://www.midot.org.il/sites/midot/layout/he-IL/images/facebook.gif" style="float:right;margin:0 0 0px 10px;"> 
+					<p style="font-weight:bold;float:right;margin:6px 0 0 0;">לעמוד הפייסבוק של מידות</p>
+				</a>
+				<div style="float:left;margin:7px 0 0 0;">
+					<a href="http://www.midot.org.il" style="text-decoration:none;color:#003B65;"><b>עמוד הבית</b></a> | 
+					<a href="http://www.midot.org.il/אודות" style="text-decoration:none;color:#003B65;"><b>אודות מידות</b></a> | 
+					<a href="http://www.midot.org.il/אודות-אפקטיביות" style="text-decoration:none;color:#003B65;"><b>אודות אפקטיביות</b></a> |
+					<a href="http://www.midot.org.il/אינדקס-עמותות" style="text-decoration:none;color:#003B65;"><b>ארגונים שנבדקו</b></a> | 
+					<a href="http://www.midot.org.il/דוחות-תחום" style="text-decoration:none;color:#003B65;"><b>דו"חות תחום</b></a> | 
+					<a href="http://www.midot.org.il/כלים-לאפקטיביות" style="text-decoration:none;color:#003B65;"><b>כלים לאפקטיביות</b></a> | 
+					<a href="http://www.midot.org.il/שאלות-ותשובות" style="text-decoration:none;color:#003B65;"><b>שאלות ותשובות</b></a> | 
+					<a href="http://www.midot.org.il/צרו-קשר" style="text-decoration:none;color:#003B65;"><b>צרו קשר</b></a>
+				</div>
+			</div>
+		</td>
+	</tr>
+</table>
+]]>
+</html>
+	</Template>
+</Templates>

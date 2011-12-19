@@ -1,0 +1,309 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2008 Frederico Caldeira Knabben
+ *
+ * == BEGIN LICENSE ==
+ *
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
+ *
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ *
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ *
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ *
+ * == END LICENSE ==
+ *
+ * This is the sample templates definitions file. It makes the "templates"
+ * command completely customizable.
+ *
+ * See FCKConfig.TemplatesXmlPath in the configuration file.
+-->
+<Templates imagesBasePath="fck_template/images/">
+	<Template title="עמוד תוכן 1" image="fcktemp2.gif">
+		<Description>תבנית לעמוד תוכן המשלבת כותרת, טקסט ותמונה אחת גדולה</Description>
+		<Html>
+			<![CDATA[
+				<br>
+<table style="width: 90%; height: 271px" cellspacing="0" cellpadding="5" width="636" align="center" border="0">
+    <tbody>
+        <tr>
+            <td colspan="2">
+            <div style="text-size: 24px"><b><span style="font-size: 14px">כותרת העמוד כאן</span></b></div>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+            <div style="text-align: justify; text-size: 30px text-align: justify"><span style="color: #333333"><span><span>העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, <span style="color: #333333"><span><span>תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, ת<span style="color: #333333"><span><span>וכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן,&nbsp;תוכן <span style="color: #333333"><span><span>העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן,</span></span></span></span></span></span></span></span></span></span></span></span></div>
+            </td>
+            <td style="text-align: right" valign="top" rowspan="2"><img height="300" alt="" width="200" border="1" src="/app/images/temppic3.jpg" /></td>
+        </tr>
+        <tr>
+            <td valign="top"><span style="color: #333333"><span><span>העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, <span style="color: #333333"><span><span>תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן,</span></span></span></span></span></span></td>
+        </tr>
+        <tr>
+            <td style="text-align: right" colspan="2">&nbsp;</td>
+        </tr>
+    </tbody>
+</table>
+<div>&nbsp;</div>
+			]]>
+		</Html>
+	</Template>
+	<Template title="יעל אדוונטור" image="fcktemp2.gif">
+		<Description>תבנית תוכן לאתר של יעל אדוונטור</Description>
+			<Html>
+			<![CDATA[
+<div style="text-align: center;">&nbsp;&nbsp;&nbsp;</div>
+<table width="750" height="400" cellspacing="0" cellpadding="0" border="0" align="center">
+    <tbody>
+        <tr valign="top">
+            <td width="246">
+            <table width="246" cellspacing="0" cellpadding="0" border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td>
+                        <div><embed width="246" height="243" menu="true" loop="true" play="true" type="application/x-shockwave-flash" src="/yael/content/Flash/flash_right.swf"></embed></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td height="120" style="text-align: center;"><span style="font-size: 6px;">&nbsp;&nbsp;&nbsp; </span>
+                        <table width="246" height="127" cellspacing="0" cellpadding="0" border="0" background="/yael/content/images/666.jpg">
+                            <tbody>
+                                <tr>
+                                    <td height="25" style="text-align: center;"><span style="color: rgb(255, 255, 255);"><b>חדשות</b></span></td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td height="120" style="text-align: center;">
+                        <table width="246" height="127" cellspacing="0" cellpadding="0" border="0" background="/yael/content/images/666.jpg">
+                            <tbody>
+                                <tr>
+                                    <td height="25" style="text-align: center;"><span style="color: rgb(255, 255, 255);"><b>מבצעים</b></span></td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            </td>
+            <td valign="top">
+            <table width="504" cellspacing="0" cellpadding="0" border="0" align="center" style="width: 504px; height: 495px;">
+                <tbody>
+                    <tr valign="top">
+                        <td width="120"><embed width="120" height="124" menu="true" loop="true" play="true" type="application/x-shockwave-flash" src="/yael/content/Flash/flash_left3.swf"></embed></td>
+                        <td width="300">&nbsp;</td>
+                    </tr>
+                    <tr valign="top">
+                        <td width="120" height="124" colspan="2">
+                        <table width="498" height="392" cellspacing="0" cellpadding="5" border="0" bgcolor="#f3f4f8" align="center" style="width: 498px; height: 392px;">
+                            <tbody>
+                                <tr>
+                                    <td valign="top" style="text-align: right;">
+                                    <div style="text-align: justify;"><span style="color: rgb(51, 153, 102);"><b>ברוכים הבאים ליעל תיירות<br />
+                                    &nbsp;<br />
+                                    </b></span><span style="color: rgb(51, 51, 51);">יעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת.<br />
+                                    &nbsp; <br />
+                                    בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכויעל תיירות עוסקת בבלה בלה טקסט עניינים בלאגן וכו.<br />
+                                    &nbsp;<br />
+                                    </span></div>
+                                    <table width="450" cellspacing="0" cellpadding="0" bordercolor="#f3f4f8" border="0" bgcolor="#ffffff" align="center">
+                                        <tbody>
+                                            <tr>
+                                                <td style="border-right: 3px solid rgb(243, 244, 248);">&nbsp;<img width="115" height="25" src="/yael/content/Images/y1.jpg" alt="" /></td>
+                                                <td style="border-right: 3px solid rgb(243, 244, 248);">&nbsp;<img width="115" height="25" src="/yael/content/Images/y11.jpg" alt="" /></td>
+                                                <td style="border-width: 1px 3px 1px 1px; border-right: 3px solid rgb(243, 244, 248);">&nbsp;<img width="115" height="25" src="/yael/content/Images/y113.jpg" alt="" /></td>
+                                                <td style="border-right: 3px solid rgb(243, 244, 248);">&nbsp;<img width="115" height="25" src="/yael/content/Images/y15.jpg" alt="" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border-right: 3px solid rgb(243, 244, 248); text-align: center;"><img width="100" height="75" src="/yael/content/Images/5.jpg" alt="" /></td>
+                                                <td style="border-right: 3px solid rgb(243, 244, 248); text-align: center;"><img width="100" height="75" src="/yael/content/Images/5.jpg" alt="" /></td>
+                                                <td style="border-width: 1px 3px 1px 1px; border-right: 3px solid rgb(243, 244, 248); text-align: center;"><img width="100" height="75" src="/yael/content/Images/5.jpg" alt="" /></td>
+                                                <td style="border-right: 3px solid rgb(243, 244, 248); text-align: center;"><img width="100" height="75" src="/yael/content/Images/5.jpg" alt="" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="border-right: 3px solid rgb(243, 244, 248);"><span style="font-size: 10px;">למעבר לעמוד הקשור <span style="color: rgb(0, 0, 255);">לחצו כאן</span></span></td>
+                                                <td style="border-right: 3px solid rgb(243, 244, 248);"><span style="font-size: 10px;">למעבר לעמוד הקשור <span style="color: rgb(0, 0, 255);">לחצו כאן</span></span></td>
+                                                <td style="border-width: 1px 3px 1px 1px; border-right: 3px solid rgb(243, 244, 248);"><span style="font-size: 10px;">למעבר לעמוד הקשור <span style="color: rgb(0, 0, 255);">לחצו כאן</span></span></td>
+                                                <td style="border-right: 3px solid rgb(243, 244, 248);"><span style="font-size: 10px;">למעבר לעמוד הקשור <span style="color: rgb(0, 0, 255);">לחצו כאן</span></span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+<div>&nbsp;</div>
+			]]>
+		</Html>
+	</Template>
+	<Template title="עמוד תוכן 2" image="fcktemp1.gif">
+		<Description>תבנית לעמוד תוכן המשלבת כותרת, טקסט ושלוש תמונות</Description>
+		<Html>
+			<![CDATA[
+				<br>
+<table style="width: 90%; height: 271px" cellspacing="0" cellpadding="5" width="636" align="center" border="0">
+    <tbody>
+        <tr>
+            <td colspan="2">
+            <div style="text-size: 24px"><b><span style="font-size: 14px">כותרת העמוד כאן</span></b></div>
+            </td>
+        </tr>
+        <tr>
+            <td valign="top">
+            <div style="text-size: 30px text-align: justify"><span style="color: #333333">תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן,<br />
+            &nbsp;&nbsp;</span></div>
+            </td>
+            <td style="text-align: right" valign="top"><img height="100" alt="" width="150" border="1" src="/app/images/temppic1.jpg" /></td>
+        </tr>
+        <tr>
+            <td valign="top">
+            <div><span>תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן,</span></div>
+            </td>
+            <td style="text-align: right" valign="top"><img height="100" alt="" width="150" border="1" src="/app/images/temppic2.jpg" /></td>
+        </tr>
+        <tr>
+            <td valign="top">
+            <div style="text-align: justify"><span style="color: #333333">תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן, תוכן העמוד כאן,</span></div>
+            </td>
+            <td style="text-align: right" valign="top"><img height="100" alt="" width="150" border="1" src="/app/images/temppic1.jpg" /></td>
+        </tr>
+        <tr>
+            <td style="text-align: right" colspan="2">&nbsp;</td>
+        </tr>
+    </tbody>
+</table>
+			]]>
+		</Html>
+	</Template>
+	<Template title="עמוד קישורים 1" image="fcktemp3.gif">
+		<Description>תבנית לעמוד קישורים הכוללת, פורמט מעוצב לקישורים ותמונה</Description>
+		<Html>
+			<![CDATA[
+				<br>
+<div align="center">
+<table cellspacing="0" cellpadding="0" width="90%" border="0">
+    <tbody>
+        <tr valign="top">
+            <td><font color="#19166f"><strong>
+            <h4><span style="color: #333333">קישורים לאתרים מומלצים</span></h4>
+            <table style="width: 307px; height: 267px" cellspacing="1" cellpadding="0" width="307" align="right" border="0">
+                <tbody>
+                    <tr>
+                        <td>
+                        <div dir="rtl"><a target="_blank" href="http://www.כתובת האתר.com">מילת הקישור</a> - תיאור קצר של האתר אליו אתם מקשרים<br />
+                        <img alt="" src="/app/Images/pas400-6.jpg" /></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        <div>
+                        <div dir="rtl">
+                        <div dir="rtl">
+                        <div><a target="_blank" href="http://www.כתובת האתר.com">מילת הקישור</a> - תיאור קצר של האתר אליו אתם מקשרים<br />
+                        <img alt="" src="/app/Images/pas400-6.jpg" /></div>
+                        </div>
+                        </div>
+                        </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        <div dir="rtl">
+                        <div><a target="_blank" href="http://www.כתובת האתר.com">מילת הקישור</a> - תיאור קצר של האתר אליו אתם מקשרים</div>
+                        <div><img alt="" src="/app/Images/pas400-6.jpg" /></div>
+                        </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        <div dir="rtl">
+                        <div><a target="_blank" href="http://www.כתובת האתר.com">מילת הקישור</a> - תיאור קצר של האתר אליו אתם מקשרים<br />
+                        <img alt="" src="/app/Images/pas400-6.jpg" /></div>
+                        </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        <div dir="rtl">
+                        <div><a target="_blank" href="http://www.כתובת האתר.com">מילת הקישור</a> - תיאור קצר של האתר אליו אתם מקשרים</div>
+                        <div><img alt="" src="/app/Images/pas400-6.jpg" /></div>
+                        </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        <div dir="rtl">
+                        <div><a target="_blank" href="http://www.כתובת האתר.com">מילת הקישור</a> - תיאור קצר של האתר אליו אתם מקשרים<br />
+                        <img alt="" src="/app/Images/pas400-6.jpg" /></div>
+                        </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        <div><a target="_blank" href="http://www.כתובת האתר.com">מילת הקישור</a> - תיאור קצר של האתר אליו אתם מקשרים<br />
+                        <img alt="" src="/app/Images/pas400-6.jpg" /></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        <div><a target="_blank" href="http://www.כתובת האתר.com">מילת הקישור</a> - תיאור קצר של האתר אליו אתם מקשרים<br />
+                        <img alt="" src="/app/Images/pas400-6.jpg" /></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        <div dir="rtl">
+                        <div dir="rtl">
+                        <div><a target="_blank" href="http://www.כתובת האתר.com">מילת הקישור</a> - תיאור קצר של האתר אליו אתם מקשרים&nbsp;</div>
+                        <div><img alt="" src="/app/Images/pas400-6.jpg" /></div>
+                        </div>
+                        </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <br />
+            <p>&nbsp;</p>
+            </strong>
+            <p>&nbsp;</p>
+            </font>
+            <p>&nbsp;</p>
+            </td>
+            <td>
+            <p align="center">&nbsp; <img height="300" alt="קישורים לאתרים" width="200" border="1" src="/app/images/temppic3.jpg" /></p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<div>&nbsp;&nbsp;&nbsp;</div>
+			]]>
+		</Html>
+	</Template>
+</Templates>

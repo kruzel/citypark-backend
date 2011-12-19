@@ -1,0 +1,76 @@
+<link rel="stylesheet" media="screen" type="text/css" href="/sites/cityp/layout/he-IL/style/form.css" />
+<table class="addpark" cellspacing="0" cellpadding="0" border="0" dir="rtl" width="100%">
+	<tr>
+		<th colspan="3">כתובת החניה</th>
+	</tr>
+	<tr>
+		<td width="180">[city Type="combo",Options="תל אביב-יפו"]<br />עיר</td>
+		<td width="280">[street_name class="required"]<br />רחוב</td>
+		<td width="175">[house_number style="width:30px;"]<br />מספר בית</td>
+	</tr>
+	<tr>
+		<th>כותרת עבור החניה</th>
+		<th colspan="2">תיאור החניה</th>
+	</tr>
+	<tr>
+		<td valign="top">[name class="required"]</td>
+		<td colspan="2">[comment Type="Textarea",maxlength="200",rows="3",style="width:250px;"]</td>
+	</tr>
+	<tr>
+		<th>איש קשר</th>
+		<th>טלפון</th>
+		<th>דוא"ל</th>
+	</tr>
+	<tr>
+		<td>[contactname]</td>
+		<td>[contactphone]</td>
+		<td>[contactmail]<br />[onlymail type="checkbox"] צור קשר בדוא"ל בלבד</td>
+	</tr>
+	<tr>
+		<th>סוג החניה</th>
+		<th>זמינות החניה</th>
+		<th>תמונת החניה</th>
+	</tr>
+	<tr>
+		<td>[parkingtype Type="combo",Options="חניה נחמדה|חניה יקרה|חניה מקורה",Headline="בחר"]</td>
+		<td>
+			<div>מ:[StartDate Type="Date",Value=Date()] בשעה:[StartHour Type="combo",Options="08:00|09:00|10:00"]</div>
+			<div>מ:[EndDate Type="Date"] בשעה:[EndHour Type="combo",Options="08:00|09:00|10:00"]</div>
+		</td>
+		<td>[Image Type="Image"]<br />[Image2 Type="image"]</td>
+	</tr>
+	<tr>
+		<th>בסיס השכרת חניה</th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<td colspan="2">[payment Type="checkbox"] חינם [hourly Type="checkbox"] שעתי [Daily Type="checkbox"] יומי [weekly Type="checkbox"] שבועי [monthly Type="checkbox"] חודשי [yearly Type="checkbox"] שנתי</td>
+		<td>[numberofparks style="width:30px;"] מספר חניות</td>
+	</tr>
+	<tr>
+		<th>מאפיינים</th>
+		<th></th>
+		<th></th>
+	</tr>
+	<tr>
+		<td colspan="3">
+		[nolimit Type="checkbox"] ללא הגבלת שעות [withlock Type="checkbox"] חניה עם מחסום [underground Type="checkbox"] חניה תת-קרקעית [roof Type="checkbox"] חניה מקורה [instreet Type="checkbox"] חניה ברחוב [criple Type="checkbox"] חניה מתאימה לנכים
+		</td>
+	</tr>
+	<tr>
+		<th colspan="3">מחיר</th>
+	</tr>
+	<tr>
+		<td colspan="3">[price style="width:30px;"]ש"ח לכל [pricefortime Type="combo",Options="רבע שעה|חצי שעה|שעה|יום|שבוע"] עבור [cartype Type="combo",Options="רכב פרטי|רכב גדול|משאית"] תשלומים [payments Type="combo",Options="1|2|3|4|5|6|7|8|9|10|11|12"]</td>
+	</tr>
+	<tr>
+		<th colspan="3">אמצעי תשלום</th>
+	</tr>
+	<tr>
+		<td colspan="2">
+		[cc Type="checkbox"] אשראי [cash Type="checkbox"] מזומן [cheak Type="checkbox"] צ'קים [paypal Type="checkbox"] paypal
+		</td>
+		<td>[submit Type="submit",value="המשך",style="padding:0 20px;float:left;"]</td>
+	</tr>
+</table>

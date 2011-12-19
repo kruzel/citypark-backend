@@ -1,0 +1,165 @@
+<ul class="sf-menu47">
+	<li class="first active"><a href="#" title="">חפש</a></li>
+	<li><a href="#" title="">פרסם חניה</a></li>
+	<li class="active"><a href="#" title="">תזמן חניה</a></li>
+	<li><a href="#" title="">סימולטור החניה</a></li>
+	<li class=""><a href="#" title="">שירות סלולרי</a></li>
+	<li class=""><a href="#" title="">איך זה עובד?</a></li>
+	<li class="last"><a href="#" title="">אודות</a></li>
+</ul>
+<div class="search">
+	הקלק כתובת מדוייקת לחיפוש חניה:
+	<form action="search.asp?mode=search" method="get">
+		<input type="hidden" name="mode" value="search" />
+		<div class="input1"><input type="text" class="ininput1" name="searchstring" value="חיפוש" onblur="if(this.value=='')this.value='חיפוש';" onfocus="if(this.value=='חיפוש')this.value='';" /></div>
+		<input type="image" src="/sites/cityp/layout/he-IL/images/button.gif" class="button" />
+	</form>
+</div>
+<div class="search2">
+	<table border="0" cellspacing="0" cellpadding="0" class="selects" valign="top">
+		<tr>
+			<td>
+				התחלת חניה
+			</td>
+			<td class="selects">
+				סיום חניה
+			</td>
+			<td class="selects">
+				סוג חניה
+			</td>
+			<td class="selects">
+				בסיס השכרה
+			</td>
+			<td class="selects">
+				מחיר מקסימלי
+			</td>
+			<td class="selects">
+				לכל
+			</td>
+			<td class="selects">
+				נקודות עניין קרובות
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<select name="start_date">
+					<option value="start_date1">15/09/2010</option>
+					<option value="start_date2">16/09/2010</option>
+					<option value="start_date3">17/09/2010</option>
+					<option value="start_date4">18/09/2010</option>
+					<option value="start_date5">19/09/2010</option>
+					<option value="start_date6">20/09/2010</option>
+				</select>
+				<img src="/sites/cityp/layout/he-IL/images/calender.gif" alt="" title="" width="17" height="14"/>
+				<select name="start_time">
+					<option value="start_time1">07:00</option>
+					<option value="start_time2">08:00</option>
+					<option value="start_time3">09:00</option>
+					<option value="start_time4">10:00</option>
+					<option value="start_time5">11:00</option>
+					<option value="start_time6">12:00</option>
+				</select>
+			</td>
+			<td class="selects">
+				<select name="end_date">
+					<option value="end_date1">15/09/2010</option>
+					<option value="end_date2">16/09/2010</option>
+					<option value="end_date3">17/09/2010</option>
+					<option value="end_date4">18/09/2010</option>
+					<option value="end_date5">19/09/2010</option>
+					<option value="end_date6">20/09/2010</option>
+				</select>
+				<img src="/sites/cityp/layout/he-IL/images/calender.gif" alt="" title="" width="17" height="14"/>
+				<select name="end_time">
+					<option value="end_time1">07:00</option>
+					<option value="end_time2">08:00</option>
+					<option value="end_time3">09:00</option>
+					<option value="end_time4">10:00</option>
+					<option value="end_time5">11:00</option>
+					<option value="end_time6">12:00</option>
+				</select>
+			</td>
+			<td class="selects">
+				<select name="type">
+					<option value="type1">חניה פרטית</option>
+					<option value="type2">חניון</option>
+					<option value="type3">חניית נכים</option>
+					<option value="type4">חניה בתשלום</option>
+				</select>
+			</td>
+			<td class="selects">
+				<select name="basis">
+					<option value="basis1">יומי</option>
+					<option value="basis2">שבועי</option>
+					<option value="basis3">חודשי</option>
+					<option value="basis4">שנתי</option>
+				</select>
+			</td>
+			<td class="selects">
+				<select name="price">
+					<option value="price1">1000</option>
+					<option value="price2">2000</option>
+					<option value="price3">3000</option>
+					<option value="price4">4000</option>
+				</select>
+			</td>
+			<td class="selects">
+				<select name="every">
+					<option value="every1">שעה</option>
+					<option value="every2">שעתיים</option>
+					<option value="every3">שלוש שעות</option>
+					<option value="every4">ארבע שעות</option>
+				</select>
+			</td>
+			<td class="selects">
+				<select name="place">
+					<option value="place1">אטרקציות לילדים</option>
+					<option value="place2">קניון</option>
+					<option value="place3">מסעדות</option>
+					<option value="place4">ים</option>
+				</select>
+			</td>
+		</tr>
+	</table>
+</div>
+<div class="advance">
+	<input type="checkbox" name="free"/> חניה חינם
+	<input type="checkbox" name="limit"/> ללא הגבלת שעות
+	<input type="checkbox" name="Barrier"/> חניה עם מחסום
+	<input type="checkbox" name="underground"/> חניה תת קרקעית
+	<input type="checkbox" name="walls"/> חניה מקורה
+	<input type="checkbox" name="street"/> חניה ברחוב
+	<input type="checkbox" name="Disabled"/> חניה מתאימה לנכים
+	&nbsp;&nbsp;&nbsp;&nbsp;
+	מרחק מהיעד
+	<select name="Distance">
+		<option value="750">עד 750 מטר</option>
+		<option value="Distance2">עד 800 מטר</option>
+		<option value="Distance3">עד 850 מטר</option>
+		<option value="Distance4">עד 900 מטר</option>
+	</select>
+</div>
+<div class="buttons2">
+	<a href="#" title="חיפוש מתקדם">חיפוש מתקדם <img src="/sites/cityp/layout/he-IL/images/search_orange.gif" alt="חיפוש מתקדם" title="חיפוש מתקדם" width="22" height="22"/></a>
+	<a href="#" title="מחשבון מחיר חניה">מחשבון מחיר חניה <img src="/sites/cityp/layout/he-IL/images/calculator.gif" alt="חיפוש מתקדם" title="חיפוש מתקדם" width="15" height="20"/></a>
+</div>
+<div class="search4"></div>
+<div class="text">
+	<div class="intext">
+		<h1 class="headline_text">[Name]</h1>
+		<div class="border"></div>
+		<div class="right">
+		[Text]
+		</div>
+		<div class="left">
+			<div class="map_top"></div>
+			<div class="map_middle" id="map" rel="a" style="border-right:1px solid #bfbfbf;border-left:1px solid #bfbfbf;border-top:0px;border-bottom:0px;">
+				<a href="#" title=""><img src="/sites/cityp/layout/he-IL/images/map.gif" alt="[Name]" title="[Name]" width="225"/></a>
+			</div>
+			<div class="map_bottom"></div>
+			<a href="#" title="השכר חניה" class="parking2">השכר חניה</a>
+			<a href="#" title="מצא חניה" class="parking2">מצא חניה</a>
+		</div>
+	</div>
+</div>
+<div class="bottom"></div>

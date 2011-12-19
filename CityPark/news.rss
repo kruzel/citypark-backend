@@ -1,0 +1,41 @@
+﻿<?xml version="1.0"?>
+<rss version="2.0">
+  <channel>
+    <title>
+      <%= Getconfig("webpagetitle")%>
+    </title>
+    <link>http://<% = Request.ServerVariables("server_name")%></link>
+    <description>
+      <%= Getconfig("Description")%>
+    </description>
+    <language>HE</language>
+    <pubDate><%=Now()%></pubDate>
+    <lastBuildDate><%=Now()%></lastBuildDate>
+ <!--#include file="config.asp"-->
+ 
+        <%
+SQL = "SELECT * FROM news Where SiteID = " & SiteID  & " ORDER BY NewsOrder DESC"
+    Set objRs = OpenDB(SQL)
+    do while not objRs.EOF
+    %>
+    <item>
+      <link>http://<% = Request.ServerVariables("server_name")& "/" & objRs("urltext") %></link>
+      <title><% = objRs("newsheadline") %></title>
+      <description>
+        <% If objRS("Newsimage") <> "" Then %>
+      <![CDATA[<div><a href='http://<% = Request.ServerVariables("server_name")& "/" & objRs("urltext") %>'><img src='http://<% = Request.ServerVariables("server_name")& "/" & objRs("newsimage") %>' alt='<% = objRs("newsheadline") %>' border='0' width='116' height='116'></a></div>]]>
+       <% End If %>
+          <%= striphtml(objRs("newstext")) %>
+      </description>
+    </item>
+        <%
+objRs.MoveNext
+    loop
+    CloseDB(objRs)
+    %>
+  </channel>
+</rss>
+
+
+
+

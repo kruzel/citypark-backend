@@ -1,0 +1,33 @@
+body {
+direction:rtl;
+}
+ul {
+list-style:none;
+padding:0 20px;
+margin:0;
+}
+ul ul {
+display:none;
+}
+ul  > li  li{
+list-style-image:url("/images/icons/left.png");
+list-style-type:square;
+}
+ul > li  {
+list-style-image:url("/images/icons/minus.png");
+list-style-type:square;
+}
+.open {
+list-style-image:url("/images/icons/minus.png");
+}
+.close {
+list-style-image:url("/images/icons/plus.png");
+}
+ul li:hover {
+cursor:pointer;
+}
+ul ul li:hover {
+font-weight:bold;
+cursor:pointer;
+}
+

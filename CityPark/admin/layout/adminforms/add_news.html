@@ -1,0 +1,142 @@
+<script type="text/javascript">
+function ShowHide(obj){
+obj.animate({"height": "toggle"}, { duration: 1000 });
+}
+</script>
+<div id="formcontainer">
+<center>
+    <div id="formheader">
+        <div id="formtitle">הוספת דף תוכן</div>
+        <div id="formsave">[Submit Type="submit",style="width:40px;height:42px;border:0px;background:url(/sites/cms/layout/images/save.gif) no-repeat;"]</div>
+        <div id="formcancel"><img src="/sites/cms/layout/images/cancel.gif" border="0" alt="" /></div>
+    </div>
+    <div id="formcontent">
+        <div id="formrightfields">
+            <table dir="rtl" cellpadding="5" cellspacing="0" width="99%" style="margin-top:10px;">
+                <tr>
+                    <td width="75" align="right" valign="top">שם הדף</td>
+                    <td align="right" valign="top">[NewsHeadline style="width:200px;",class="required"]</td>
+                </tr>
+                <tr>
+                    <td align="right" valign="top">כתובת הדף</td>
+                    <td align="right" valign="top">[urltext style="width:200px;",class="required"]<div style="color:Red;font-size:11px;">(במידה ותעשה רווחים יתווסף מקף אוטומטית)</div></td>
+                </tr>
+                <tr>
+                    <td align="right" valign="top">קטגוריה</td>
+                    <td align="right" valign="top">[CategoryID Type="combo",table="Category",Headline="בחר קטגוריה",style="width:205px;",class="validate-selection"]</td>
+                </tr>
+                <tr>
+                    <td align="right" valign="top">תוכן הדף</td>
+                    <td align="right" valign="top">[NewsText Type="editor",style="width:99%;height:350px;border:1px solid #ccc;"]</td>
+                </tr>
+            </table>
+        </div>
+        <div id="formleftfields">
+            <div id="formleftfieldsheader">
+                <div id="formleftfieldstitle" style="padding-right:10px;width:60%;float:right;font-weight:bold;">תיאור קצר ותמונה של הדף</div>
+                <div id="formleftfieldsopen">
+                <a href="#" onclick="ShowHide(jQuery('#slidingDivdesc')); return false;">פתח</a>
+                </div>
+                <div id="slidingDivdesc" class="slidingdivdesc">
+                    <table dir="rtl" cellpadding="3" cellspacing="0" border="0" width="100%" id="formleftfieldstable">
+                        <tr>
+                            <td align="right">תיאור קצר על הדף</td>
+                        </tr>
+                        <tr>
+                            <td align="right">[NewsShortText Type="Textarea",rows="3",Columns="10",maxlength="200",style="width:80%;"]</td>
+                        </tr>
+                        <tr>
+                            <td align="right">תמונה מייצגת לדף</td>
+                        </tr>
+                        <tr>
+                            <td align="right">[NewsImage Type="file"]</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div id="formleftfieldsheader">
+                <div id="formleftfieldstitle">קידום במנועי חיפוש</div>
+                <div id="formleftfieldsopen">
+                <a href="#" onclick="ShowHide(jQuery('#slidingDivseo')); return false;">פתח</a>
+                </div>
+                <div id="slidingDivseo" class="slidingdivdesc">
+                    <table dir="rtl" cellpadding="3" cellspacing="0" border="0" width="100%" id="formleftfieldstable">
+                        <tr>
+                            <td align="right">כותרת העמוד (Title)</td>
+                        </tr>
+                        <tr>
+                            <td align="right">[NewsTitle style="width:80%;"]</td>
+                        </tr>
+                        <tr>
+                            <td align="right">תיאור (Description)</td>
+                        </tr>
+                        <tr>
+                            <td align="right">[NewsDescription Type="Textarea",rows="3",Columns="10",maxlength="200",style="width:80%;"]</td>
+                        </tr>
+                        <tr>
+                            <td align="right">מילות מפתח (KeyWords)</td>
+                        </tr>
+                        <tr>
+                            <td align="right">[NewsKeywords style="width:80%;",Type="Textarea",rows="3",Columns="10",maxlength="200"]</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div id="formleftfieldsheader">
+                <div id="formleftfieldstitle">תבניות עיצוב</div>
+                <div id="formleftfieldsopen">
+                <a href="#" onclick="ShowHide(jQuery('#slidingDivtemplate')); return false;">פתח</a>
+                </div>
+                <div id="slidingDivtemplate" class="slidingdivdesc">
+                    <table dir="rtl" cellpadding="3" cellspacing="0" border="0" width="100%" id="formleftfieldstable">
+                        <tr>
+                            <td align="right">תבנית חלק עליון (Header)</td>
+                        </tr>
+                        <tr>
+                            <td align="right">[NewsHeader Type="combo",Options="Header.html|Content.html|Footer.html",Headline="בחר",style="width:80%;"]</td>
+                        </tr>
+                        <tr>
+                            <td align="right">תבנית תוכן (Content)</td>
+                        </tr>
+                        <tr>
+                            <td align="right">[NewsTemplate Type="combo",Options="Header.html|Content.html|Footer.html",Headline="בחר",style="width:80%;"]</td>
+                        </tr>
+                        <tr>
+                            <td align="right">תבנית חלק תחתון (Footer)</td>
+                        </tr>
+                        <tr>
+                            <td align="right">[NewsFooter Type="combo",Options="Header.html|Content.html|Footer.html",Headline="בחר",style="width:80%;"]</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div id="formleftfieldsheader">
+                <div id="formleftfieldstitle">הגדרות אבטחה</div>
+                <div id="formleftfieldsopen">
+                <a href="#" onclick="ShowHide(jQuery('#slidingDivseciur')); return false;">פתח</a>
+                </div>
+                <div id="slidingDivseciur" class="slidingdivdesc">
+                    <table dir="rtl" cellpadding="3" cellspacing="0" border="0" width="100%" id="formleftfieldstable">
+                        <tr>
+                            <td align="right">רמת הרשאה</td>
+                        </tr>
+                        <tr>
+                            <td align="right">[News9Level Type="combo",Options="1|2|3|4|5|6|7|8|9",Headline="בחר",style="width:50px;"]</td>
+                        </tr>
+                        <tr>
+                            <td align="right">תבנית טופס אבטחה</td>
+                        </tr>
+                        <tr>
+                            <td align="right">[NewsSecurityTarget style="width:80%;"]</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div id="formsubmit">
+            [Submit Type="submit",value="שמירה",style="padding:0 10px;"]
+            </div>
+        </div>
+        <div id="clearboth"></div>
+    </div>
+</center>
+</div>

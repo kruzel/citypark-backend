@@ -1,0 +1,94 @@
+<html>
+	<head>
+		<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5">
+		<title>Lewies Color Picker - Demonstration</title>
+	</head>
+	<body>
+
+		<h2>Demonstration</h2>
+
+		<p>
+			 This page demonstrates how to setup multiple color picker fields on the same
+			 page.  Simply click on a colored box below to open the dialog form.
+		</p>
+		<form id="frmName" name="frmName">
+			<FONT face="Arial">Color 1: </FONT><input type="text" name="Color1" id="Color1" size="6" value="FF0000" onchange="ColorChanged(document.imgColor1, this);">
+			<FONT face="Arial">&nbsp; </FONT><a href="javascript:void 0;" onclick="ChangeColor(document.imgColor1, document.frmName.Color1);return false;">
+				<img type="image" name="imgColor1" src="dropper.gif" id="imgColor1" style="BACKGROUND-COLOR:#ff0000"
+					class="ColorPicker" align="absMiddle" width="16" height="16"></a>
+			<br>
+			<FONT face="Arial">Color 2: </FONT><input type="text" name="Color2" id="Color2" size="6" value="00FF00" onchange="ColorChanged(document.imgColor2, this);">
+			<FONT face="Arial">&nbsp; </FONT><a href="javascript:void 0;" onclick="ChangeColor(document.imgColor2, document.frmName.Color2);return false;">
+				<img type="image" name="imgColor2" src="dropper.gif" id="imgColor2" style="BACKGROUND-COLOR:#00ff00"
+					class="ColorPicker" align="absMiddle" width="16" height="16"></a>
+			<br>
+			<FONT face="Arial">Color 3: </FONT><input type="text" name="Color3" id="Color3" size="6" value="0000FF" onchange="ColorChanged(document.imgColor3, this);">
+			<FONT face="Arial">&nbsp; </FONT><a href="javascript:void 0;" onclick="ChangeColor(document.imgColor3, document.frmName.Color3);return false;">
+				<img type="image" name="imgColor3" src="dropper.gif" id="imgColor3" style="BACKGROUND-COLOR:#0000ff"
+					class="ColorPicker" align="absMiddle" width="16" height="16"></a>
+			<br>
+		</form>
+		<style> IMG.ColorPicker { padding: 2px; BORDER:black 1px solid; WIDTH:16px; HEIGHT:16px; }
+		</style>
+		<script>
+		function ColorChanged(ColorBox, ColorField)
+		{
+			var hex = ColorField.value.toUpperCase();
+			var bad = false;
+			for(var i = 0; i < 6; i++)
+				if("0123456789ABCDEF".indexOf(hex.substr(i, 1)) == -1)
+				{
+					bad = true;
+					break;
+				}
+			if(bad || hex.length != 6) 
+			{
+				alert('Invalid Color');
+				return;
+			}
+			ColorBox.style.backgroundColor = '#' + ColorField.value;
+		}
+		var ColorPicker_InputField;
+		var ColorPicker_Icon;
+		function ColorPicker_Picked(color)
+		{
+			ColorPicker_InputField.value = color;
+			ColorPicker_Icon.style.backgroundColor = "#" + color;
+		}
+		function ChangeColor(ColorBox, ColorField)
+		{
+			var ieVersion = null;
+			var color = null;
+
+			if(document.all && navigator.appVersion.indexOf("MSIE ") != -1)
+			{
+				ieVersion = navigator.appVersion;
+				ieVersion = ieVersion.substr(ieVersion.indexOf("MSIE ") + 5);
+				ieVersion = ieVersion.substr(0, ieVersion.indexOf(";"));
+				ieVersion = new Number(ieVersion);
+			}
+
+			if(ieVersion != null && ieVersion >= 5.5)
+			{
+				var arguments = new Array();
+				arguments["Color"] = new String(ColorField.value);
+				arguments["DefaultLanguage"] = "en-us";
+				arguments["LanguageDetection"] = true;
+				color = window.showModalDialog("IE5.5+/ColorPicker.htm", arguments, "dialogWidth:488px;dialogHeight:350px;help:no;center:yes;status:no;");
+				if(color != null)
+				{
+					ColorBox.style.backgroundColor = "#" + color;
+					ColorField.value = color;
+				}
+			} 
+			else 
+			{
+				var query = "?DefaultLanguage=en-us&LanguageDetection=true&Color=" + ColorField.value;
+				ColorPicker_InputField = ColorField;
+				ColorPicker_Icon = ColorBox;
+				window.open("NS7.1/ColorPicker.htm" + query, "ColorPicker", "width=488, height=300");
+			}
+		}
+		</script>
+	</body>
+</html>		

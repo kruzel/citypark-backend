@@ -1,0 +1,15 @@
+.tv_results
+{
+	background-color: window;
+	border: 1px solid windowframe;
+	overflow: hidden;
+	padding: 0;
+}
+
+.tv_input
+{
+	-moz-background-clip: border;
+	-moz-background-inline-policy: continuous;
+	-moz-background-origin: padding;
+	background: window url(/images/arrow.jpg) no-repeat scroll right center;
+}

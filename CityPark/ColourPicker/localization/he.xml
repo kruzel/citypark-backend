@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<language localname="Hebrew" englishname="Hebrew" code="he">
+	<Fonts>
+		<Font name="Arial" size="12pt" />
+	</Fonts>
+	<Title>בחירת צבע</Title>
+	<About>
+GaByGoS! version 2
+
+ישום זה נבנה במקור על ידי 
+ lewismoten
+ושופץ על ידי 
+ GABYGOS! 2005
+
+	</About>
+	<BadNumber>מספר בין {0} ל {1} נדרש. הוכנס ערך מקורב.</BadNumber>
+	<SelectAColor>בחר צבע:</SelectAColor>
+	<Recent>צבעים שנבחרו לאחרונה:</Recent>
+	<WebSafe>
+		<Image tooltip="זהירות: צבע לא בטוח "></Image>
+		<Color tooltip="לחץ לבחירת צבע בטוח"></Color>
+	</WebSafe>
+	<Buttons>
+		<OK>אישור</OK>
+		<Cancel>ביטול</Cancel>
+		<About>אודות</About>
+	</Buttons>
+	<HSB>
+		<Hue tooltip="גוון" measurement="°">H:</Hue>
+		<Saturation tooltip="מידת הרוויה" measurement="%">S:</Saturation>
+		<Brightness tooltip="בהירות" measurement="%">B:</Brightness>
+	</HSB>
+	<RGB tooltip="#{0} rgb({1}, {2}, {3})">
+		<Red tooltip="Red">R:</Red>
+		<Green tooltip="Green">G:</Green>
+		<Blue tooltip="Blue">B:</Blue>
+	</RGB>
+	<Hex>#</Hex>
+</language>

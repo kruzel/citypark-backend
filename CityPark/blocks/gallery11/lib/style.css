@@ -1,0 +1,194 @@
+html, body {
+	color: black;
+	font-family: "Trebuchet MS", Verdana, serif;
+	background: #ccc;
+	font-size: 16px;
+	margin: 0;
+	padding: 0;
+}
+#print-sig {
+	display: none;
+}
+:link, cite {
+	color: #821122;
+}
+:visited {
+	color: #561420;
+}
+h1, h2, h3, h4 {
+	color: #333;
+}
+h1, h2 {
+	margin: 1.8em 0 0 0;
+	line-height: 20%;
+	padding-left: .2em;
+	border-bottom: .5em solid #eee;
+}
+body {
+	margin: 1em 1em .5em 1em;
+}
+#main {
+	margin-right: 11.5em;
+}
+#site-title {
+	position: absolute;
+	color: #333;
+	right: .5em;
+	top: .71em;
+	margin: 0;
+	border-bottom: 2px solid #555;
+	font-size: 140%;
+	padding: 0 .3em .3em .3em;
+	font-style: italic;
+	letter-spacing: .1ex;
+}
+#me {
+	font-style: italic;
+	white-space: nowrap;
+	margin-bottom: 1.5em;
+}
+#envelope {
+	font-family: 'Arial Unicode MS', sans-serif;
+	font-size: 180%;
+	font-style: normal;
+	text-decoration: none;
+	line-height: 0;
+}
+#menu {
+	position: absolute;
+	top: 3.2em;
+	right: 1em;
+	color: #333;
+	width: 10em;
+	padding: .5em 0 0 .5em;
+	border-left: 2px solid #555;
+}
+#menu ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+#menu li {
+	margin-bottom: .7em;
+}
+#menu ul ul {
+	margin-top: .7em;
+}
+#menu li li {
+	margin: .2em 0;
+	font-weight: normal;
+	text-align: right;
+}
+#menu li li.current b span {
+	font-family: Arial;
+	margin-right: .5em;
+}
+#menu li li div.descr {
+	display: none;
+	color: black;
+	padding: .4em .4em .5em 0;
+	border-right: 1em solid #eee;
+	font-size: 95%;
+}
+#menu li li div.descr div {
+	margin-right: -1em;
+}
+#menu a:hover + div.descr {
+	display: block;
+}
+#disclaimer {
+	text-align: center;
+	font-size: 80%;
+	color: #777;
+	margin-top: 1.5em;
+}
+.credits {
+	font-size: 80%;
+	color: #333;
+}
+.credits :link {
+	color: #9b404e;
+}
+.credits :visited {
+	color: #77434c;
+}
+.credits {
+	text-align: center;
+}
+p, ol {
+	text-align: justify;
+}
+ol li {
+	margin-bottom: .4em;
+}
+pre, code, kbd, span.pre {
+	font-family: "Bitstream Vera Sans Mono", Monaco, "Lucida Console", monospace;
+	font-size: 90%;
+	background: #C7A786;
+	line-height: 115%;
+	font-style: normal;
+	font-weight: normal;
+}
+pre {
+	padding: .2em;
+}
+pre * {
+	font-size: 100%;
+}
+pre span {
+	font-family: "Trebuchet MS", Verdana, serif;
+	white-space: normal;
+}
+pre i {
+	color: #561420;
+  font-style: normal;
+}
+kbd:before {
+	content: '\25ba';
+	font-family: Arial;
+}
+kbd span {
+	font-family: Arial;
+}
+span.pre {
+	background: none;
+	white-space: pre;
+}
+table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 90%;
+}
+td, th {
+	padding: .1em .4em;
+	vertical-align: top;
+}
+td {
+	background: #C7A786;
+}
+th {
+	color: #333;
+	text-align: left;
+	background: #ccc;
+	padding-bottom: .2em;
+	text-transform: capitalize;
+}
+div.disclaimer {
+	border: 1px solid #821122;
+	background: #eee;
+	color: #821122;
+	padding: .5em;
+	font-size: 80%;
+}
+div.disclaimer h2 {
+	font-size: 120%;
+	color: inherit;
+	margin: 0;
+	padding: 0;
+	line-height: normal;
+	border-bottom: none;
+	text-transform: uppercase;
+}
+div.disclaimer p {
+	margin: .5em 0 0 0;
+}

@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<language localname="English (United States)" englishname="English (United States)" code="en-us">
+	<Fonts>
+		<Font name="Arial" size="12pt" />
+	</Fonts>
+	<Title>Color Picker</Title>
+	<About>
+Lewies Color Picker
+version 1.1
+
+This form was created by Lewis Moten in May of 2004.
+It simulates the color picker in a popular graphics application.
+It gives users a visual way to choose colors from a large and dynamic palette.
+
+Visit the authors web page?
+www.lewismoten.com
+	</About>
+	<BadNumber>A number between {0} and {1} is required. Closest value inserted.</BadNumber>
+	<SelectAColor>Select a color:</SelectAColor>
+	<Recent>Recent:</Recent>
+	<WebSafe>
+		<Image tooltip="Warning: not a web safe color"></Image>
+		<Color tooltip="Click to select web safe color"></Color>
+	</WebSafe>
+	<Buttons>
+		<OK>OK</OK>
+		<Cancel>Cancel</Cancel>
+		<About>About</About>
+	</Buttons>
+	<HSB>
+		<Hue tooltip="Hue" measurement="°">H:</Hue>
+		<Saturation tooltip="Saturation" measurement="%">S:</Saturation>
+		<Brightness tooltip="Brightness" measurement="%">B:</Brightness>
+	</HSB>
+	<RGB tooltip="#{0} rgb({1}, {2}, {3})">
+		<Red tooltip="Red">R:</Red>
+		<Green tooltip="Green">G:</Green>
+		<Blue tooltip="Blue">B:</Blue>
+	</RGB>
+	<Hex>#</Hex>
+</language>

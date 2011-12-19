@@ -1,0 +1,5 @@
+<!--#include file="../config.asp"-->
+    
+<%  
+ 
+%>

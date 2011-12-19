@@ -1,0 +1,14 @@
+<input type="text" id="myobj" size="93">
+<a href="#" onclick="javascript:	window.open('default.asp?object=myobj&subfolder=/Content', 'SelectTablesPopup', 'width=600, height=600, dependent=yes, resizeable=yes, menubar=no, scrollbars=yes');">לחץ כאן</a>
+<br><br>
+<img id="a" style="display:none;">
+<br><br>
+<input type="button" value="שנה תמונה" onclick="change()">
+
+<script language="javascript">
+	function change()
+	{
+		a.src = myobj.value;
+		document.getElementById("a").style.display = "block";
+	}
+</script>
