@@ -1003,7 +1003,7 @@ namespace CityParkWS
         }
 
         [WebMethod(Description = "Return on street parking prediction in street segments")]
-        public List<SearchParkingSegment> getStreetParkingPrediction(String sessionId, float latitude, float longitude, int distance)
+        public List<StreetSegment> getStreetParkingPrediction(String sessionId, float latitude, float longitude, int distance)
         {
             if (!authenticateUser(sessionId))
             {
@@ -1022,10 +1022,59 @@ namespace CityParkWS
             //          2.a.3)segment maintanence interval using the cleanSWT()
 
             //3)for each segments in search radius return USWT[user,segment]=(distance from segment/radius)*SWT[segment]
-            List<SearchParkingSegment> segList = new List<SearchParkingSegment>();
-            for (int i = 0; i < 3; i++)
+            List<StreetSegment> segList = new List<StreetSegment>();
+            String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
+            using (SqlConnection con = new SqlConnection(conStr))
             {
-                segList.Add(new SearchParkingSegment(i + 1, latitude + 0.0002f * i, longitude + 0.0002f * i, latitude + 0.001f * i + 0.001f, longitude + 0.0001f * i + 0.001f, (i + 1 / (i + 1)) * 100,"32.3223223,34.343434343"));
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    String sql = String.Format(@"DECLARE @UserLat float = {0}
+                            DECLARE @UserLong float = {1}
+                            SELECT * FROM [CITYPARK].[dbo].[StreetSegmentLine] a
+                            where SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
+                            + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) < 0.5  
+                            AND 
+                            SQRT  ( POWER((a.endLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
+                            + POWER((a.endLongitude -@UserLong) * 40000 / 360, 2)) < 0.5 order by SegmentUnique", latitude, longitude);
+                    cmd.Connection = con;
+                    cmd.CommandText = sql;
+                    con.Open();
+                    SqlDataReader sqlDataReader = cmd.ExecuteReader();
+                    if (sqlDataReader.HasRows)
+                    {
+                        Random random = new Random();
+                        while (sqlDataReader.Read())
+                        {
+                            StreetSegmentLine ssl = new StreetSegmentLine();
+                            ssl.StartLatitude = sqlDataReader["StartLatitude"].ToString();
+                            ssl.StartLongitude = sqlDataReader["StartLongitude"].ToString();
+                            ssl.EndLatitude = sqlDataReader["EndLatitude"].ToString();
+                            ssl.EndLongitude = sqlDataReader["EndLongitude"].ToString();
+                            ssl.SegmentUnique = sqlDataReader["SegmentUnique"].ToString();
+                            StreetSegment sSeg = null;
+                            foreach (StreetSegment ss in segList)
+                            {
+                                if (ss.SegmentUnique.Equals(ssl.SegmentUnique))
+                                {
+                                    sSeg = ss;
+                                    break;
+                                }
+                            }
+                            if (sSeg != null)
+                            {
+                                sSeg.add(ssl);
+                            }
+                            else
+                            {
+                                sSeg = new StreetSegment(ssl.SegmentUnique,random.Next(0,20));
+                                sSeg.add(ssl);
+                                segList.Add(sSeg);
+                            }
+                            
+                        }
+                    }
+                      //segList.Add(new SearchParkingSegment(i + 1, latitude + 0.0002f * i, longitude + 0.0002f * i, latitude + 0.001f * i + 0.001f, longitude + 0.0001f * i + 0.001f, (i + 1 / (i + 1)) * 100,"32.3223223,34.343434343"));
+                }
             }
             return segList;
         }
@@ -1334,7 +1383,7 @@ namespace CityParkWS
 
                     String sql = String.Format(
                         @"SELECT COUNT(*)
-                            FROM CITYPARK.[dbo].[StreetParking] where DateSeg > dateadd(hh, {0}, getdate())", delta);
+                            FROM CITYPARK.[dbo].[StreetParking] where Date > dateadd(hh, {0}, getdate())", delta);
                     cmd.Connection = con;
                     cmd.CommandType = CommandType.Text;
                     cmd.CommandText = sql;
