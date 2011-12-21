@@ -9,6 +9,7 @@ using System.Security.Cryptography;
 using System.Web.Services.Protocols;
 using System.Xml;
 using System.Timers;
+using System.Data;
 
 namespace CityParkWS
 {    
@@ -737,7 +738,7 @@ namespace CityParkWS
             userStartParkingEvent(sessionId,latitude, longitude, false, searchParkingSegment);
         }
             
-        [WebMethod(Description = "Reports the clients location")]
+        [WebMethod(Description = "Reports the clients location,Also uses as a session keep alive")]
         public Boolean reportSearchLocation(String sessionId, float latitude, float longitude)
         {    
             if (!authenticateUser(sessionId))
@@ -765,14 +766,8 @@ namespace CityParkWS
                     SearchParkingSegment previousSegment = segmentSessionMap.getSearchParkingSegment(sd.PreviousSegment);
                     int previousSegmentRate = calcSegmentParkingRate(previousSegment);
                     //3.b)calculate SWT calcSWT(segment,rate) for the former segment
-                }
-                
-                
-                
-                
-                
-
-                
+                    calcSWT(previousSegment, previousSegmentRate);
+                }                
                                 
             }
             catch (Exception ex)
@@ -1041,8 +1036,10 @@ namespace CityParkWS
         {
             try
             {
-                if (sessionMap[sessionId.Trim()]!=null)
+                if (sessionMap[sessionId.Trim()] != null)
+                {
                     return true;
+                }
             }
             catch (Exception ex)
             {
@@ -1322,14 +1319,13 @@ namespace CityParkWS
          *Recalculate SegmentParkingRate (++)
          * */
         private int calcSegmentParkingRate(SearchParkingSegment sps)
-        {//todo: need to check if this SQL works!!!
-            //also:
+        {
+            //Algo:
             //udpate SWT updateTime
             sps.LastUpdate = DateTime.Now;
             //count and return how many start parking in last DELTA T
             int previousSegmentRate = 0;
-            DateTime delta = DateTime.Now;
-            delta.AddMinutes(60);
+            int delta = -1;
             String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
             using (SqlConnection con = new SqlConnection(conStr))
             {
@@ -1338,17 +1334,17 @@ namespace CityParkWS
 
                     String sql = String.Format(
                         @"SELECT COUNT(*)
-                            FROM [CITYPARK].[dbo].[StreetParking] where [Date] >={0}",delta);
+                            FROM CITYPARK.[dbo].[StreetParking] where DateSeg > dateadd(hh, {0}, getdate())", delta);
                     cmd.Connection = con;
+                    cmd.CommandType = CommandType.Text;
                     cmd.CommandText = sql;
                     con.Open();
-                    previousSegmentRate = (int)cmd.ExecuteScalar();                   
+                    previousSegmentRate = (Int32)cmd.ExecuteScalar();
                 }
             }
-
             return previousSegmentRate;
         }
-
+       
         private void cleanSWT()
         {
             //todo:
@@ -1357,8 +1353,8 @@ namespace CityParkWS
             //     waitingList.remove(segment); //or set SWT to -1 
         }
 
-        private float calcSWT(SearchParkingSegment segment,float rate)
-        {           
+        private float calcSWT(SearchParkingSegment segment,int rate)
+        {           //todo:missing another if statement!!!
             
             if (rate <= 0)
             {

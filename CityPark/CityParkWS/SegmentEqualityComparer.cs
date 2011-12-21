@@ -11,7 +11,7 @@ namespace CityParkWS
             return a.SegmentUnique.Equals(b.SegmentUnique);
         }
 
-        public int GetHasCode(SearchParkingSegment x)
+        public int GetHashCode(SearchParkingSegment x)
         {
             return x.SegmentUnique.GetHashCode();
         }

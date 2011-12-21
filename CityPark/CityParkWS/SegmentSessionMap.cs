@@ -169,7 +169,7 @@ namespace CityParkWS
                     Boolean existsOnList = false;
                     foreach (SessionData sessionD in slist)
                     {
-                        if (sessionD.SessionId.Equals(sessionData.SessionId))
+                        if (sessionD.UserName.Equals(sessionData.UserName))
                         {
                             existsOnList = true;
                         }

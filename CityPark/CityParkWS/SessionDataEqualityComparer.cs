@@ -11,7 +11,7 @@ namespace CityParkWS
             return a.SessionId.Equals(b.SessionId);
         }
 
-        public int GetHasCode(SessionData x)
+        public int GetHashCode(SessionData x)
         {
             return x.SessionId.GetHashCode();
         }
