@@ -23,6 +23,7 @@ namespace CityParkWS
         private static Timer timer = null;
 
         private static Dictionary<String, SessionData> sessionMap = null;
+        private static SegmentSessionMap segmentSessionMap = null;
         private static String USER_NOT_FOUND = "NO USER FOUND";
         private static String USER_ALREADY_EXISTS = "USER ALREADY EXISTS";
         private static String START_PAYMENT = "START_PAYMENT";
@@ -34,7 +35,11 @@ namespace CityParkWS
 
 
         public CityParkService()
-        {            
+        {
+            if (segmentSessionMap == null)
+            {
+                segmentSessionMap = new SegmentSessionMap();
+            }
             if (sessionMap == null)
             {
                 sessionMap = new Dictionary<String, SessionData>();
@@ -56,7 +61,8 @@ namespace CityParkWS
                 DateTime dateTime = sessionMap[sessionIdKey].LastUpdate;
                 if (DateTime.Now.Subtract(dateTime).TotalMinutes >= 30)
                 {
-                    //todo: remove user from segmentWaitList and from segments
+                    //algo: remove user from segmentWaitList and from segments
+                    segmentSessionMap.removeSessionDataFromAll(sessionMap[sessionIdKey]);
                     sessionMap.Remove(sessionIdKey);
                 }
             }
@@ -727,22 +733,13 @@ namespace CityParkWS
                 }
             }
 
-            //Algorithim event:
+            //algo:
             userStartParkingEvent(sessionId,latitude, longitude, false, searchParkingSegment);
         }
             
         [WebMethod(Description = "Reports the clients location")]
         public Boolean reportSearchLocation(String sessionId, float latitude, float longitude)
-        {
-
-            //doto:
-            //1)Remove the DB table
-            //2)Add to the session map the current location and the last location and current segment
-            //3) keep the current and last timestamp
-            //if user changed segment calc the segmentParking rate calcSegmentParkingRante()
-            //calculate SWT calcSWT(segment,rate) for the former segment
-            
-            
+        {    
             if (!authenticateUser(sessionId))
             {
                 throw Utils.RaiseException(Context.Request.Url.AbsoluteUri,
@@ -751,35 +748,32 @@ namespace CityParkWS
                                    "401",
                                    "reportSearchLocation");
             }
-            SessionData sd = sessionMap[sessionId];
+           
             try
             {
-                String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
-
-                using (SqlConnection con = new SqlConnection(conStr))
+                //algo:
+                SessionData sd = sessionMap[sessionId];
+                SearchParkingSegment sps = getParkingSegment(latitude, longitude);
+                //1)Add to the session map the current location and the last location and current segment,keep the current and last timestamp
+                sd.setCurrentLocationAndUpdateTime(latitude, longitude);                
+                //2) keep the current and last timestamp
+                sps.LastUpdate = DateTime.Now;
+                //3)if user changed segment 
+                if (sd.updateCurrentSegment(sps.SegmentUnique))
                 {
-                    using (SqlCommand cmd = new SqlCommand())
-                    {
-                        String insertSql = String.Format(
-                         @"INSERT INTO [CITYPARK].[dbo].[ReportLocation]
-                           ([userId]
-                           ,[actiondate]
-                           ,[latitude]
-                           ,[longitude]
-                           ,[sessionId])
-                        VALUES
-                           ({0}
-                           ,CURRENT_TIMESTAMP
-                           ,{1}
-                           ,{2}
-                           ,'{3}')", sd.UserId, latitude, longitude,sessionId);
-                        cmd.Connection = con;
-                        cmd.CommandText = insertSql;
-                        con.Open();
-                        cmd.ExecuteNonQuery();
-                    }
+                    //3.a)calc the segmentParking rate calcSegmentParkingRate()
+                    SearchParkingSegment previousSegment = segmentSessionMap.getSearchParkingSegment(sd.PreviousSegment);
+                    int previousSegmentRate = calcSegmentParkingRate(previousSegment);
+                    //3.b)calculate SWT calcSWT(segment,rate) for the former segment
                 }
-                sessionMap[sessionId].LastUpdate = DateTime.Now;                
+                
+                
+                
+                
+                
+
+                
+                                
             }
             catch (Exception ex)
             {
@@ -1304,8 +1298,11 @@ namespace CityParkWS
 
         private SearchParkingSegment getParkingSegment(float lat, float lon)
         {
+            //todo:
             //Select from segment
-            return new SearchParkingSegment();
+            SearchParkingSegment sps =  new SearchParkingSegment();
+            sps = segmentSessionMap.getSearchParkingSegment(sps);
+            return sps;
         }
 
         /**
@@ -1318,21 +1315,38 @@ namespace CityParkWS
 
         private int getSegmentUsersCount(SearchParkingSegment searchParkingSegment)
         {
-            //todo:
-            //get value from the segment waiting map
-            return 0;
+            return segmentSessionMap.countSegmentUsers(searchParkingSegment);
         }
 
         /**
          *Recalculate SegmentParkingRate (++)
          * */
-        private int calcSegmentParkingRate(SearchParkingSegment searchParkingSegment)
-        {
-
-            //todo:
+        private int calcSegmentParkingRate(SearchParkingSegment sps)
+        {//todo: need to check if this SQL works!!!
+            //also:
             //udpate SWT updateTime
+            sps.LastUpdate = DateTime.Now;
             //count and return how many start parking in last DELTA T
-            return 0;
+            int previousSegmentRate = 0;
+            DateTime delta = DateTime.Now;
+            delta.AddMinutes(60);
+            String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
+            using (SqlConnection con = new SqlConnection(conStr))
+            {
+                using (SqlCommand cmd = new SqlCommand())
+                {
+
+                    String sql = String.Format(
+                        @"SELECT COUNT(*)
+                            FROM [CITYPARK].[dbo].[StreetParking] where [Date] >={0}",delta);
+                    cmd.Connection = con;
+                    cmd.CommandText = sql;
+                    con.Open();
+                    previousSegmentRate = (int)cmd.ExecuteScalar();                   
+                }
+            }
+
+            return previousSegmentRate;
         }
 
         private void cleanSWT()

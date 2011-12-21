@@ -62,7 +62,10 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SearchParkingSegment.cs" />
+    <Compile Include="SegmentEqualityComparer.cs" />
+    <Compile Include="SegmentSessionMap.cs" />
     <Compile Include="SessionData.cs" />
+    <Compile Include="SessionDataEqualityComparer.cs" />
     <Compile Include="StreetSegmentLine.cs" />
     <Compile Include="TweetReport.cs" />
     <Compile Include="User.cs" />

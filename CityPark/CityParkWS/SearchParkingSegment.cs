@@ -12,7 +12,8 @@ namespace CityParkWS
         public float EndLatitude { get; set; }
         public Int32 Id { get; set; }
         public Int32 SearchTime { get; set; }
-        public String SegmentUnique { set; get; } 
+        public String SegmentUnique { set; get; }
+        public DateTime LastUpdate { set; get; }
         
         public SearchParkingSegment() { }
         public SearchParkingSegment(Int32 id,float startLat,float startLong,
