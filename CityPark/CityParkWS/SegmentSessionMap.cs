@@ -7,7 +7,7 @@ namespace CityParkWS
     public class SegmentSessionMap
     {
         private Dictionary<String, SearchParkingSegmentDetails> segmentToSessionMap;//segmentUnique as key
-        private Dictionary<SessionData, List<SearchParkingSegment>> userToSegmentMap;
+        private Dictionary<String, List<SearchParkingSegment>> userToSegmentMap;//SessionData
 
         private class SearchParkingSegmentDetails
         {
@@ -25,7 +25,7 @@ namespace CityParkWS
         public SegmentSessionMap()
         {            
             segmentToSessionMap = new Dictionary<String, SearchParkingSegmentDetails>();//new SegmentEqualityComparer()
-            userToSegmentMap = new Dictionary<SessionData, List<SearchParkingSegment>>(new SessionDataEqualityComparer());
+            userToSegmentMap = new Dictionary<String, List<SearchParkingSegment>>();// (new SessionDataEqualityComparer());
         }
 
         /// <summary>
@@ -80,14 +80,14 @@ namespace CityParkWS
         {
             try
             {
-                List<SearchParkingSegment> segmentList = userToSegmentMap[sessionData];
+                List<SearchParkingSegment> segmentList = userToSegmentMap[sessionData.UserName];
                 //remvoe from all segements user lists
                 foreach (SearchParkingSegment sg in segmentList)
                 {
                     removeSessionDataFromSegment(sessionData, sg);
                 }
                 //remove from users list
-                userToSegmentMap.Remove(sessionData);
+                userToSegmentMap.Remove(sessionData.UserName);
             }
             catch (Exception ex)
             {
@@ -107,18 +107,18 @@ namespace CityParkWS
                 if (segmentToSessionMap.ContainsKey(segment.SegmentUnique))
                 {
                     List<SessionData> list = segmentToSessionMap[segment.SegmentUnique].sessionList;
-                    if (userToSegmentMap.ContainsKey(sessionData))
+                    if (userToSegmentMap.ContainsKey(sessionData.UserName))
                     {
-                        List<SearchParkingSegment> spsList = userToSegmentMap[sessionData];
-                        List<SearchParkingSegment> removeList = new List<SearchParkingSegment>();
+                        List<SearchParkingSegment> spsList = userToSegmentMap[sessionData.UserName];
+                        List<SearchParkingSegment> newSpsList = new List<SearchParkingSegment>();
                         foreach (SearchParkingSegment sps in spsList)
                         {
-                            if (sps.SegmentUnique.Equals(segment.SegmentUnique))
+                            if (!sps.SegmentUnique.Equals(segment.SegmentUnique))
                             {
-                                removeList.Add(sps);
+                                newSpsList.Add(sps);//new list without the segment
                             }
                         }
-                        spsList.RemoveAll(delegate(SearchParkingSegment s) { return s.SegmentUnique.Equals(segment.SegmentUnique); });
+                        spsList = newSpsList;
                     }
                     list.Remove(sessionData);
                 }
@@ -139,9 +139,9 @@ namespace CityParkWS
             try
             {
                 segment = getSearchParkingSegment(segment);
-                if (userToSegmentMap.ContainsKey(sessionData))
+                if (userToSegmentMap.ContainsKey(sessionData.UserName))
                 {
-                    List<SearchParkingSegment> list = userToSegmentMap[sessionData];
+                    List<SearchParkingSegment> list = userToSegmentMap[sessionData.UserName];
                     Boolean existsOnList = false;
                     foreach (SearchParkingSegment searchParkingSegment in list)
                     {
@@ -160,7 +160,7 @@ namespace CityParkWS
                 {
                     List<SearchParkingSegment> list = new List<SearchParkingSegment>();
                     list.Add(segment);
-                    userToSegmentMap.Add(sessionData, list);
+                    userToSegmentMap.Add(sessionData.UserName, list);
                 }
                 //ADD TO SEGMENT2SESSION MAP
                 if (segmentToSessionMap.ContainsKey(segment.SegmentUnique))
