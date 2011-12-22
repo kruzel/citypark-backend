@@ -1423,8 +1423,49 @@ namespace CityParkWS
         {
             //todo:
             //Select from segment
-            SearchParkingSegment sps =  new SearchParkingSegment();
+            SearchParkingSegment sps = getSearchParkingSegment(lat,lon);
             sps = segmentSessionMap.getSearchParkingSegment(sps);
+            return sps;
+        }
+
+        private SearchParkingSegment getSearchParkingSegment(float lat, float lon)
+        {
+            //todo:fix the SQL logic
+            SearchParkingSegment sps=null;
+            String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
+            using (SqlConnection con = new SqlConnection(conStr))
+            {
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    String sql = String.Format(@"DECLARE @UserLat float = {0}
+                            DECLARE @UserLong float = {1}
+                            SELECT TOP 1 * FROM [CITYPARK].[dbo].[StreetSegmentLine] a
+                            where SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
+                            + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) < 0.5  
+                            AND 
+                            SQRT  ( POWER((a.endLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
+                            + POWER((a.endLongitude -@UserLong) * 40000 / 360, 2)) < 0.5 order by SegmentUnique", lat, lon);
+                    cmd.Connection = con;
+                    cmd.CommandText = sql;
+                    con.Open();
+                    SqlDataReader sqlDataReader = cmd.ExecuteReader();
+                    if (sqlDataReader.HasRows)
+                    {
+                        Random random = new Random();
+                        while (sqlDataReader.Read())
+                        {
+                            StreetSegmentLine ssl = new StreetSegmentLine();
+                            ssl.StartLatitude = sqlDataReader["StartLatitude"].ToString();
+                            ssl.StartLongitude = sqlDataReader["StartLongitude"].ToString();
+                            ssl.EndLatitude = sqlDataReader["EndLatitude"].ToString();
+                            ssl.EndLongitude = sqlDataReader["EndLongitude"].ToString();
+                            ssl.SegmentUnique = sqlDataReader["SegmentUnique"].ToString();
+                            sps = new SearchParkingSegment(30*60,ssl.SegmentUnique);
+                            break;
+                        }
+                    }
+                }
+            }
             return sps;
         }
 
