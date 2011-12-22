@@ -1415,21 +1415,19 @@ namespace CityParkWS
         /// <returns></returns>
         protected void userStartParkingEvent(String sessionId, float lat, float lon, Boolean userPaidForParking, SearchParkingSegment searchParkingSegment)
         {
-            //todo:
+            //Algo:
             //1)remove user from  segment waiting list
+            try
+            {
+                segmentSessionMap.removeSessionDataFromSegment(sessionMap[sessionId], searchParkingSegment);
+            }
+            catch (Exception ex) { }
         }
 
         private SearchParkingSegment getParkingSegment(float lat, float lon)
         {
-            //todo:
+            //Algo:
             //Select from segment
-            SearchParkingSegment sps = getSearchParkingSegment(lat,lon);
-            sps = segmentSessionMap.getSearchParkingSegment(sps);
-            return sps;
-        }
-
-        private SearchParkingSegment getSearchParkingSegment(float lat, float lon)
-        {
             //todo:fix the SQL logic
             SearchParkingSegment sps=null;
             String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
@@ -1466,7 +1464,7 @@ namespace CityParkWS
                     }
                 }
             }
-            return sps;
+            return segmentSessionMap.getSearchParkingSegment(sps);
         }
 
         /**
@@ -1521,20 +1519,20 @@ namespace CityParkWS
         }
 
         private float calcSWT(SearchParkingSegment segment,int rate)
-        {           //todo:missing another if statement!!!
-            
-            if (rate <= 0)
-            {
-                return 30 * 60;
-            }
-            else //todo: if(waitingList[segment].count>0)
+        {       
+
+            if (rate > 0 && segmentSessionMap.countSegmentUsers(segment)>0)
             {
                 //todo:
                 //calulate SWT
                 //for each user in the segment waiting list [[1/(sum[user distance from segment/searchRadiosConstant ])]/waitingList[segment].count]/rate
-                //store the data SWT in the segment map
+                //store the data SWT in the segment map  
+                return 0;
             }
-            return 0;
+            else 
+            {
+                return 30 * 60;
+            }
         }
     }
 
