@@ -654,24 +654,14 @@ namespace CityParkWS
           
         }
 
-
-        [WebMethod(Description = "Reports that the client has parked, still has not paid")]
-        public void reportStreetParkingByLatitudeLongitude(String sessionId, float latitude, float longitude)
+        private void reportStreetParkingStatus(float latitude, float longitude,Boolean released,String segmentUnique)
         {
-            if (!authenticateUser(sessionId))
-            {
-                throw Utils.RaiseException(Context.Request.Url.AbsoluteUri,
-                                   "reportStreetParkingByLatitudeLongitude",
-                                   USER_NOT_AUTHENTICATE,
-                                   "401",
-                                   "reportStreetParkingByLatitudeLongitude");
-            }
             String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
 
-            String city = null;
-            String street = null;
-            String houseNum = null;
-            using (SqlConnection con = new SqlConnection(conStr))
+            String city = "";
+            String street = "";
+            String houseNum = "";
+            /**using (SqlConnection con = new SqlConnection(conStr))
             {
                 using (SqlCommand cmd = new SqlCommand())
                 {
@@ -699,9 +689,8 @@ namespace CityParkWS
                         }
                     }
                 }
-            }
-
-            SearchParkingSegment searchParkingSegment = getParkingSegment(latitude,longitude);
+            }*/
+            
             using (SqlConnection con = new SqlConnection(conStr))
             {
                 using (SqlCommand cmd = new SqlCommand())
@@ -716,24 +705,40 @@ namespace CityParkWS
                            ,[latitude]
                            ,[longitude]
                            ,[Date]
-                           ,[SegementUniqueId])
+                           ,[SegementUniqueId]
+                           ,[Released])
                         VALUES
                            (''
                            ,''
                            ,'{0}'
                            ,'{1}'
-                           ,{2}
+                           ,'{2}'
                            ,{3}
                            ,{4}
                            ,CURRENT_TIMESTAMP
-                           ,'{5}')", city, street, houseNum, latitude, longitude,searchParkingSegment.SegmentUnique);
+                           ,'{5}'
+                           ,'{6}')", city, street, houseNum, latitude, longitude, segmentUnique, released);
                     cmd.Connection = con;
                     cmd.CommandText = insertSql;
                     con.Open();
                     cmd.ExecuteNonQuery();
                 }
             }
+        }
 
+        [WebMethod(Description = "Reports that the client has parked, still has not paid")]
+        public void reportStreetParkingByLatitudeLongitude(String sessionId, float latitude, float longitude)
+        {
+            if (!authenticateUser(sessionId))
+            {
+                throw Utils.RaiseException(Context.Request.Url.AbsoluteUri,
+                                   "reportStreetParkingByLatitudeLongitude",
+                                   USER_NOT_AUTHENTICATE,
+                                   "401",
+                                   "reportStreetParkingByLatitudeLongitude");
+            }
+            SearchParkingSegment searchParkingSegment = getParkingSegment(latitude, longitude);
+            reportStreetParkingStatus(latitude, longitude, false, searchParkingSegment.SegmentUnique);
             //algo:
             userStartParkingEvent(sessionId,latitude, longitude, false, searchParkingSegment);
         }
@@ -1079,6 +1084,78 @@ namespace CityParkWS
             return segList;
         }
 
+        [WebMethod(Description = "Add released parking spots")]
+        public void addParkingReleases(String sessionId, float latitude, float longitude)
+        {
+            if (!authenticateUser(sessionId))
+            {
+                throw Utils.RaiseException(Context.Request.Url.AbsoluteUri,
+                                    "addParkingReleases",
+                                    USER_NOT_AUTHENTICATE,
+                                    "401",
+                                    "addParkingReleases");
+            }
+            reportStreetParkingStatus(latitude, longitude, true, "");
+        }
+
+
+        [WebMethod(Description = "List of lately (2 min) released parking spots")]
+        public List<Parking>  getParkingReleases(String sessionId, float latitude, float longitude, int distance)
+        {
+            if (!authenticateUser(sessionId))
+            {
+                throw Utils.RaiseException(Context.Request.Url.AbsoluteUri,
+                                    "getParkingReleases",
+                                    USER_NOT_AUTHENTICATE,
+                                    "401",
+                                    "getParkingReleases");
+            }
+
+            String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
+            using (SqlConnection con = new SqlConnection(conStr))
+            {
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    String loginSql = String.Format(
+                        @"DECLARE @NOW geography
+                               --User Location Coordinates
+                               SET @NOW = geography::Point({0}, {1},4326)
+                               -- Real time user location after geocoded (address to coordinates)
+                               SELECT top 200 *,
+                               @NOW.STDistance(geography::Point(latitude,longitude,4326)) as Distance
+                               FROM [citypark].[dbo].[StreetParking]
+                               WHERE @NOW.STDistance(geography::Point(latitude,longitude,4326))<={2}                            
+                               and datediff(mi,Date,CURRENT_TIMESTAMP)< 2 and Released = 1 order by Distance asc", latitude, longitude, distance);
+                    cmd.Connection = con;
+                    cmd.CommandText = loginSql;
+                    con.Open();
+                    SqlDataReader sqlDataReader = cmd.ExecuteReader();
+                    List<Parking> parkingList = new List<Parking>();
+                    if (sqlDataReader.HasRows)
+                    {
+                        while (sqlDataReader.Read())
+                        {
+                            Parking parking = new Parking();
+                            parking.Latitude = sqlDataReader["latitude"].ToString();
+                            parking.Longitude = sqlDataReader["longitude"].ToString();
+                            /*parking.City = sqlDataReader["City"].ToString();
+                            parking.StreetName = sqlDataReader["Street"].ToString();
+                            String houseNum = sqlDataReader["House_Number"].ToString();                            
+                            if (!houseNum.Trim().Equals(""))
+                                parking.HouseNumber = Convert.ToInt32(houseNum);*/
+                            parkingList.Add(parking);
+                        }
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                    return parkingList;
+                }
+            }
+        }
+            
+
 
 
         private Boolean authenticateUser(String sessionId)
@@ -1383,7 +1460,7 @@ namespace CityParkWS
 
                     String sql = String.Format(
                         @"SELECT COUNT(*)
-                            FROM CITYPARK.[dbo].[StreetParking] where Date > dateadd(hh, {0}, getdate())", delta);
+                            FROM CITYPARK.[dbo].[StreetParking] where Date > dateadd(hh, {0}, getdate()) and SegementUniqueId='{1}'", delta,sps.SegmentUnique);
                     cmd.Connection = con;
                     cmd.CommandType = CommandType.Text;
                     cmd.CommandText = sql;
