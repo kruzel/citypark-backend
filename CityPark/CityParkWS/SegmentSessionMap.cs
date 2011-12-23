@@ -22,6 +22,23 @@ namespace CityParkWS
 
         }
 
+        public int cleanTimeOutSegments()
+        {
+            int count = 0;
+            foreach (SearchParkingSegmentDetails spsd in segmentToSessionMap.Values)
+            {
+                if (DateTime.Now.Subtract(spsd.sps.LastUpdate).TotalMinutes > 30)
+                {                    
+                    spsd.sps.SWT = -1;
+                    spsd.sessionList = new List<SessionData>();
+                    count++;
+                }
+
+            }
+           
+            return count;
+        }
+
         public SegmentSessionMap()
         {            
             segmentToSessionMap = new Dictionary<String, SearchParkingSegmentDetails>();//new SegmentEqualityComparer()

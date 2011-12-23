@@ -18,6 +18,7 @@ namespace CityParkWS
         public float CurrentLatitude { get; set; }
         public String CurrentSegment { get; set; }
         public String PreviousSegment { get; set; }
+        public Dictionary<String, float> SegmentDistanceMap{get;set;}
         
         public SessionData(String sessionIdStr) 
         {

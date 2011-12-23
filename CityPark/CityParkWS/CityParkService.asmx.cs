@@ -55,6 +55,8 @@ namespace CityParkWS
 
         void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
+            //Algo
+            segmentSessionMap.cleanTimeOutSegments();
             List<String> keys = new List<String>(sessionMap.Keys);
             for (int i = 0; i < keys.Count; i++)
             {                
@@ -1512,10 +1514,64 @@ namespace CityParkWS
        
         private void cleanSWT()
         {
+
             //todo:
             //for each segment in waitingList
             // if( waitingList[segment].lastUpdate<timeConstant)
             //     waitingList.remove(segment); //or set SWT to -1 
+        }
+
+        private Dictionary<String,float> getAllSegmentsInRange(float lat,float lon)
+        {
+            //todo: make it better SQL
+            Dictionary<String, float> segmentInRange = new Dictionary<String, float>();
+            String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
+            using (SqlConnection con = new SqlConnection(conStr))
+            {
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    String sql = String.Format(@"DECLARE @UserLat float = {0}
+                            DECLARE @UserLong float = {1}
+                            SELECT distinct SegmentUnique,
+                                SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
+                            + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) as distance
+                            FROM [CITYPARK].[dbo].[StreetSegmentLine] a
+                            where SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
+                            + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) < 0.5", lat, lon);
+                    cmd.Connection = con;
+                    cmd.CommandText = sql;
+                    con.Open();
+                    SqlDataReader sqlDataReader = cmd.ExecuteReader();
+                    if (sqlDataReader.HasRows)
+                    {
+                        Random random = new Random();
+                        while (sqlDataReader.Read())
+                        {
+                            segmentInRange.Add(sqlDataReader["SegmentUnique"].ToString(),float.Parse(sqlDataReader["distance"].ToString()));
+                        }
+                    }
+                }
+            }
+            return segmentInRange;
+        }
+
+        private void assignSessionToSegments(Dictionary<String,float> segmentDistance,SessionData sessionData)
+        {/*add to sessionData list with distance!!, and assign to each segment*/
+            //remove from each segment the session data            
+            segmentSessionMap.removeSessionDataFromAll(sessionData);
+            //add to sessionData list with distance
+            sessionData.SegmentDistanceMap = segmentDistance;
+            List<String> newSegments = new List<String>(segmentDistance.Keys);
+            foreach (String key in newSegments)
+            {
+                SearchParkingSegment sps = segmentSessionMap.getSearchParkingSegment(key);
+                if(sps==null)
+                {
+                    //todo:add new segment to the lists in the segSessionMap
+                }
+                segmentSessionMap.addSessionDataToSegment(sessionData,sps);
+            }
+
         }
 
         private float calcSWT(SearchParkingSegment segment,int rate)
