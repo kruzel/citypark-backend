@@ -6,7 +6,7 @@ namespace CityParkWS
 {
     public class SearchParkingSegment
     {   
-        public Int32 SWT { get; set; }
+        public float SWT { get; set; }
         public String SegmentUnique { set; get; }
         public DateTime LastUpdate { set; get; }
         

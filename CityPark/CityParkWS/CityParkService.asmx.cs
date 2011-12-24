@@ -802,7 +802,7 @@ namespace CityParkWS
                     SearchParkingSegment previousSegment = segmentSessionMap.getSearchParkingSegment(sd.PreviousSegment);
                     int previousSegmentRate = calcSegmentParkingRate(previousSegment);
                     //3.b)calculate SWT calcSWT(segment,rate) for the former segment
-                    calcSWT(previousSegment, previousSegmentRate);
+                    calcSWT(previousSegment, previousSegmentRate,500);
                 }                                                            
             }
             catch (Exception ex)
@@ -1604,16 +1604,34 @@ namespace CityParkWS
 
         }
 
-        private float calcSWT(SearchParkingSegment segment,int rate)
-        {       
-
+        private float calcSWT(SearchParkingSegment segment,int rate,int radius)
+        {
+            float SWT = 0;
             if (rate > 0 && segmentSessionMap.countSegmentUsers(segment)>0)
             {
-                //todo:
+                //todo: check the else statement return value
+                //Algo:
                 //calulate SWT
-                //for each user in the segment waiting list [[1/(sum[user distance from segment/searchRadiosConstant ])]/waitingList[segment].count]/rate
-                //store the data SWT in the segment map  
-                return 0;
+                //for each user in the segment waiting list [[1/(sum[user distance from segment/searchRadiusConstant ])]/waitingList[segment].count]/rate
+                int waitingListCount = segmentSessionMap.countSegmentUsers(segment);                
+                List<SessionData> sdList = segmentSessionMap.getSegmetsSessionDataList(segment.SegmentUnique);
+                float tmpDistanceDivRadius = 0;
+                foreach (SessionData sd in sdList)
+                {
+                    if (sessionMap.ContainsKey(sd.SessionId))
+                    {
+                        Dictionary <String,float> sdMap = sessionMap[sd.SessionId].SegmentDistanceMap;
+                        if (sdMap != null && sdMap.ContainsKey(segment.SegmentUnique))
+                        {
+                            float distance = sdMap[segment.SegmentUnique];
+                            tmpDistanceDivRadius += distance / radius;
+                        }
+                    }
+                }
+                SWT = 1 / tmpDistanceDivRadius / waitingListCount / rate;
+                //store the data SWT in the segment map 
+                segment.SWT = SWT;
+                return SWT;
             }
             else 
             {

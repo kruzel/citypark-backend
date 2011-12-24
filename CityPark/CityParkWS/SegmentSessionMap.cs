@@ -22,6 +22,15 @@ namespace CityParkWS
 
         }
 
+        public List<SessionData> getSegmetsSessionDataList(String sps)
+        {
+            if (segmentToSessionMap.ContainsKey(sps))
+            {
+                return segmentToSessionMap[sps].sessionList;
+            }
+            return new List<SessionData>();
+        }
+
         public int cleanTimeOutSegments()
         {
             int count = 0;
