@@ -1123,7 +1123,7 @@ namespace CityParkWS
         }
 
         [WebMethod(Description = "Add released parking spots")]
-        public void addParkingReleases(String sessionId, float latitude, float longitude)
+        public void reportStreetParkingRelease(String sessionId, float latitude, float longitude)
         {
             if (!authenticateUser(sessionId))
             {
