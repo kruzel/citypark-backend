@@ -23,7 +23,7 @@ namespace CityParkWS
     {
         private static Timer timer = null;
 
-        private static Dictionary<String, SessionData> sessionMap = null;
+        private static Dictionary<String, SessionDataWrapper> sessionMap = null;
         private static SegmentSessionMap segmentSessionMap = null;
         private static String USER_NOT_FOUND = "NO USER FOUND";
         private static String USER_ALREADY_EXISTS = "USER ALREADY EXISTS";
@@ -43,7 +43,7 @@ namespace CityParkWS
             }
             if (sessionMap == null)
             {
-                sessionMap = new Dictionary<String, SessionData>();
+                sessionMap = new Dictionary<String, SessionDataWrapper>();
             }
             if (timer == null || !timer.Enabled)
             {
@@ -55,17 +55,17 @@ namespace CityParkWS
 
         void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            //Algo
-            segmentSessionMap.cleanTimeOutSegments();
+            //Algo:
+            cleanSWT();            
             List<String> keys = new List<String>(sessionMap.Keys);
             for (int i = 0; i < keys.Count; i++)
             {                
                 String sessionIdKey = keys[i];
-                DateTime dateTime = sessionMap[sessionIdKey].LastUpdate;
+                DateTime dateTime = sessionMap[sessionIdKey].sessionData.LastUpdate;
                 if (DateTime.Now.Subtract(dateTime).TotalMinutes >= 30)
                 {
                     //algo: remove user from segmentWaitList and from segments
-                    segmentSessionMap.removeSessionDataFromAll(sessionMap[sessionIdKey]);
+                    segmentSessionMap.removeSessionDataFromAll(sessionMap[sessionIdKey].sessionData);
                     sessionMap.Remove(sessionIdKey);
                 }
             }
@@ -469,7 +469,7 @@ namespace CityParkWS
 
             String sessionId = id.ToString() + "T" + DateTime.Now.Millisecond;
             SessionData sessionData = new SessionData(responseStr, id,sessionId);
-            sessionMap.Add(sessionId, sessionData);
+            sessionMap.Add(sessionId, new SessionDataWrapper(sessionData));
            
             return sessionData;
         }
@@ -573,7 +573,7 @@ namespace CityParkWS
                             ,[other1]
                             ,[other7]
                             ,[SiteID]
-                        FROM USERS where Id ='{0}'",sessionMap[sessionId].UserId);
+                        FROM USERS where Id ='{0}'",sessionMap[sessionId].sessionData.UserId);
                     cmd.Connection = con;
                     cmd.CommandText = selectSql;
                     con.Open();
@@ -741,8 +741,8 @@ namespace CityParkWS
             }
             SearchParkingSegment searchParkingSegment = getParkingSegment(latitude, longitude);
             reportStreetParkingStatus(latitude, longitude, false, searchParkingSegment.SegmentUnique);
-            //algo:
-            userStartParkingEvent(sessionId,latitude, longitude, false, searchParkingSegment);
+            //Algo:
+            userStartParkingEvent(sessionId);
         }
             
         [WebMethod(Description = "Reports the clients location,Also uses as a session keep alive")]
@@ -756,11 +756,40 @@ namespace CityParkWS
                                    "401",
                                    "reportSearchLocation");
             }
+            SessionData sd = sessionMap[sessionId].sessionData;
+            try
+            {
+                String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
+                using (SqlConnection con = new SqlConnection(conStr))
+                {
+                    using (SqlCommand cmd = new SqlCommand())
+                    {
+                        String insertSql = String.Format(
+                         @"INSERT INTO [CITYPARK].[dbo].[ReportLocation]
+                           ([userId]
+                           ,[actiondate]
+                           ,[latitude]
+                           ,[longitude]
+                           ,[sessionId])
+                        VALUES
+                           ({0}
+                           ,CURRENT_TIMESTAMP
+                           ,{1}
+                           ,{2}
+                           ,'{3}')", sd.UserId, latitude, longitude, sessionId);
+                        cmd.Connection = con;
+                        cmd.CommandText = insertSql;
+                        con.Open();
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+            }
+            catch (Exception ex) { }
            
             try
             {
-                //algo:
-                SessionData sd = sessionMap[sessionId];
+                //algo:                
                 SearchParkingSegment sps = getParkingSegment(latitude, longitude);
                 //1)Add to the session map the current location and the last location and current segment,keep the current and last timestamp
                 sd.setCurrentLocationAndUpdateTime(latitude, longitude);                
@@ -774,8 +803,7 @@ namespace CityParkWS
                     int previousSegmentRate = calcSegmentParkingRate(previousSegment);
                     //3.b)calculate SWT calcSWT(segment,rate) for the former segment
                     calcSWT(previousSegment, previousSegmentRate);
-                }                
-                                
+                }                                                            
             }
             catch (Exception ex)
             {
@@ -795,8 +823,8 @@ namespace CityParkWS
                                    "401",
                                    "reportStartPayment");
             }
-            SessionData sd = sessionMap[sessionId];
-            return reportPayment(sessionMap[sessionId].UserId,paymentProviderName, latitude, longitude, operationStatus, START_PAYMENT, DateTime.Now);
+            SessionData sd = sessionMap[sessionId].sessionData;
+            return reportPayment(sessionMap[sessionId].sessionData.UserId, paymentProviderName, latitude, longitude, operationStatus, START_PAYMENT, DateTime.Now);
             
         }
 
@@ -811,7 +839,7 @@ namespace CityParkWS
                                    "401",
                                    "reportStopPayment");
             }
-            SessionData data = sessionMap[sessionId];
+            SessionData data = sessionMap[sessionId].sessionData;
             return reportPayment(data.UserId, paymentProviderName, latitude, longitude, operationStatus, STOP_PAYMENT, DateTime.Now);
 
         }
@@ -1023,6 +1051,7 @@ namespace CityParkWS
             //todo:
             //1)Fetch all lines distinced by segmentUnique order by distance.
             //2)register user on the waiting list foreach segmentUnique (counter logic only).
+            //  THIS SECTION (2.a.X) IS DONE:
             //  2.a) - when user should be removed from list/map:
             //          2.a.1)timeout (20 min) - session managment
             //          2.a.2)start parking
@@ -1030,18 +1059,25 @@ namespace CityParkWS
 
             //3)for each segments in search radius return USWT[user,segment]=(distance from segment/radius)*SWT[segment]
             List<StreetSegment> segList = new List<StreetSegment>();
+
+            //algo:
+            //A)get all segments and distance from current session and store on sessionData for cache usage
+            //B)assign this sessionDaata to each one of the segment
+            Dictionary<String, float> segmentDistance = getAllSegmentsInRange(latitude, longitude);
+            assignSessionToSegments(segmentDistance, sessionMap[sessionId]);   
+
             String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
             using (SqlConnection con = new SqlConnection(conStr))
             {
                 using (SqlCommand cmd = new SqlCommand())
-                {
+                {//todo:This SQL should be as getAllSegmentsInRange() logic
                     String sql = String.Format(@"DECLARE @UserLat float = {0}
                             DECLARE @UserLong float = {1}
                             SELECT * FROM [CITYPARK].[dbo].[StreetSegmentLine] a
                             where SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
                             + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) < 0.5  
                             AND 
-                            SQRT  ( POWER((a.endLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
+                                  SQRT  ( POWER((a.endLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
                             + POWER((a.endLongitude -@UserLong) * 40000 / 360, 2)) < 0.5 order by SegmentUnique", latitude, longitude);
                     cmd.Connection = con;
                     cmd.CommandText = sql;
@@ -1409,19 +1445,17 @@ namespace CityParkWS
 
         
         /// <summary>
-        /// 
+        /// This is the logic when user has parked.
         /// </summary>
-        /// <param name="lat"></param>
-        /// <param name="lon"></param>
-        /// <param name="userPaidForParking"></param>
         /// <returns></returns>
-        protected void userStartParkingEvent(String sessionId, float lat, float lon, Boolean userPaidForParking, SearchParkingSegment searchParkingSegment)
+        protected void userStartParkingEvent(String sessionId)
         {
             //Algo:
             //1)remove user from  segment waiting list
             try
             {
-                segmentSessionMap.removeSessionDataFromSegment(sessionMap[sessionId], searchParkingSegment);
+                segmentSessionMap.removeSessionDataFromAll(sessionMap[sessionId].sessionData);
+                //segmentSessionMap.removeSessionDataFromSegment(sessionMap[sessionId].sessionData, searchParkingSegment);
             }
             catch (Exception ex) { }
         }
@@ -1514,11 +1548,11 @@ namespace CityParkWS
        
         private void cleanSWT()
         {
-
-            //todo:
+            //Algo:
             //for each segment in waitingList
             // if( waitingList[segment].lastUpdate<timeConstant)
             //     waitingList.remove(segment); //or set SWT to -1 
+            segmentSessionMap.cleanTimeOutSegments();
         }
 
         private Dictionary<String,float> getAllSegmentsInRange(float lat,float lon)
@@ -1555,21 +1589,17 @@ namespace CityParkWS
             return segmentInRange;
         }
 
-        private void assignSessionToSegments(Dictionary<String,float> segmentDistance,SessionData sessionData)
+        private void assignSessionToSegments(Dictionary<String,float> segmentDistance,SessionDataWrapper sessionDataWrapper)
         {/*add to sessionData list with distance!!, and assign to each segment*/
             //remove from each segment the session data            
-            segmentSessionMap.removeSessionDataFromAll(sessionData);
+            segmentSessionMap.removeSessionDataFromAll(sessionDataWrapper.sessionData);
             //add to sessionData list with distance
-            sessionData.SegmentDistanceMap = segmentDistance;
+            sessionDataWrapper.SegmentDistanceMap = segmentDistance;
             List<String> newSegments = new List<String>(segmentDistance.Keys);
             foreach (String key in newSegments)
             {
                 SearchParkingSegment sps = segmentSessionMap.getSearchParkingSegment(key);
-                if(sps==null)
-                {
-                    //todo:add new segment to the lists in the segSessionMap
-                }
-                segmentSessionMap.addSessionDataToSegment(sessionData,sps);
+                segmentSessionMap.addSessionDataToSegment(sessionDataWrapper.sessionData, sps);
             }
 
         }

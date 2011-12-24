@@ -66,13 +66,15 @@ namespace CityParkWS
         /// </summary>
         /// <param name="sps">SearchParkingSegment</param>
         /// <returns>SearchParkingSegment</returns>
-        public SearchParkingSegment getSearchParkingSegment(String sps)
+        public SearchParkingSegment getSearchParkingSegment(String spsName)
         {
-            if (segmentToSessionMap.ContainsKey(sps))
+            if (segmentToSessionMap.ContainsKey(spsName))
             {
-                return segmentToSessionMap[sps].sps;
+                return segmentToSessionMap[spsName].sps;
             }
-            return null;
+            SearchParkingSegment sps = new SearchParkingSegment(-1,spsName);
+            segmentToSessionMap.Add(sps.SegmentUnique, new SearchParkingSegmentDetails(sps, new List<SessionData>()));
+            return sps;
         }
 
         /// <summary>
@@ -97,14 +99,17 @@ namespace CityParkWS
         {
             try
             {
-                List<SearchParkingSegment> segmentList = userToSegmentMap[sessionData.UserName];
-                //remvoe from all segements user lists
-                foreach (SearchParkingSegment sg in segmentList)
+                if (userToSegmentMap.ContainsKey(sessionData.UserName))
                 {
-                    removeSessionDataFromSegment(sessionData, sg);
+                    List<SearchParkingSegment> segmentList = userToSegmentMap[sessionData.UserName];
+                    //remvoe from all segements user lists
+                    foreach (SearchParkingSegment sg in segmentList)
+                    {
+                        removeSessionDataFromSegment(sessionData, sg);
+                    }
+                    //remove from users list
+                    userToSegmentMap.Remove(sessionData.UserName);
                 }
-                //remove from users list
-                userToSegmentMap.Remove(sessionData.UserName);
             }
             catch (Exception ex)
             {
@@ -135,7 +140,7 @@ namespace CityParkWS
                                 newSpsList.Add(sps);//new list without the segment
                             }
                         }
-                        spsList = newSpsList;
+                        userToSegmentMap[sessionData.UserName] = newSpsList;
                     }
                     list.Remove(sessionData);
                 }
