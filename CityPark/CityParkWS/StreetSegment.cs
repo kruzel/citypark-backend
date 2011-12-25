@@ -7,14 +7,14 @@ namespace CityParkWS
     public class StreetSegment
     {
         public String SegmentUnique { get; set; }
-        public int SWT { get; set; }
+        public float SWT { get; set; }
         public List<StreetSegmentLine> SegmentLine{get;set;}
 
         public StreetSegment() 
         {
             SegmentLine = new List<StreetSegmentLine>();
         }
-        public StreetSegment(String unique,int swt)
+        public StreetSegment(String unique, float swt)
         {
             SegmentUnique = unique;
             SWT = swt;

@@ -22,6 +22,10 @@ namespace CityParkWS
     public class CityParkService : System.Web.Services.WebService
     {
         private static Timer timer = null;
+        private static Boolean demoMode = true;
+
+        private static float TPhigh = 30 * 60;//in seconds
+        private static int RADIUS = 500;//in meter
 
         private static Dictionary<String, SessionDataWrapper> sessionMap = null;
         private static SegmentSessionMap segmentSessionMap = null;
@@ -62,7 +66,7 @@ namespace CityParkWS
             {                
                 String sessionIdKey = keys[i];
                 DateTime dateTime = sessionMap[sessionIdKey].sessionData.LastUpdate;
-                if (DateTime.Now.Subtract(dateTime).TotalMinutes >= 30)
+                if (DateTime.Now.Subtract(dateTime).TotalMinutes >= 10)
                 {
                     //algo: remove user from segmentWaitList and from segments
                     segmentSessionMap.removeSessionDataFromAll(sessionMap[sessionIdKey].sessionData);
@@ -742,11 +746,12 @@ namespace CityParkWS
             SearchParkingSegment searchParkingSegment = getParkingSegment(latitude, longitude);
             reportStreetParkingStatus(latitude, longitude, false, searchParkingSegment.SegmentUnique);
             //Algo:
+            calcSWT(searchParkingSegment, calcSegmentParkingRate(searchParkingSegment), RADIUS);
             userStartParkingEvent(sessionId);
         }
             
         [WebMethod(Description = "Reports the clients location,Also uses as a session keep alive")]
-        public Boolean reportSearchLocation(String sessionId, float latitude, float longitude)
+        public Boolean reportLocation(String sessionId, float latitude, float longitude)
         {    
             if (!authenticateUser(sessionId))
             {
@@ -793,8 +798,8 @@ namespace CityParkWS
                 SearchParkingSegment sps = getParkingSegment(latitude, longitude);
                 //1)Add to the session map the current location and the last location and current segment,keep the current and last timestamp
                 sd.setCurrentLocationAndUpdateTime(latitude, longitude);                
-                //2) keep the current and last timestamp
-                sps.LastUpdate = DateTime.Now;
+                //2) update lastVisit time for current
+                sps.LastVisit = DateTime.Now;
                 //3)if user changed segment 
                 if (sd.updateCurrentSegment(sps.SegmentUnique))
                 {
@@ -802,7 +807,7 @@ namespace CityParkWS
                     SearchParkingSegment previousSegment = segmentSessionMap.getSearchParkingSegment(sd.PreviousSegment);
                     int previousSegmentRate = calcSegmentParkingRate(previousSegment);
                     //3.b)calculate SWT calcSWT(segment,rate) for the former segment
-                    calcSWT(previousSegment, previousSegmentRate,500);
+                    calcSWT(previousSegment, previousSegmentRate,RADIUS);
                 }                                                            
             }
             catch (Exception ex)
@@ -1039,7 +1044,7 @@ namespace CityParkWS
 
         [WebMethod(Description = "Return on street parking prediction in street segments")]
         public List<StreetSegment> getStreetParkingPrediction(String sessionId, float latitude, float longitude, int distance)
-        {
+        {            
             if (!authenticateUser(sessionId))
             {
                 throw Utils.RaiseException(Context.Request.Url.AbsoluteUri,
@@ -1048,24 +1053,21 @@ namespace CityParkWS
                                     "401",
                                     "getStreetParkingPrediction");
             }
-            //todo:
+            //Algo:
             //1)Fetch all lines distinced by segmentUnique order by distance.
             //2)register user on the waiting list foreach segmentUnique (counter logic only).
-            //  THIS SECTION (2.a.X) IS DONE:
             //  2.a) - when user should be removed from list/map:
             //          2.a.1)timeout (20 min) - session managment
             //          2.a.2)start parking
             //          2.a.3)segment maintanence interval using the cleanSWT()
 
-            //3)for each segments in search radius return USWT[user,segment]=(distance from segment/radius)*SWT[segment]
-            List<StreetSegment> segList = new List<StreetSegment>();
-
-            //algo:
-            //A)get all segments and distance from current session and store on sessionData for cache usage
-            //B)assign this sessionDaata to each one of the segment
+           
+            //get all segments and distance from current session and store on sessionData for cache usage
             Dictionary<String, float> segmentDistance = getAllSegmentsInRange(latitude, longitude);
-            assignSessionToSegments(segmentDistance, sessionMap[sessionId]);   
+            //assign this sessionData to each one of the segment
+            assignSessionToSegments(segmentDistance, sessionMap[sessionId]);
 
+            List<StreetSegment> segList = new List<StreetSegment>();
             String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
             using (SqlConnection con = new SqlConnection(conStr))
             {
@@ -1109,14 +1111,22 @@ namespace CityParkWS
                             }
                             else
                             {
-                                sSeg = new StreetSegment(ssl.SegmentUnique,random.Next(0,20));
+                                float USWT = -1;
+                                if (!demoMode && segmentDistance.ContainsKey(ssl.SegmentUnique))
+                                {
+                                    //3)for each segments in search radius return USWT[user,segment]=(distance from segment/radius)*SWT[segment]
+                                    USWT = (segmentDistance[ssl.SegmentUnique] / RADIUS) * segmentSessionMap.getSearchParkingSegment(ssl.SegmentUnique).SWT;
+                                }else //demo mode only!!
+                                {
+                                    USWT = random.Next(0,1800);
+                                }
+                                sSeg = new StreetSegment(ssl.SegmentUnique, USWT);
                                 sSeg.add(ssl);
                                 segList.Add(sSeg);
                             }
                             
                         }
                     }
-                      //segList.Add(new SearchParkingSegment(i + 1, latitude + 0.0002f * i, longitude + 0.0002f * i, latitude + 0.001f * i + 0.001f, longitude + 0.0001f * i + 0.001f, (i + 1 / (i + 1)) * 100,"32.3223223,34.343434343"));
                 }
             }
             return segList;
@@ -1521,12 +1531,10 @@ namespace CityParkWS
          * */
         private int calcSegmentParkingRate(SearchParkingSegment sps)
         {
-            //Algo:
-            //udpate SWT updateTime
-            sps.LastUpdate = DateTime.Now;
+            //Algo:            
             //count and return how many start parking in last DELTA T
             int previousSegmentRate = 0;
-            int delta = -1;
+            int delta = -1;//last houre
             String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
             using (SqlConnection con = new SqlConnection(conStr))
             {
@@ -1581,7 +1589,7 @@ namespace CityParkWS
                         Random random = new Random();
                         while (sqlDataReader.Read())
                         {
-                            segmentInRange.Add(sqlDataReader["SegmentUnique"].ToString(),float.Parse(sqlDataReader["distance"].ToString()));
+                            segmentInRange.Add(sqlDataReader["SegmentUnique"].ToString(),float.Parse(sqlDataReader["distance"].ToString())*1000);//in meters
                         }
                     }
                 }
@@ -1609,7 +1617,6 @@ namespace CityParkWS
             float SWT = 0;
             if (rate > 0 && segmentSessionMap.countSegmentUsers(segment)>0)
             {
-                //todo: check the else statement return value
                 //Algo:
                 //calulate SWT
                 //for each user in the segment waiting list [[1/(sum[user distance from segment/searchRadiusConstant ])]/waitingList[segment].count]/rate
@@ -1628,14 +1635,14 @@ namespace CityParkWS
                         }
                     }
                 }
-                SWT = 1 / tmpDistanceDivRadius / waitingListCount / rate;
+                SWT = ( 1 / tmpDistanceDivRadius ) * waitingListCount / rate;
                 //store the data SWT in the segment map 
                 segment.SWT = SWT;
                 return SWT;
             }
             else 
             {
-                return 30 * 60;
+                return TPhigh;//30 minutes
             }
         }
     }

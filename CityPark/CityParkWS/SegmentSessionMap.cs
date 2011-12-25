@@ -36,10 +36,10 @@ namespace CityParkWS
             int count = 0;
             foreach (SearchParkingSegmentDetails spsd in segmentToSessionMap.Values)
             {
-                if (DateTime.Now.Subtract(spsd.sps.LastUpdate).TotalMinutes > 30)
+                if (DateTime.Now.Subtract(spsd.sps.LastVisit).TotalMinutes > 30)
                 {                    
                     spsd.sps.SWT = -1;
-                    spsd.sessionList = new List<SessionData>();
+                    //No need to udpate the sessionList
                     count++;
                 }
 

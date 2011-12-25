@@ -8,12 +8,15 @@ namespace CityParkWS
     {   
         public float SWT { get; set; }
         public String SegmentUnique { set; get; }
-        public DateTime LastUpdate { set; get; }
+        public DateTime LastVisit { set; get; }
         
-        public SearchParkingSegment() { }
-        public SearchParkingSegment(Int32 swt,String segUnique)
+        public SearchParkingSegment() 
         {
-            LastUpdate = DateTime.Now;
+            SWT = -1;
+        }
+        public SearchParkingSegment(float swt,String segUnique)
+        {
+            LastVisit = DateTime.Now;
             SWT = swt;
             SegmentUnique = segUnique;
         }
