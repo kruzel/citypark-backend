@@ -11,6 +11,7 @@ namespace CityParkWS
         public SessionDataWrapper(SessionData sd)
         {
             sessionData = sd;
+            SegmentDistanceMap = new Dictionary<string, float>();
         }
     }
 }

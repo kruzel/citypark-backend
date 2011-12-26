@@ -69,7 +69,7 @@ namespace CityParkWS
                 if (DateTime.Now.Subtract(dateTime).TotalMinutes >= 10)
                 {
                     //algo: remove user from segmentWaitList and from segments
-                    segmentSessionMap.removeSessionDataFromAll(sessionMap[sessionIdKey].sessionData);
+                    segmentSessionMap.removeSessionDataFromAllSegments(sessionMap[sessionIdKey].sessionData);
                     sessionMap.Remove(sessionIdKey);
                 }
             }
@@ -1464,8 +1464,8 @@ namespace CityParkWS
             //1)remove user from  segment waiting list
             try
             {
-                segmentSessionMap.removeSessionDataFromAll(sessionMap[sessionId].sessionData);
-                //segmentSessionMap.removeSessionDataFromSegment(sessionMap[sessionId].sessionData, searchParkingSegment);
+                SessionDataWrapper sdw =sessionMap[sessionId];
+                segmentSessionMap.removeSessionDataFromAll(sdw.sessionData, new List<String>(sdw.SegmentDistanceMap.Keys));                
             }
             catch (Exception ex) { }
         }
@@ -1504,7 +1504,7 @@ namespace CityParkWS
                             ssl.EndLatitude = sqlDataReader["EndLatitude"].ToString();
                             ssl.EndLongitude = sqlDataReader["EndLongitude"].ToString();
                             ssl.SegmentUnique = sqlDataReader["SegmentUnique"].ToString();
-                            sps = new SearchParkingSegment(30*60,ssl.SegmentUnique);
+                            sps = new SearchParkingSegment(-1,ssl.SegmentUnique);
                             break;
                         }
                     }
@@ -1599,14 +1599,16 @@ namespace CityParkWS
 
         private void assignSessionToSegments(Dictionary<String,float> segmentDistance,SessionDataWrapper sessionDataWrapper)
         {/*add to sessionData list with distance!!, and assign to each segment*/
-            //remove from each segment the session data            
-            segmentSessionMap.removeSessionDataFromAll(sessionDataWrapper.sessionData);
+            //remove from each segment the session data                       
+            segmentSessionMap.removeSessionDataFromAll(sessionDataWrapper.sessionData, new List<String>(sessionDataWrapper.SegmentDistanceMap.Keys));             
             //add to sessionData list with distance
             sessionDataWrapper.SegmentDistanceMap = segmentDistance;
             List<String> newSegments = new List<String>(segmentDistance.Keys);
             foreach (String key in newSegments)
             {
+                //get search parking segment and if not exists create one
                 SearchParkingSegment sps = segmentSessionMap.getSearchParkingSegment(key);
+                //assign the session data to the search parking segment
                 segmentSessionMap.addSessionDataToSegment(sessionDataWrapper.sessionData, sps);
             }
 

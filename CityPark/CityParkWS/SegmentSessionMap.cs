@@ -7,7 +7,6 @@ namespace CityParkWS
     public class SegmentSessionMap
     {
         private Dictionary<String, SearchParkingSegmentDetails> segmentToSessionMap;//segmentUnique as key
-        private Dictionary<String, List<SearchParkingSegment>> userToSegmentMap;//SessionData
 
         private class SearchParkingSegmentDetails
         {
@@ -22,6 +21,11 @@ namespace CityParkWS
 
         }
 
+        /// <summary>
+        /// Returns the segment session list
+        /// </summary>
+        /// <param name="sps"></param>
+        /// <returns></returns>
         public List<SessionData> getSegmetsSessionDataList(String sps)
         {
             if (segmentToSessionMap.ContainsKey(sps))
@@ -31,6 +35,10 @@ namespace CityParkWS
             return new List<SessionData>();
         }
 
+        /// <summary>
+        /// Clean the  timeout segments, where last visit is greater than 30 min.
+        /// </summary>
+        /// <returns></returns>
         public int cleanTimeOutSegments()
         {
             int count = 0;
@@ -51,7 +59,6 @@ namespace CityParkWS
         public SegmentSessionMap()
         {            
             segmentToSessionMap = new Dictionary<String, SearchParkingSegmentDetails>();//new SegmentEqualityComparer()
-            userToSegmentMap = new Dictionary<String, List<SearchParkingSegment>>();// (new SessionDataEqualityComparer());
         }
 
         /// <summary>
@@ -100,24 +107,46 @@ namespace CityParkWS
             return 0;
         }
 
+        
+
         /// <summary>
-        /// Remove the session data from all maps
+        /// Remove the session data from all segments
         /// </summary>
         /// <param name="sessionData"></param>
-        public void removeSessionDataFromAll(SessionData sessionData)
+        /// <returns>count of removed from segment and -1 if there was an error</returns>
+        public int removeSessionDataFromAllSegments(SessionData sessionData)
+        {
+            int count = 0;
+            try
+            {                
+                foreach (SearchParkingSegmentDetails sg in segmentToSessionMap.Values)
+                {
+                    if(sg.sessionList.Remove(sessionData)) count++;
+                }
+            }
+            catch (Exception ex)
+            {
+                count = -1;
+                Console.WriteLine("removeSessionDataFromAllSegments " + ex.Message);
+            }
+            return count;
+        }
+
+        /// <summary>
+        /// Remove the session data from all segments in the list
+        /// </summary>
+        /// <param name="sessionData"></param>
+        public void removeSessionDataFromAll(SessionData sessionData,List<String> segmentList)
         {
             try
             {
-                if (userToSegmentMap.ContainsKey(sessionData.UserName))
-                {
-                    List<SearchParkingSegment> segmentList = userToSegmentMap[sessionData.UserName];
-                    //remvoe from all segements user lists
-                    foreach (SearchParkingSegment sg in segmentList)
+                //remove from all segements user lists
+                foreach (String segment in segmentList)
+                {                    
+                    if (segmentToSessionMap.ContainsKey(segment))
                     {
-                        removeSessionDataFromSegment(sessionData, sg);
-                    }
-                    //remove from users list
-                    userToSegmentMap.Remove(sessionData.UserName);
+                        segmentToSessionMap[segment].sessionList.Remove(sessionData);
+                    }                   
                 }
             }
             catch (Exception ex)
@@ -126,40 +155,7 @@ namespace CityParkWS
             }
         }
 
-        /// <summary>
-        /// Remove the sessions from the search parking segment
-        /// </summary>
-        /// <param name="sessionData"></param>
-        /// <param name="segment"></param>
-        public void removeSessionDataFromSegment(SessionData sessionData, SearchParkingSegment segment)
-        {
-            try
-            {
-                if (segmentToSessionMap.ContainsKey(segment.SegmentUnique))
-                {
-                    List<SessionData> list = segmentToSessionMap[segment.SegmentUnique].sessionList;
-                    if (userToSegmentMap.ContainsKey(sessionData.UserName))
-                    {
-                        List<SearchParkingSegment> spsList = userToSegmentMap[sessionData.UserName];
-                        List<SearchParkingSegment> newSpsList = new List<SearchParkingSegment>();
-                        foreach (SearchParkingSegment sps in spsList)
-                        {
-                            if (!sps.SegmentUnique.Equals(segment.SegmentUnique))
-                            {
-                                newSpsList.Add(sps);//new list without the segment
-                            }
-                        }
-                        userToSegmentMap[sessionData.UserName] = newSpsList;
-                    }
-                    list.Remove(sessionData);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("removeSessionDataFromSegment "+ex.Message);
-            }
-        }
-
+        
         /// <summary>
         /// Add the session to segment
         /// </summary>
@@ -169,60 +165,21 @@ namespace CityParkWS
         {
             try
             {
-                segment = getSearchParkingSegment(segment);
-                if (userToSegmentMap.ContainsKey(sessionData.UserName))
-                {
-                    List<SearchParkingSegment> list = userToSegmentMap[sessionData.UserName];
-                    Boolean existsOnList = false;
-                    foreach (SearchParkingSegment searchParkingSegment in list)
-                    {
-                        if (searchParkingSegment.SegmentUnique.Equals(segment.SegmentUnique))
-                        {
-                            existsOnList = true;
-                        }
-                    }
-                    if (existsOnList.Equals(false))
-                    {
-                        list.Add(segment);
-                    }
-
-                }
-                else //if (!userToSegmentMap.ContainsKey(sessionData.UserName))
-                {
-                    List<SearchParkingSegment> list = new List<SearchParkingSegment>();
-                    list.Add(segment);
-                    userToSegmentMap.Add(sessionData.UserName, list);
-                }
-                //ADD TO SEGMENT2SESSION MAP
                 if (segmentToSessionMap.ContainsKey(segment.SegmentUnique))
                 {
-                    List<SessionData> slist = segmentToSessionMap[segment.SegmentUnique].sessionList;
-                    Boolean existsOnList = false;
-                    foreach (SessionData sessionD in slist)
+                    SearchParkingSegmentDetails spsd = segmentToSessionMap[segment.SegmentUnique];
+                    if (!spsd.sessionList.Contains(sessionData))
                     {
-                        if (sessionD.UserName.Equals(sessionData.UserName))
-                        {
-                            existsOnList = true;
-                        }
-                    }
-                    if (existsOnList.Equals(false))
-                    {
-                        slist.Add(sessionData);
+                        spsd.sessionList.Add(sessionData);
                     }
                 }
-                else
+                else 
                 {
-                    List<SessionData> list = new List<SessionData>();
-                    list.Add(sessionData);
-                    segmentToSessionMap.Add(segment.SegmentUnique, new SearchParkingSegmentDetails(segment, list));
-
+                    segment = getSearchParkingSegment(segment);
+                    segmentToSessionMap[segment.SegmentUnique].sessionList.Add(sessionData);
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine("addSessionDataToSegment " + ex.Message);
-            }
+            catch (Exception ex) { }
         }
-
     }
 }

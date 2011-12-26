@@ -65,7 +65,6 @@
     <Compile Include="SegmentEqualityComparer.cs" />
     <Compile Include="SegmentSessionMap.cs" />
     <Compile Include="SessionData.cs" />
-    <Compile Include="SessionDataEqualityComparer.cs" />
     <Compile Include="SessionDataWrapper.cs" />
     <Compile Include="StreetSegment.cs" />
     <Compile Include="StreetSegmentLine.cs" />
