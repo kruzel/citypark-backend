@@ -22,7 +22,7 @@ namespace CityParkWS
     public class CityParkService : System.Web.Services.WebService
     {
         private static Timer timer = null;
-        private static Boolean demoMode = true;
+        private static Boolean demoMode = false;
 
         private static float TPhigh = 30 * 60;//in seconds
         private static int RADIUS = 500;//in meter
@@ -74,6 +74,35 @@ namespace CityParkWS
                 }
             }
         }
+
+
+        [WebMethod(Description = "Set and get configuration data")]
+        public List<String> config(String user,String pwd,String key,String value)
+        {
+            List<String> list = new List<String>();
+            if (user.Trim().Equals("ranbrandes") && pwd.Trim().Equals("assaf2-8-10"))
+            {
+                switch (key.Trim())
+                {
+                    case "RADIUS":
+                        RADIUS = Int32.Parse(value);
+                        break;
+                    case "demoMode":
+                        demoMode = Boolean.Parse(value);
+                        break;
+                    case "TPhigh":
+                        TPhigh = Int32.Parse(value);
+                        break;
+                    default:
+                        break;
+                }
+                list.Add("demoMode:" + demoMode);
+                list.Add("RADIUS:" + RADIUS);
+                list.Add("TPhigh:" + TPhigh);
+            }
+            return list;            
+        }
+
 
         [WebMethod(Description = "Return all garages data within the current location in radius of the given distance")]
         public List<Parking> findAllGarageParkingDataByLatitudeLongitude(String sessionId, float latitude, float longitude, int distance)
@@ -1193,10 +1222,23 @@ namespace CityParkWS
                                 parking.HouseNumber = Convert.ToInt32(houseNum);*/
                             parkingList.Add(parking);
                         }
-                    }
-                    else
+                    }                    
+                    if (demoMode)
                     {
-                        return null;
+                        Random random = new Random();
+                        for (int i = 0; i < 30; i++)
+                        {
+                            float lat = random.Next(661359,932738);
+                            lat = lat / 10000000f;
+                            lat += 32f;
+                            float lng = random.Next(7537129, 7737129);
+                            lng = lng / 10000000f;
+                            lng += 34f;
+                            Parking p = new Parking();
+                            p.Latitude = lat+"";
+                            p.Longitude = lng+"";
+                            parkingList.Add(p);
+                        }
                     }
                     return parkingList;
                 }
@@ -1483,19 +1525,16 @@ namespace CityParkWS
                 {
                     String sql = String.Format(@"DECLARE @UserLat float = {0}
                             DECLARE @UserLong float = {1}
-                            SELECT TOP 1 * FROM [CITYPARK].[dbo].[StreetSegmentLine] a
-                            where SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
-                            + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) < 0.5  
-                            AND 
-                            SQRT  ( POWER((a.endLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
-                            + POWER((a.endLongitude -@UserLong) * 40000 / 360, 2)) < 0.5 order by SegmentUnique", lat, lon);
+                            SELECT TOP 1 SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
+                                + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) as distance,*
+                            FROM [CITYPARK].[dbo].[StreetSegmentLine] a   
+                                order by distance", lat, lon);
                     cmd.Connection = con;
                     cmd.CommandText = sql;
                     con.Open();
                     SqlDataReader sqlDataReader = cmd.ExecuteReader();
                     if (sqlDataReader.HasRows)
                     {
-                        Random random = new Random();
                         while (sqlDataReader.Read())
                         {
                             StreetSegmentLine ssl = new StreetSegmentLine();
@@ -1585,8 +1624,7 @@ namespace CityParkWS
                     con.Open();
                     SqlDataReader sqlDataReader = cmd.ExecuteReader();
                     if (sqlDataReader.HasRows)
-                    {
-                        Random random = new Random();
+                    {                        
                         while (sqlDataReader.Read())
                         {
                             segmentInRange.Add(sqlDataReader["SegmentUnique"].ToString(),float.Parse(sqlDataReader["distance"].ToString())*1000);//in meters
