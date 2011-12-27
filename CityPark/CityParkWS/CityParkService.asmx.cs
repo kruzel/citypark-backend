@@ -10,6 +10,8 @@ using System.Web.Services.Protocols;
 using System.Xml;
 using System.Timers;
 using System.Data;
+using log4net;
+using log4net.Core;
 
 namespace CityParkWS
 {    
@@ -38,9 +40,11 @@ namespace CityParkWS
         private static String UNVERIFIED = "UNVERIFIED";
         private static String USER_NOT_AUTHENTICATE = "User is not authenticated, Please login to the system!";
 
+        protected static readonly ILog log = LogManager.GetLogger(typeof(CityParkService));
 
         public CityParkService()
         {
+            log4net.Config.XmlConfigurator.Configure();
             if (segmentSessionMap == null)
             {
                 segmentSessionMap = new SegmentSessionMap();
@@ -69,14 +73,28 @@ namespace CityParkWS
                 if (DateTime.Now.Subtract(dateTime).TotalMinutes >= 10)
                 {
                     //algo: remove user from segmentWaitList and from segments
-                    segmentSessionMap.removeSessionDataFromAllSegments(sessionMap[sessionIdKey].sessionData);
+                    segmentSessionMap.removeSessionDataFromAllSegments(sessionIdKey);
                     sessionMap.Remove(sessionIdKey);
                 }
             }
         }
 
+        [WebMethod(Description = "Administration:Returns the sessionData")]
+        public List<SessionData> getSessionData(String user, String pwd)
+        {
+            List<SessionData> list = new List<SessionData>();
+            if (user.Trim().Equals("ranbrandes") && pwd.Trim().Equals("assaf2-8-10"))
+            {
+                foreach (SessionDataWrapper sd in sessionMap.Values)
+                {
+                    list.Add(sd.sessionData);
+                }
+            }
+            return list;
+        }
 
-        [WebMethod(Description = "Set and get configuration data")]
+
+        [WebMethod(Description = "Administration:Set and get configuration data")]
         public List<String> config(String user,String pwd,String key,String value)
         {
             List<String> list = new List<String>();
@@ -86,6 +104,10 @@ namespace CityParkWS
                 {
                     case "RADIUS":
                         RADIUS = Int32.Parse(value);
+                        break;
+                    case "log":
+                        if (value.Equals("INFO")) LogManager.GetRepository().Threshold = Level.Info;
+                        if (value.Equals("DEBUG")) LogManager.GetRepository().Threshold = Level.Debug;
                         break;
                     case "demoMode":
                         demoMode = Boolean.Parse(value);
@@ -462,6 +484,7 @@ namespace CityParkWS
             String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
             String responseStr = USER_NOT_FOUND;
             int id = -1;
+            int count = -9999;
             using (SqlConnection con = new SqlConnection(conStr))
             {                
                 using (SqlCommand cmd = new SqlCommand())
@@ -480,6 +503,7 @@ namespace CityParkWS
                         sqlDataReader.Read();
                         responseStr = sqlDataReader["Email"].ToString();
                         id = Int32.Parse(sqlDataReader["Id"].ToString());
+                        count = Int32.Parse(sqlDataReader["count"].ToString());
                     }
                     sqlDataReader.Close();
                     if (responseStr == USER_NOT_FOUND)
@@ -490,9 +514,10 @@ namespace CityParkWS
                 if (id != -1) //just double check                  
                     using (SqlCommand updateCmd = new SqlCommand())
                     {
+                        count = count + 1;
                         String updateSql = String.Format(
-                            @"UPDATE USERS SET LastLogin =  CURRENT_TIMESTAMP WHERE Id = '{0}'",
-                            id);
+                            @"UPDATE USERS SET LastLogin =  CURRENT_TIMESTAMP , count={1} WHERE Id = '{0}'",
+                            id,count);
                         updateCmd.Connection = con;
                         updateCmd.CommandText = updateSql;
                         // Then connection is already opened so there is no need to do con.Open();
@@ -503,7 +528,8 @@ namespace CityParkWS
             String sessionId = id.ToString() + "T" + DateTime.Now.Millisecond;
             SessionData sessionData = new SessionData(responseStr, id,sessionId);
             sessionMap.Add(sessionId, new SessionDataWrapper(sessionData));
-           
+            log.Info("info");
+            log.Debug("debug");
             return sessionData;
         }
 
@@ -762,7 +788,7 @@ namespace CityParkWS
         }
 
         [WebMethod(Description = "Reports that the client has parked, still has not paid")]
-        public void reportStreetParkingByLatitudeLongitude(String sessionId, float latitude, float longitude)
+        public Boolean reportStreetParking(String sessionId, float latitude, float longitude)
         {
             if (!authenticateUser(sessionId))
             {
@@ -772,11 +798,20 @@ namespace CityParkWS
                                    "401",
                                    "reportStreetParkingByLatitudeLongitude");
             }
-            SearchParkingSegment searchParkingSegment = getParkingSegment(latitude, longitude);
-            reportStreetParkingStatus(latitude, longitude, false, searchParkingSegment.SegmentUnique);
-            //Algo:
-            calcSWT(searchParkingSegment, calcSegmentParkingRate(searchParkingSegment), RADIUS);
-            userStartParkingEvent(sessionId);
+            try
+            {
+                SearchParkingSegment searchParkingSegment = getParkingSegment(latitude, longitude);
+                reportStreetParkingStatus(latitude, longitude, false, searchParkingSegment.SegmentUnique);            
+                //Algo:
+                calcSWT(searchParkingSegment, calcSegmentParkingRate(searchParkingSegment), RADIUS);
+                userStartParkingEvent(sessionId);
+            }
+            catch (Exception ex)
+            {
+                log.Error("SessionId :" + sessionId + " ,reportStreetParking Error:" + ex.Message);
+                return false;
+            }
+            return true;
         }
             
         [WebMethod(Description = "Reports the clients location,Also uses as a session keep alive")]
@@ -819,7 +854,10 @@ namespace CityParkWS
                 }
 
             }
-            catch (Exception ex) { }
+            catch (Exception ex) 
+            {
+                log.Error("SessionId :" + sessionId + " ,reportLocation SQL Error:" + ex.Message);
+            }
            
             try
             {
@@ -841,6 +879,7 @@ namespace CityParkWS
             }
             catch (Exception ex)
             {
+                log.Error("SessionId :" + sessionId + " ,reportLocation Error:" + ex.Message);
                 return false;
             }
             return true;
@@ -924,6 +963,7 @@ namespace CityParkWS
                     }
                 }
             }catch(Exception ex){
+                log.Error("UserId :" + userId + " ,reportPayment Error:" + ex.Message);
                 return false;
             }
             return true;
@@ -1162,7 +1202,7 @@ namespace CityParkWS
         }
 
         [WebMethod(Description = "Add released parking spots")]
-        public void reportStreetParkingRelease(String sessionId, float latitude, float longitude)
+        public Boolean reportStreetParkingRelease(String sessionId, float latitude, float longitude)
         {
             if (!authenticateUser(sessionId))
             {
@@ -1172,7 +1212,16 @@ namespace CityParkWS
                                     "401",
                                     "addParkingReleases");
             }
-            reportStreetParkingStatus(latitude, longitude, true, "");
+            try
+            {
+                reportStreetParkingStatus(latitude, longitude, true, "");
+            }
+            catch (Exception ex) 
+            {
+                log.Error("SessionId :" + sessionId + " ,reportStreetParkingRelease Error:" + ex.Message);
+                return false;
+            }
+            return true;
         }
 
 
@@ -1259,8 +1308,11 @@ namespace CityParkWS
             }
             catch (Exception ex)
             {
+
+                log.Error("Session Id :" + sessionId+ " is not authenticated");
                 return false;
             }
+            log.Error("SessionId :" + sessionId + " is not authenticated");
             return false;
         }
 
@@ -1507,9 +1559,12 @@ namespace CityParkWS
             try
             {
                 SessionDataWrapper sdw =sessionMap[sessionId];
-                segmentSessionMap.removeSessionDataFromAll(sdw.sessionData, new List<String>(sdw.SegmentDistanceMap.Keys));                
+                segmentSessionMap.removeSessionDataFromAll(sdw.sessionData.SessionId, new List<String>(sdw.SegmentDistanceMap.Keys));                
             }
-            catch (Exception ex) { }
+            catch (Exception ex) 
+            {
+                log.Error("SessionId :" + sessionId + " ,userStartParkingEvent Error:" + ex.Message);
+            }
         }
 
         private SearchParkingSegment getParkingSegment(float lat, float lon)
@@ -1638,7 +1693,7 @@ namespace CityParkWS
         private void assignSessionToSegments(Dictionary<String,float> segmentDistance,SessionDataWrapper sessionDataWrapper)
         {/*add to sessionData list with distance!!, and assign to each segment*/
             //remove from each segment the session data                       
-            segmentSessionMap.removeSessionDataFromAll(sessionDataWrapper.sessionData, new List<String>(sessionDataWrapper.SegmentDistanceMap.Keys));             
+            segmentSessionMap.removeSessionDataFromAll(sessionDataWrapper.sessionData.SessionId, new List<String>(sessionDataWrapper.SegmentDistanceMap.Keys));             
             //add to sessionData list with distance
             sessionDataWrapper.SegmentDistanceMap = segmentDistance;
             List<String> newSegments = new List<String>(segmentDistance.Keys);
@@ -1647,7 +1702,7 @@ namespace CityParkWS
                 //get search parking segment and if not exists create one
                 SearchParkingSegment sps = segmentSessionMap.getSearchParkingSegment(key);
                 //assign the session data to the search parking segment
-                segmentSessionMap.addSessionDataToSegment(sessionDataWrapper.sessionData, sps);
+                segmentSessionMap.addSessionDataToSegment(sessionDataWrapper.sessionData.SessionId, sps);
             }
 
         }
@@ -1661,13 +1716,13 @@ namespace CityParkWS
                 //calulate SWT
                 //for each user in the segment waiting list [[1/(sum[user distance from segment/searchRadiusConstant ])]/waitingList[segment].count]/rate
                 int waitingListCount = segmentSessionMap.countSegmentUsers(segment);                
-                List<SessionData> sdList = segmentSessionMap.getSegmetsSessionDataList(segment.SegmentUnique);
+                List<String> sdList = segmentSessionMap.getSegmetsSessionDataList(segment.SegmentUnique);
                 float tmpDistanceDivRadius = 0;
-                foreach (SessionData sd in sdList)
+                foreach (String sd in sdList)
                 {
-                    if (sessionMap.ContainsKey(sd.SessionId))
+                    if (sessionMap.ContainsKey(sd))
                     {
-                        Dictionary <String,float> sdMap = sessionMap[sd.SessionId].SegmentDistanceMap;
+                        Dictionary <String,float> sdMap = sessionMap[sd].SegmentDistanceMap;
                         if (sdMap != null && sdMap.ContainsKey(segment.SegmentUnique))
                         {
                             float distance = sdMap[segment.SegmentUnique];

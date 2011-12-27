@@ -18,8 +18,18 @@ namespace CityParkWS
         public float CurrentLatitude { get; set; }
         public String CurrentSegment { get; set; }
         public String PreviousSegment { get; set; }
-        
-        
+
+
+        public SessionData(String userNameStr, Int32 id, String sessionIdStr)
+        {
+            LastUpdate = DateTime.Now;
+            UserId = id;
+            SessionId = sessionIdStr;
+            UserName = userNameStr;
+            CurrentSegment = "";
+            PreviousSegment = "";
+        }
+
         public SessionData(String sessionIdStr) 
         {
             LastUpdate = DateTime.Now;
@@ -27,8 +37,13 @@ namespace CityParkWS
             CurrentSegment = "";
             PreviousSegment = "";
         }
+
         public SessionData() 
         {
+            LastUpdate = DateTime.Now;
+            UserId = 0;
+            SessionId = "";
+            UserName = "";
             CurrentSegment = "";
             PreviousSegment = "";
         }
@@ -41,14 +56,6 @@ namespace CityParkWS
             CurrentLongitude = longitude;
             PreviousUpdate = LastUpdate;
             LastUpdate = DateTime.Now;
-        }
-
-        public SessionData(String userNameStr, Int32 id, String sessionIdStr)
-        {
-            LastUpdate = DateTime.Now;
-            UserId = id;
-            SessionId = sessionIdStr;
-            UserName = userNameStr;
         }
 
         /// <summary>

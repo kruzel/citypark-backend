@@ -11,9 +11,9 @@ namespace CityParkWS
         private class SearchParkingSegmentDetails
         {
             public SearchParkingSegment sps { get; set; }
-            public List<SessionData> sessionList { get; set; }
+            public List<String> sessionList { get; set; }
 
-            public SearchParkingSegmentDetails(SearchParkingSegment pSps, List<SessionData> pSessionList)
+            public SearchParkingSegmentDetails(SearchParkingSegment pSps, List<String> pSessionList)
             {
                 sps = pSps;
                 sessionList = pSessionList;
@@ -26,13 +26,13 @@ namespace CityParkWS
         /// </summary>
         /// <param name="sps"></param>
         /// <returns></returns>
-        public List<SessionData> getSegmetsSessionDataList(String sps)
+        public List<String> getSegmetsSessionDataList(String sps)
         {
             if (segmentToSessionMap.ContainsKey(sps))
             {
                 return segmentToSessionMap[sps].sessionList;
             }
-            return new List<SessionData>();
+            return new List<String>();
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace CityParkWS
                 return segmentToSessionMap[sps.SegmentUnique].sps;
             }
 
-            segmentToSessionMap.Add(sps.SegmentUnique, new SearchParkingSegmentDetails(sps,new List<SessionData>()));
+            segmentToSessionMap.Add(sps.SegmentUnique, new SearchParkingSegmentDetails(sps,new List<String>()));
             return sps;
         }
 
@@ -89,7 +89,7 @@ namespace CityParkWS
                 return segmentToSessionMap[spsName].sps;
             }
             SearchParkingSegment sps = new SearchParkingSegment(-1,spsName);
-            segmentToSessionMap.Add(sps.SegmentUnique, new SearchParkingSegmentDetails(sps, new List<SessionData>()));
+            segmentToSessionMap.Add(sps.SegmentUnique, new SearchParkingSegmentDetails(sps, new List<String>()));
             return sps;
         }
 
@@ -114,7 +114,7 @@ namespace CityParkWS
         /// </summary>
         /// <param name="sessionData"></param>
         /// <returns>count of removed from segment and -1 if there was an error</returns>
-        public int removeSessionDataFromAllSegments(SessionData sessionData)
+        public int removeSessionDataFromAllSegments(String sessionData)
         {
             int count = 0;
             try
@@ -136,7 +136,7 @@ namespace CityParkWS
         /// Remove the session data from all segments in the list
         /// </summary>
         /// <param name="sessionData"></param>
-        public void removeSessionDataFromAll(SessionData sessionData,List<String> segmentList)
+        public void removeSessionDataFromAll(String sessionData,List<String> segmentList)
         {
             try
             {
@@ -161,7 +161,7 @@ namespace CityParkWS
         /// </summary>
         /// <param name="sessionData"></param>
         /// <param name="segment"></param>
-        public void addSessionDataToSegment(SessionData sessionData,SearchParkingSegment segment)
+        public void addSessionDataToSegment(String sessionData,SearchParkingSegment segment)
         {
             try
             {
