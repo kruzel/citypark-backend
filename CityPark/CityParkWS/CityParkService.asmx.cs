@@ -1682,7 +1682,18 @@ namespace CityParkWS
                     {                        
                         while (sqlDataReader.Read())
                         {
-                            segmentInRange.Add(sqlDataReader["SegmentUnique"].ToString(),float.Parse(sqlDataReader["distance"].ToString())*1000);//in meters
+                            try
+                            {
+                                String segUnqSql = sqlDataReader["SegmentUnique"].ToString();
+                                if (!segmentInRange.ContainsKey(segUnqSql))
+                                {
+                                    segmentInRange.Add(segUnqSql, float.Parse(sqlDataReader["distance"].ToString()) * 1000);//in meters
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                log.Error("Got error while creating segment in range map." + ex.Message);
+                            }
                         }
                     }
                 }
