@@ -24,7 +24,7 @@ namespace CityParkWS
     public class CityParkService : System.Web.Services.WebService
     {
         private static Timer timer = null;
-        private static Boolean demoMode = false;
+        private static String userDemo = "demo@citypark.co.il";
 
         private static float TPhigh = 30 * 60;//in seconds
         private static int RADIUS = 500;//in meter
@@ -109,16 +109,13 @@ namespace CityParkWS
                         if (value.Equals("INFO")) LogManager.GetRepository().Threshold = Level.Info;
                         if (value.Equals("DEBUG")) LogManager.GetRepository().Threshold = Level.Debug;
                         break;
-                    case "demoMode":
-                        demoMode = Boolean.Parse(value);
-                        break;
                     case "TPhigh":
                         TPhigh = Int32.Parse(value);
                         break;
                     default:
                         break;
                 }
-                list.Add("demoMode:" + demoMode);
+                list.Add("demo user:" + userDemo);
                 list.Add("RADIUS:" + RADIUS);
                 list.Add("TPhigh:" + TPhigh);
             }
@@ -503,7 +500,22 @@ namespace CityParkWS
                         sqlDataReader.Read();
                         responseStr = sqlDataReader["Email"].ToString();
                         id = Int32.Parse(sqlDataReader["Id"].ToString());
-                        count = Int32.Parse(sqlDataReader["count"].ToString());
+                        String countSrt = sqlDataReader["count"].ToString();
+                        if (countSrt.Equals("") || countSrt.ToLower().Equals("null"))
+                        {
+                            count = 0;
+                        }
+                        else
+                        {
+                            try
+                            {
+                                count = Int32.Parse(countSrt);
+                            }
+                            catch (Exception ex)
+                            {
+                                log.Error(ex.Message);
+                            }
+                        }
                     }
                     sqlDataReader.Close();
                     if (responseStr == USER_NOT_FOUND)
@@ -574,7 +586,8 @@ namespace CityParkWS
                             ,[LastLogin]
                             ,[other1]
                             ,[other7]
-                            ,[SiteID])
+                            ,[SiteID]
+                            ,[count])
                         VALUES
                             ('{2}'
                             ,'{3}'
@@ -589,7 +602,8 @@ namespace CityParkWS
                             ,CURRENT_TIMESTAMP
                             ,'{5}'
                             ,'{6}'
-                            ,30)", email /*0*/, password, firstName, familyName, phoneNumber/*4*/,licensesPlate,paymentService);
+                            ,30
+                            ,0)", email /*0*/, password, firstName, familyName, phoneNumber/*4*/,licensesPlate,paymentService);
                     cmd.Connection = con;
                     cmd.CommandText = insertSql;
                     con.Open();
@@ -1130,12 +1144,13 @@ namespace CityParkWS
             //          2.a.2)start parking
             //          2.a.3)segment maintanence interval using the cleanSWT()
 
-           
+            float distanceKm = ((float)distance) / 1000f;
             //get all segments and distance from current session and store on sessionData for cache usage
-            Dictionary<String, float> segmentDistance = getAllSegmentsInRange(latitude, longitude);
+            Dictionary<String, float> segmentDistance = getAllSegmentsInRange(latitude, longitude,distanceKm);
             //assign this sessionData to each one of the segment
             assignSessionToSegments(segmentDistance, sessionMap[sessionId]);
-
+            Boolean demo = userDemo.Equals(sessionMap[sessionId].sessionData.UserName);
+            
             List<StreetSegment> segList = new List<StreetSegment>();
             String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
             using (SqlConnection con = new SqlConnection(conStr))
@@ -1146,10 +1161,10 @@ namespace CityParkWS
                             DECLARE @UserLong float = {1}
                             SELECT * FROM [CITYPARK].[dbo].[StreetSegmentLine] a
                             where SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
-                            + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) < 0.5  
+                            + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) < {2}  
                             AND 
                                   SQRT  ( POWER((a.endLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
-                            + POWER((a.endLongitude -@UserLong) * 40000 / 360, 2)) < 0.5 order by SegmentUnique", latitude, longitude);
+                            + POWER((a.endLongitude -@UserLong) * 40000 / 360, 2)) < {2} order by SegmentUnique", latitude, longitude, distanceKm);
                     cmd.Connection = con;
                     cmd.CommandText = sql;
                     con.Open();
@@ -1180,18 +1195,23 @@ namespace CityParkWS
                             }
                             else
                             {
-                                float USWT = -1;
-                                if (!demoMode && segmentDistance.ContainsKey(ssl.SegmentUnique))
+                                float SWT = segmentSessionMap.getSearchParkingSegment(ssl.SegmentUnique).SWT;
+                                if (SWT >= 0)
                                 {
-                                    //3)for each segments in search radius return USWT[user,segment]=(distance from segment/radius)*SWT[segment]
-                                    USWT = (segmentDistance[ssl.SegmentUnique] / RADIUS) * segmentSessionMap.getSearchParkingSegment(ssl.SegmentUnique).SWT;
-                                }else //demo mode only!!
-                                {
-                                    USWT = random.Next(0,1800);
+                                    float USWT = -1;
+                                    if (!demo && segmentDistance.ContainsKey(ssl.SegmentUnique))
+                                    {
+                                        //3)for each segments in search radius return USWT[user,segment]=(distance from segment/radius)*SWT[segment]
+                                        USWT = (segmentDistance[ssl.SegmentUnique] / RADIUS) * SWT;
+                                    }
+                                    else //demo mode only!!
+                                    {
+                                        USWT = random.Next(0, 1800);
+                                    }
+                                    sSeg = new StreetSegment(ssl.SegmentUnique, USWT);
+                                    sSeg.add(ssl);
+                                    segList.Add(sSeg);
                                 }
-                                sSeg = new StreetSegment(ssl.SegmentUnique, USWT);
-                                sSeg.add(ssl);
-                                segList.Add(sSeg);
                             }
                             
                         }
@@ -1236,8 +1256,57 @@ namespace CityParkWS
                                     "401",
                                     "getParkingReleases");
             }
-
+            List<Parking> parkingList = new List<Parking>();
+            Boolean demo = userDemo.Equals(sessionMap[sessionId].sessionData.UserName);
             String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
+
+            if (demo)
+            {                
+                using (SqlConnection con = new SqlConnection(conStr))
+                {
+                    using (SqlCommand cmd = new SqlCommand())
+                    {
+                        String sql = String.Format(@"DECLARE @UserLat float = {0}
+                            DECLARE @UserLong float = {1}
+                            SELECT * FROM [CITYPARK].[dbo].[StreetSegmentLine] a
+                            where SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
+                            + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) < {2}", latitude, longitude,(float)distance/1000f);
+                        cmd.Connection = con;
+                        cmd.CommandText = sql;
+                        con.Open();
+                        SqlDataReader sqlDataReader = cmd.ExecuteReader();
+                        if (sqlDataReader.HasRows)
+                        {
+                            Random random = new Random();
+                            while (sqlDataReader.Read())
+                            {
+                                Parking p = new Parking();
+                                p.Latitude = sqlDataReader["StartLatitude"].ToString();
+                                p.Longitude = sqlDataReader["StartLongitude"].ToString();
+                                parkingList.Add(p);
+                            }
+                        }
+                    }
+                }
+              /*  Random random = new Random();
+                for (int i = 0; i < 30; i++)
+                {
+                    float lat = random.Next(-90, 90);//0.00x
+                    if (lat == 0) lat = 1;
+                    lat = lat / 10000f;
+                    lat = lat + latitude;
+                    float lng = random.Next(-90, 90);//0.00x
+                    if (lng == 0) lng = 1;
+                    lng = lng / 10000f;
+                    lng = lng + longitude;
+                    Parking p = new Parking();
+                    p.Latitude = lat + "";
+                    p.Longitude = lng + "";
+                    parkingList.Add(p);
+                }                */
+                return parkingList;
+            }
+        
             using (SqlConnection con = new SqlConnection(conStr))
             {
                 using (SqlCommand cmd = new SqlCommand())
@@ -1251,12 +1320,12 @@ namespace CityParkWS
                                @NOW.STDistance(geography::Point(latitude,longitude,4326)) as Distance
                                FROM [citypark].[dbo].[StreetParking]
                                WHERE @NOW.STDistance(geography::Point(latitude,longitude,4326))<={2}                            
-                               and datediff(mi,Date,CURRENT_TIMESTAMP)< 2 and Released = 1 order by Distance asc", latitude, longitude, distance);
+                               and datediff(mi,Date,CURRENT_TIMESTAMP)< 2 and Released = 1 order by Distance asc", latitude, longitude, distance/*in meter*/);
                     cmd.Connection = con;
                     cmd.CommandText = loginSql;
                     con.Open();
                     SqlDataReader sqlDataReader = cmd.ExecuteReader();
-                    List<Parking> parkingList = new List<Parking>();
+                    
                     if (sqlDataReader.HasRows)
                     {
                         while (sqlDataReader.Read())
@@ -1272,23 +1341,6 @@ namespace CityParkWS
                             parkingList.Add(parking);
                         }
                     }                    
-                    if (demoMode)
-                    {
-                        Random random = new Random();
-                        for (int i = 0; i < 30; i++)
-                        {
-                            float lat = random.Next(661359,932738);
-                            lat = lat / 10000000f;
-                            lat += 32f;
-                            float lng = random.Next(7537129, 7737129);
-                            lng = lng / 10000000f;
-                            lng += 34f;
-                            Parking p = new Parking();
-                            p.Latitude = lat+"";
-                            p.Longitude = lng+"";
-                            parkingList.Add(p);
-                        }
-                    }
                     return parkingList;
                 }
             }
@@ -1607,14 +1659,6 @@ namespace CityParkWS
             return segmentSessionMap.getSearchParkingSegment(sps);
         }
 
-        /**
-         * SWT = FP * SegmentUsersCount / SegmentParkingRate
-         * */
-        private float calcSegmentWaitTime(int userCount, int parkingRate, float parkingWaitTimeFactor)
-        {
-            return parkingWaitTimeFactor * userCount / parkingRate;
-        }
-
         private int getSegmentUsersCount(SearchParkingSegment searchParkingSegment)
         {
             return segmentSessionMap.countSegmentUsers(searchParkingSegment);
@@ -1657,7 +1701,7 @@ namespace CityParkWS
             segmentSessionMap.cleanTimeOutSegments();
         }
 
-        private Dictionary<String,float> getAllSegmentsInRange(float lat,float lon)
+        private Dictionary<String,float> getAllSegmentsInRange(float lat,float lon,float distanceKm)
         {
             //todo: make it better SQL
             Dictionary<String, float> segmentInRange = new Dictionary<String, float>();
@@ -1673,7 +1717,7 @@ namespace CityParkWS
                             + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) as distance
                             FROM [CITYPARK].[dbo].[StreetSegmentLine] a
                             where SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
-                            + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) < 0.5", lat, lon);
+                            + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) < {2}", lat, lon,distanceKm);
                     cmd.Connection = con;
                     cmd.CommandText = sql;
                     con.Open();
