@@ -378,6 +378,7 @@ namespace CityParkWS
                             parking.FirstHourPrice = sqlDataReader["firstHourPrice"].ToString();
                             parking.ExtraQuarterPrice = sqlDataReader["extraQuarterPrice"].ToString();
                             parking.AllDayPrice = sqlDataReader["allDayPrice"].ToString();
+                            parking.Toshav = sqlDataReader["toshav"].ToString();
                             parkingList.Add(parking);
                         }
                     }
@@ -1196,7 +1197,7 @@ namespace CityParkWS
                             else
                             {
                                 float SWT = segmentSessionMap.getSearchParkingSegment(ssl.SegmentUnique).SWT;
-                                if (SWT >= 0)
+                                if (SWT >= 0 || demo)
                                 {
                                     float USWT = -1;
                                     if (!demo && segmentDistance.ContainsKey(ssl.SegmentUnique))
