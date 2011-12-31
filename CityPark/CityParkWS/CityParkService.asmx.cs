@@ -816,7 +816,8 @@ namespace CityParkWS
             try
             {
                 SearchParkingSegment searchParkingSegment = getParkingSegment(latitude, longitude);
-                reportStreetParkingStatus(latitude, longitude, false, searchParkingSegment.SegmentUnique);            
+                reportStreetParkingStatus(latitude, longitude, false, searchParkingSegment.SegmentUnique);      
+                //todo: add data to algo table
                 //Algo:
                 calcSWT(searchParkingSegment, calcSegmentParkingRate(searchParkingSegment), RADIUS);
                 userStartParkingEvent(sessionId);
@@ -911,7 +912,32 @@ namespace CityParkWS
                                    "401",
                                    "reportStartPayment");
             }
-            SessionData sd = sessionMap[sessionId].sessionData;
+            SessionData sd = sessionMap[sessionId].sessionData;            
+            try
+            {
+                SearchParkingSegment sps = getParkingSegment(latitude, longitude);
+                String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
+
+                using (SqlConnection con = new SqlConnection(conStr))
+                {
+                    {
+                        using (SqlCommand updateCmd = new SqlCommand())
+                        {
+
+                            String updateSql = String.Format(
+                                @"UPDATE [citypark].[dbo].[Segment] SET Parking = 'PAID' WHERE SegmentUnique = '{0}'",
+                                sps.SegmentUnique);
+                            updateCmd.Connection = con;
+                            updateCmd.CommandText = updateSql;
+                            updateCmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+            }
             return reportPayment(sessionMap[sessionId].sessionData.UserId, paymentProviderName, latitude, longitude, operationStatus, START_PAYMENT, DateTime.Now);
             
         }
