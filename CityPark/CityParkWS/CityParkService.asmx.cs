@@ -919,8 +919,7 @@ namespace CityParkWS
                 String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
 
                 using (SqlConnection con = new SqlConnection(conStr))
-                {
-                    {
+                { 
                         using (SqlCommand updateCmd = new SqlCommand())
                         {
 
@@ -929,9 +928,10 @@ namespace CityParkWS
                                 sps.SegmentUnique);
                             updateCmd.Connection = con;
                             updateCmd.CommandText = updateSql;
+                            con.Open();
                             updateCmd.ExecuteNonQuery();
                         }
-                    }
+                    
                 }
             }
             catch (Exception ex)
@@ -992,11 +992,11 @@ namespace CityParkWS
                         VALUES
                            ({0}
                            ,'{1}'
-                           ,'{2}'
+                           ,CURRENT_TIMESTAMP
                            ,{3}
                            ,{4}
                            ,'{5}'
-                           ,'{6}')",userId,paymentProvider,currentTime,latitude,longitude,operation,status);
+                           ,'{6}')", userId,paymentProvider,currentTime,latitude,longitude,operation,status);
                         cmd.Connection = con;
                         cmd.CommandText = insertSql;
                         con.Open();
