@@ -818,6 +818,44 @@ namespace CityParkWS
                 SearchParkingSegment searchParkingSegment = getParkingSegment(latitude, longitude);
                 reportStreetParkingStatus(latitude, longitude, false, searchParkingSegment.SegmentUnique);      
                 //todo: add data to algo table
+                try
+                {
+                    int count = calcSegmentParkingRate(searchParkingSegment);
+                    String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
+                    using (SqlConnection con = new SqlConnection(conStr))
+                    {
+                        using (SqlCommand cmd = new SqlCommand())
+                        {
+                          
+                            DateTime now = DateTime.Now;
+                            String insertSql = String.Format(@"INSERT INTO [CITYPARK].[dbo].[AlgoData]
+                                        ([SegmentUnique]
+                                        ,[Latitude]
+                                        ,[Longitude]
+                                        ,[Day]
+                                        ,[Hour]
+                                        ,[Count]
+                                        ,[ReportDate])
+                                    VALUES
+                                        ('{0}'
+                                        ,'{1}'
+                                        ,'{2}'
+                                        ,{3}
+                                        ,{4}
+                                        ,{5}
+                                        ,CURRENT_TIMESTAMP)", searchParkingSegment.SegmentUnique, latitude, longitude, (int)now.DayOfWeek/*0 for Sunday*/, now.Hour, count);
+
+                            cmd.Connection = con;
+                            cmd.CommandText = insertSql;
+                            con.Open();
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error ("reportStreetParkingByLat..Long.. add to algoData table failed, " + ex.Message);
+                }
                 //Algo:
                 calcSWT(searchParkingSegment, calcSegmentParkingRate(searchParkingSegment), RADIUS);
                 userStartParkingEvent(sessionId);
