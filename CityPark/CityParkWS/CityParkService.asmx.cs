@@ -209,6 +209,9 @@ namespace CityParkWS
                             parking.Underground = sqlDataReader["Underground"].ToString();
                             parking.Nolimit = sqlDataReader["Nolimit"].ToString();
                             parking.Roof = sqlDataReader["Roof"].ToString();
+                            parking.Criple = sqlDataReader["Criple"].ToString();
+                            parking.Toshav = sqlDataReader["toshav"].ToString();
+                            parking.Jenion = sqlDataReader["jenion"].ToString();
                             parking.FirstHourPrice = sqlDataReader["firstHourPrice"].ToString();
                             parking.ExtraQuarterPrice = sqlDataReader["extraQuarterPrice"].ToString();
                             parking.AllDayPrice = sqlDataReader["allDayPrice"].ToString();
@@ -375,10 +378,13 @@ namespace CityParkWS
                             parking.Underground = sqlDataReader["Underground"].ToString();
                             parking.Nolimit = sqlDataReader["Nolimit"].ToString();
                             parking.Roof = sqlDataReader["Roof"].ToString();
+                            parking.Criple = sqlDataReader["Criple"].ToString();
+                            parking.Toshav = sqlDataReader["toshav"].ToString();
+                            parking.Jenion = sqlDataReader["jenion"].ToString();
                             parking.FirstHourPrice = sqlDataReader["firstHourPrice"].ToString();
                             parking.ExtraQuarterPrice = sqlDataReader["extraQuarterPrice"].ToString();
                             parking.AllDayPrice = sqlDataReader["allDayPrice"].ToString();
-                            parking.Toshav = sqlDataReader["toshav"].ToString();
+                            
                             parkingList.Add(parking);
                         }
                     }
@@ -447,6 +453,9 @@ namespace CityParkWS
                             parking.Underground = sqlDataReader["Underground"].ToString();
                             parking.Nolimit = sqlDataReader["Nolimit"].ToString();
                             parking.Roof = sqlDataReader["Roof"].ToString();
+                            parking.Criple = sqlDataReader["Criple"].ToString();
+                            parking.Toshav = sqlDataReader["toshav"].ToString();
+                            parking.Jenion = sqlDataReader["jenion"].ToString();
                             parking.FirstHourPrice = sqlDataReader["firstHourPrice"].ToString();
                             parking.ExtraQuarterPrice = sqlDataReader["extraQuarterPrice"].ToString();
                             parking.AllDayPrice = sqlDataReader["allDayPrice"].ToString();
