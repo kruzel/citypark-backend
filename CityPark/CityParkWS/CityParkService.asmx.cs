@@ -1148,10 +1148,12 @@ namespace CityParkWS
                     cmd.Connection = con;
                     cmd.CommandText = searchSql;
                     con.Open();
+                    Boolean demo = userDemo.Equals(sessionMap[sessionId].sessionData.UserName);
                     SqlDataReader sqlDataReader = cmd.ExecuteReader();
                     List<Parking> parkingList = new List<Parking>();
                     if (sqlDataReader.HasRows)
                     {
+                        Random random = new Random();
                         while (sqlDataReader.Read())
                         {
                             String parkingID = sqlDataReader["parkingID"].ToString();
@@ -1178,6 +1180,14 @@ namespace CityParkWS
                             parking.FirstHourPrice = sqlDataReader["firstHourPrice"].ToString();
                             parking.ExtraQuarterPrice = sqlDataReader["extraQuarterPrice"].ToString();
                             parking.AllDayPrice = sqlDataReader["allDayPrice"].ToString();
+                            if (demo)
+                            {
+                                parking.Current_Pnuyot = random.Next(-1, 10)+"";
+                                if (parking.FirstHourPrice == "" || parking.FirstHourPrice == "NULL" || parking.FirstHourPrice == "0")
+                                {
+                                    parking.FirstHourPrice = random.Next(20,30)+"";
+                                }
+                            }
                             parkingList.Add(parking);
                         }
                     }
