@@ -1194,7 +1194,7 @@ namespace CityParkWS
                                 parking.Current_Pnuyot = random.Next(-1, 10)+"";
                                 if (parking.FirstHourPrice == "" || parking.FirstHourPrice == "NULL" || parking.FirstHourPrice == "0")
                                 {
-                                    parking.FirstHourPrice = random.Next(20,30)+"";
+                                    parking.FirstHourPrice = "25";
                                 }
                             }
                             parkingList.Add(parking);
