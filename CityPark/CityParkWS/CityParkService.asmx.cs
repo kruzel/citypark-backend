@@ -134,28 +134,27 @@ namespace CityParkWS
                                     "401",
                                     "findAllGarageParkingDataByLatitudeLongitude");
             }
+            Boolean demo = userDemo.Equals(sessionMap[sessionId].sessionData.UserName);
+            Random random = null;
+            if (demo)
+            {
+                random = new Random();
+            }
             String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
             using (SqlConnection con = new SqlConnection(conStr))
             {
                 using (SqlCommand cmd = new SqlCommand())
                 {
-                    String searchSql = String.Format(
+                    /*String searchSql = String.Format(
                      @"DECLARE
                         @NOW geography 
                         SET
                         @NOW = geography::Point({0}, {1},4326) 
                         SELECT
-                        top 200.*,
-
-                        b.firstHourPrice, 
-                        b.extraQuarterPrice, 
-                        b.allDayPrice, 
+                        top 200.*, b.firstHourPrice, b.extraQuarterPrice, b.allDayPrice, 
                         @NOW.STDistance(geography::Point(latitude,longitude,4326)) as Distance 
-                        FROM
-                        CITYPARK.[dbo].[Parking] as a, 
-                        CITYPARK.[dbo].[parking_shortrange] b 
+                        FROM CITYPARK.[dbo].[Parking] as a, CITYPARK.[dbo].[parking_shortrange] b 
                         where a.parkingID=b.parkId 
-
                         and DATEPART(dw, GETDATE()) between 
                         Case when fromDay='א' then 1
                         when fromDay='ב' then 2
@@ -176,9 +175,46 @@ namespace CityParkWS
                         End
 
                         and DATENAME(hour, GETDATE())>=CAST(b.fromHour AS int)and DATENAME(hour, GETDATE())<=CAST(b.toHour AS int)
-                        and Heniontype='חניון'
-                        and @NOW.STDistance(geography::Point(latitude,longitude,4326))<={2}
-                        order by Distance asc", latitude, longitude, distance);// and Current_Pnuyot>0 and isnumeric (b.firsthourprice)=1
+                        and Heniontype='חניון' and @NOW.STDistance(geography::Point(latitude,longitude,4326))<={2}
+                        order by Distance asc", latitude, longitude, distance);// and Current_Pnuyot>0 and isnumeric (b.firsthourprice)=1*/
+                    String searchSql = String.Format(
+                     @"DECLARE  @USER geography = geography::Point({0}, {1},4326) 
+                            SELECT top 200.*,
+                            CASE WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())< Weekday_OneTimeHour 
+		                    THEN (select WeekDay_FirstHourPrice)
+                            WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
+			                    THEN (select Weekday_OneTimePrice)
+                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())<Friday_OneTimeHour
+		                        THEN (select Friday_FirstHourPrice)
+                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())>=Friday_OneTimeHour and Friday_OneTimeHour>1
+			                    THEN (select Friday_OneTimePrice)
+                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())<Saturday_FirstHourPrice
+			                    THEN (select Saturday_FirstHourPrice)
+                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
+			                    THEN (select Saturday_OneTimePrice)
+                           END AS FirstHourPrice,
+       
+                           CASE WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())< Weekday_OneTimeHour
+		                    THEN (select WeekDay_extraQuarterPrice)
+                            WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
+			                    THEN 0
+                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())<Friday_OneTimeHour
+		                        THEN (select Friday_extraQuarterPrice)
+                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())>=Friday_OneTimeHour and Friday_OneTimeHour>1
+			                    THEN 0
+                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())<Saturday_FirstHourPrice
+			                    THEN (select Saturday_extraQuarterPrice)
+                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
+			                    THEN 0
+                            END AS extraQuarterPrice,
+       
+                             @USER.STDistance(geography::Point(latitude,longitude,4326)) as Distance,
+                             allDayPrice
+        
+                           FROM [CITYPARK].[dbo].[Parking]
+			                    WHERE Heniontype='חניון'
+                                and @USER.STDistance(geography::Point(latitude,longitude,4326))<{2}
+                                order by Distance,vip asc", latitude, longitude, distance);// and Current_Pnuyot>0 and isnumeric (b.firsthourprice)=1
                     cmd.Connection = con;
                     cmd.CommandText = searchSql;
                     con.Open();
@@ -215,6 +251,14 @@ namespace CityParkWS
                             parking.FirstHourPrice = sqlDataReader["firstHourPrice"].ToString();
                             parking.ExtraQuarterPrice = sqlDataReader["extraQuarterPrice"].ToString();
                             parking.AllDayPrice = sqlDataReader["allDayPrice"].ToString();
+                            if (demo)
+                            {
+                                parking.Current_Pnuyot = random.Next(-1, 10) + "";
+                                if (parking.FirstHourPrice == "" || parking.FirstHourPrice == "NULL" || parking.FirstHourPrice == "0")
+                                {
+                                    parking.FirstHourPrice = "25";
+                                }
+                            }
                             parkingList.Add(parking);
                         }
                     }
@@ -312,43 +356,43 @@ namespace CityParkWS
                 {
                     String paramsSql = Utils.getParkingParams(payment, nolimit, withlock, tatkarkait, roof, toshav, criple);
                     String loginSql = String.Format(
-                        @"DECLARE @NOW geography
-                            --User Location Coordinates
-                            SET @NOW = geography::Point({0}, {1},4326)
-                            -- Real time user location after geocoded (address to coordinates)
-                            SELECT top 1000 *,
-                            b.firstHourPrice, 
-							b.extraQuarterPrice, 
-							b.allDayPrice, 
-                            @NOW.STDistance(geography::Point(latitude,longitude,4326)) as Distance
-                            FROM 
-                            CITYPARK.[dbo].[Parking] as a, 
-							CITYPARK.[dbo].[parking_shortrange] b                            
-                            WHERE 
-                            a.parkingID=b.parkId 
-							and DATEPART(dw, GETDATE()) between 
-							Case when fromDay='א' then 1
-							when fromDay='ב' then 2
-							when fromDay='ג' then 3
-							when fromDay='ד' then 4
-							when fromDay='ה' then 5
-							when fromDay='ו' then 6
-							when fromDay='שבת' then 7
-							End 
-
-							and Case when toDay='א' then 1
-							when toDay='ב' then 2
-							when toDay='ג' then 3
-							when toDay='ד' then 4
-							when toDay='ה' then 5
-							when toDay='ו' then 6
-							when toDay='שבת' then 7
-							End
-
-							and DATENAME(hour, GETDATE())>=CAST(b.fromHour AS int)and DATENAME(hour, GETDATE())<=CAST(b.toHour AS int)
-							and Heniontype='חניון'
-							and @NOW.STDistance(geography::Point(latitude,longitude,4326))<={2}{3}
-							order by Distance asc", latitude, longitude, distance, paramsSql);//note: "and Current_Pnuyot>0" and isnumeric (b.firsthourprice)=1 was removed
+                     @"DECLARE  @USER geography = geography::Point({0}, {1},4326) 
+                            SELECT top 200.*,
+                            CASE WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())< Weekday_OneTimeHour 
+		                    THEN (select WeekDay_FirstHourPrice)
+                            WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
+			                    THEN (select Weekday_OneTimePrice)
+                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())<Friday_OneTimeHour
+		                        THEN (select Friday_FirstHourPrice)
+                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())>=Friday_OneTimeHour and Friday_OneTimeHour>1
+			                    THEN (select Friday_OneTimePrice)
+                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())<Saturday_FirstHourPrice
+			                    THEN (select Saturday_FirstHourPrice)
+                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
+			                    THEN (select Saturday_OneTimePrice)
+                           END AS FirstHourPrice,
+       
+                           CASE WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())< Weekday_OneTimeHour
+		                    THEN (select WeekDay_extraQuarterPrice)
+                            WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
+			                    THEN 0
+                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())<Friday_OneTimeHour
+		                        THEN (select Friday_extraQuarterPrice)
+                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())>=Friday_OneTimeHour and Friday_OneTimeHour>1
+			                    THEN 0
+                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())<Saturday_FirstHourPrice
+			                    THEN (select Saturday_extraQuarterPrice)
+                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
+			                    THEN 0
+                            END AS extraQuarterPrice,
+       
+                             @USER.STDistance(geography::Point(latitude,longitude,4326)) as Distance,
+                             allDayPrice
+        
+                           FROM [CITYPARK].[dbo].[Parking]
+			                    WHERE Heniontype='חניון'
+                                and @USER.STDistance(geography::Point(latitude,longitude,4326))<{2}{3}
+                                order by Distance,vip asc", latitude, longitude, distance, paramsSql);//note: "and Current_Pnuyot>0" and isnumeric (b.firsthourprice)=1 was removed
                        
                     cmd.Connection = con;
                     cmd.CommandText = loginSql;
@@ -415,7 +459,7 @@ namespace CityParkWS
             {
                 using (SqlCommand cmd = new SqlCommand())
                 {
-                    String fetchDataSql = String.Format(
+                    /*String fetchDataSql = String.Format(
                      @"SELECT *,
                         priceTbl.firstHourPrice, 
                         priceTbl.extraQuarterPrice, 
@@ -423,7 +467,40 @@ namespace CityParkWS
                         FROM
                         CITYPARK.[dbo].[Parking] as parkingTbl, 
                         CITYPARK.[dbo].[parking_shortrange] as priceTbl 
-                        where parkingTbl.parkingID='{0}' and parkingTbl.parkingID=priceTbl.parkId", parkingId);
+                        where parkingTbl.parkingID='{0}' and parkingTbl.parkingID=priceTbl.parkId", parkingId); //This is the old SQL*/
+
+                    String fetchDataSql = String.Format(
+                        @"SELECT top 1.*,
+                            CASE WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())< Weekday_OneTimeHour 
+		                    THEN (select WeekDay_FirstHourPrice)
+                            WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
+			                    THEN (select Weekday_OneTimePrice)
+                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())<Friday_OneTimeHour
+		                        THEN (select Friday_FirstHourPrice)
+                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())>=Friday_OneTimeHour and Friday_OneTimeHour>1
+			                    THEN (select Friday_OneTimePrice)
+                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())<Saturday_FirstHourPrice
+			                    THEN (select Saturday_FirstHourPrice)
+                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
+			                    THEN (select Saturday_OneTimePrice)
+                           END AS FirstHourPrice,
+       
+                           CASE WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())< Weekday_OneTimeHour
+		                    THEN (select WeekDay_extraQuarterPrice)
+                            WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
+			                    THEN 0
+                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())<Friday_OneTimeHour
+		                        THEN (select Friday_extraQuarterPrice)
+                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())>=Friday_OneTimeHour and Friday_OneTimeHour>1
+			                    THEN 0
+                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())<Saturday_FirstHourPrice
+			                    THEN (select Saturday_extraQuarterPrice)
+                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
+			                    THEN 0
+                            END AS extraQuarterPrice,
+                            allDayPrice        
+                           FROM [CITYPARK].[dbo].[Parking]
+			                    WHERE parkingID ='{0}'", parkingId);
                     cmd.Connection = con;
                     cmd.CommandText = fetchDataSql;
                     con.Open();
@@ -1114,46 +1191,45 @@ namespace CityParkWS
             {
                 using (SqlCommand cmd = new SqlCommand())
                 {
+                    //see findAllGarageParkingDataByLatitudeLongitude commented sql for the old sql logic
                     String searchSql = String.Format(
-                     @"DECLARE
-                        @NOW geography 
-                        SET
-                        @NOW = geography::Point({0}, {1},4326) 
-                        SELECT
-                        top 200.*,
-
-                        b.firstHourPrice, 
-                        b.extraQuarterPrice, 
-                        b.allDayPrice, 
-                        @NOW.STDistance(geography::Point(latitude,longitude,4326)) as Distance 
-                        FROM
-                        CITYPARK.[dbo].[Parking] as a, 
-                        CITYPARK.[dbo].[parking_shortrange] b 
-                        where a.parkingID=b.parkId 
-
-                        and DATEPART(dw, GETDATE()) between 
-                        Case when fromDay='א' then 1
-                        when fromDay='ב' then 2
-                        when fromDay='ג' then 3
-                        when fromDay='ד' then 4
-                        when fromDay='ה' then 5
-                        when fromDay='ו' then 6
-                        when fromDay='שבת' then 7
-                        End 
-
-                        and Case when toDay='א' then 1
-                        when toDay='ב' then 2
-                        when toDay='ג' then 3
-                        when toDay='ד' then 4
-                        when toDay='ה' then 5
-                        when toDay='ו' then 6
-                        when toDay='שבת' then 7
-                        End
-
-                        and DATENAME(hour, GETDATE())>=CAST(b.fromHour AS int)and DATENAME(hour, GETDATE())<=CAST(b.toHour AS int)
-                        and Heniontype='חניון'
-                        and @NOW.STDistance(geography::Point(latitude,longitude,4326))<={2}
-                        order by Distance asc", latitude, longitude, distance);// and Current_Pnuyot>0 and isnumeric (b.firsthourprice)=1
+                     @"DECLARE  @USER geography = geography::Point({0}, {1},4326) 
+                            SELECT top 200.*,
+                            CASE WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())< Weekday_OneTimeHour 
+		                    THEN (select WeekDay_FirstHourPrice)
+                            WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
+			                    THEN (select Weekday_OneTimePrice)
+                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())<Friday_OneTimeHour
+		                        THEN (select Friday_FirstHourPrice)
+                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())>=Friday_OneTimeHour and Friday_OneTimeHour>1
+			                    THEN (select Friday_OneTimePrice)
+                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())<Saturday_FirstHourPrice
+			                    THEN (select Saturday_FirstHourPrice)
+                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
+			                    THEN (select Saturday_OneTimePrice)
+                           END AS FirstHourPrice,
+       
+                           CASE WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())< Weekday_OneTimeHour
+		                    THEN (select WeekDay_extraQuarterPrice)
+                            WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
+			                    THEN 0
+                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())<Friday_OneTimeHour
+		                        THEN (select Friday_extraQuarterPrice)
+                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())>=Friday_OneTimeHour and Friday_OneTimeHour>1
+			                    THEN 0
+                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())<Saturday_FirstHourPrice
+			                    THEN (select Saturday_extraQuarterPrice)
+                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
+			                    THEN 0
+                            END AS extraQuarterPrice,
+       
+                             @USER.STDistance(geography::Point(latitude,longitude,4326)) as Distance,
+                             allDayPrice
+        
+                           FROM [CITYPARK].[dbo].[Parking]
+			                    WHERE Heniontype='חניון'
+                                and @USER.STDistance(geography::Point(latitude,longitude,4326))<{2}
+                                order by Distance,vip asc", latitude, longitude, distance);
                     cmd.Connection = con;
                     cmd.CommandText = searchSql;
                     con.Open();
