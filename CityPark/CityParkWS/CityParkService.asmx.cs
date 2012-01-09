@@ -179,32 +179,34 @@ namespace CityParkWS
                         order by Distance asc", latitude, longitude, distance);// and Current_Pnuyot>0 and isnumeric (b.firsthourprice)=1*/
                     String searchSql = String.Format(
                      @"DECLARE  @USER geography = geography::Point({0}, {1},4326) 
+                       DECLARE @Date DATETIME 
+                        SET @Date = GETDATE()
                             SELECT top 200.*,
-                            CASE WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())< Weekday_OneTimeHour 
+                            CASE WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)< Weekday_OneTimeHour 
 		                    THEN (select WeekDay_FirstHourPrice)
-                            WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
+                            WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
 			                    THEN (select Weekday_OneTimePrice)
-                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())<Friday_OneTimeHour
+                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)<Friday_OneTimeHour
 		                        THEN (select Friday_FirstHourPrice)
-                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())>=Friday_OneTimeHour and Friday_OneTimeHour>1
+                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)>=Friday_OneTimeHour and Friday_OneTimeHour>1
 			                    THEN (select Friday_OneTimePrice)
-                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())<Saturday_FirstHourPrice
+                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)<Saturday_FirstHourPrice
 			                    THEN (select Saturday_FirstHourPrice)
-                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
+                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
 			                    THEN (select Saturday_OneTimePrice)
                            END AS FirstHourPrice,
        
-                           CASE WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())< Weekday_OneTimeHour
+                           CASE WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)< Weekday_OneTimeHour
 		                    THEN (select WeekDay_extraQuarterPrice)
-                            WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
+                            WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
 			                    THEN 0
-                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())<Friday_OneTimeHour
+                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)<Friday_OneTimeHour
 		                        THEN (select Friday_extraQuarterPrice)
-                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())>=Friday_OneTimeHour and Friday_OneTimeHour>1
+                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)>=Friday_OneTimeHour and Friday_OneTimeHour>1
 			                    THEN 0
-                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())<Saturday_FirstHourPrice
+                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)<Saturday_FirstHourPrice
 			                    THEN (select Saturday_extraQuarterPrice)
-                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
+                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
 			                    THEN 0
                             END AS extraQuarterPrice,
        
@@ -218,53 +220,55 @@ namespace CityParkWS
                     cmd.Connection = con;
                     cmd.CommandText = searchSql;
                     con.Open();
-                    SqlDataReader sqlDataReader = cmd.ExecuteReader();
                     List<Parking> parkingList = new List<Parking>();
-                    if (sqlDataReader.HasRows)
-                    {
-                        while (sqlDataReader.Read())
+                    using (SqlDataReader sqlDataReader = cmd.ExecuteReader())
+                    {                        
+                        if (sqlDataReader.HasRows)
                         {
-                            String parkingID = sqlDataReader["parkingID"].ToString();
-                            String qHouseNumber = sqlDataReader["house_number"].ToString();
-                            if ("NULL".Equals(qHouseNumber) || "".Equals(qHouseNumber.Trim())) qHouseNumber = "0";
-                            int parkingIdInt = Convert.ToInt32(parkingID);
-                            int houseNumInt = Convert.ToInt32(qHouseNumber);
-                            Parking parking = new Parking(parkingIdInt,
-                                sqlDataReader["name"].ToString(),
-                                sqlDataReader["City"].ToString(),
-                                sqlDataReader["street_name"].ToString(),
-                                houseNumInt,
-                                sqlDataReader["latitude"].ToString(),
-                                sqlDataReader["longitude"].ToString());
-                            parking.Comment = sqlDataReader["comment"].ToString();
-                            parking.Coupon_text = sqlDataReader["coupon_text"].ToString();
-                            parking.Current_Pnuyot = sqlDataReader["current_Pnuyot"].ToString();
-                            parking.Image = sqlDataReader["image"].ToString();
-                            parking.Image2 = sqlDataReader["image2"].ToString();
-                            parking.Withlock = sqlDataReader["Withlock"].ToString();
-                            parking.Underground = sqlDataReader["Underground"].ToString();
-                            parking.Nolimit = sqlDataReader["Nolimit"].ToString();
-                            parking.Roof = sqlDataReader["Roof"].ToString();
-                            parking.Criple = sqlDataReader["Criple"].ToString();
-                            parking.Toshav = sqlDataReader["toshav"].ToString();
-                            parking.Jenion = sqlDataReader["jenion"].ToString();
-                            parking.FirstHourPrice = sqlDataReader["firstHourPrice"].ToString();
-                            parking.ExtraQuarterPrice = sqlDataReader["extraQuarterPrice"].ToString();
-                            parking.AllDayPrice = sqlDataReader["allDayPrice"].ToString();
-                            if (demo)
+                            while (sqlDataReader.Read())
                             {
-                                parking.Current_Pnuyot = random.Next(-1, 10) + "";
-                                if (parking.FirstHourPrice == "" || parking.FirstHourPrice == "NULL" || parking.FirstHourPrice == "0")
+                                String parkingID = sqlDataReader["parkingID"].ToString();
+                                String qHouseNumber = sqlDataReader["house_number"].ToString();
+                                if ("NULL".Equals(qHouseNumber) || "".Equals(qHouseNumber.Trim())) qHouseNumber = "0";
+                                int parkingIdInt = Convert.ToInt32(parkingID);
+                                int houseNumInt = Convert.ToInt32(qHouseNumber);
+                                Parking parking = new Parking(parkingIdInt,
+                                    sqlDataReader["name"].ToString(),
+                                    sqlDataReader["City"].ToString(),
+                                    sqlDataReader["street_name"].ToString(),
+                                    houseNumInt,
+                                    sqlDataReader["latitude"].ToString(),
+                                    sqlDataReader["longitude"].ToString());
+                                parking.Comment = sqlDataReader["comment"].ToString();
+                                parking.Coupon_text = sqlDataReader["coupon_text"].ToString();
+                                parking.Current_Pnuyot = sqlDataReader["current_Pnuyot"].ToString();
+                                parking.Image = sqlDataReader["image"].ToString();
+                                parking.Image2 = sqlDataReader["image2"].ToString();
+                                parking.Withlock = sqlDataReader["Withlock"].ToString();
+                                parking.Underground = sqlDataReader["Underground"].ToString();
+                                parking.Nolimit = sqlDataReader["Nolimit"].ToString();
+                                parking.Roof = sqlDataReader["Roof"].ToString();
+                                parking.Criple = sqlDataReader["Criple"].ToString();
+                                parking.Toshav = sqlDataReader["toshav"].ToString();
+                                parking.Jenion = sqlDataReader["jenion"].ToString();
+                                parking.FirstHourPrice = sqlDataReader["firstHourPrice"].ToString();
+                                parking.ExtraQuarterPrice = sqlDataReader["extraQuarterPrice"].ToString();
+                                parking.AllDayPrice = sqlDataReader["allDayPrice"].ToString();
+                                if (demo)
                                 {
-                                    parking.FirstHourPrice = "25";
+                                    parking.Current_Pnuyot = random.Next(-1, 10) + "";
+                                    if (parking.FirstHourPrice == "" || parking.FirstHourPrice == "NULL" || parking.FirstHourPrice == "0")
+                                    {
+                                        parking.FirstHourPrice = "25";
+                                    }
                                 }
+                                parkingList.Add(parking);
                             }
-                            parkingList.Add(parking);
                         }
-                    }
-                    else
-                    {
-                        return null;
+                        else
+                        {
+                            return null;
+                        }
                     }
                     return parkingList;
                 }
@@ -288,6 +292,7 @@ namespace CityParkWS
             {
                 using (SqlCommand cmd = new SqlCommand())
                 {
+                    
                     String subTypeRewrite = "";
                     if (!"".Equals(subType))
                     {
@@ -306,31 +311,33 @@ namespace CityParkWS
                     cmd.Connection = con;
                     cmd.CommandText = loginSql;
                     con.Open();
-                    SqlDataReader sqlDataReader = cmd.ExecuteReader();
                     List<POI> poiList = new List<POI>();
-                    if (sqlDataReader.HasRows)
+                    using (SqlDataReader sqlDataReader = cmd.ExecuteReader())
                     {
-                        while (sqlDataReader.Read())
+                        if (sqlDataReader.HasRows)
                         {
-                            POI poi = new POI();
-                            poi.Type = sqlDataReader["type"].ToString();
-                            poi.SubType = sqlDataReader["sub_type"].ToString();
-                            poi.Name = sqlDataReader["name"].ToString();
-                            poi.City = sqlDataReader["city"].ToString();
-                            poi.StreetName = sqlDataReader["street_name"].ToString();
-                            String houseNum = sqlDataReader["house_number"].ToString();
-                            if ("NULL".Equals(houseNum)) houseNum = "0";
-                            poi.HouseNumber = Convert.ToInt32(houseNum);
-                            poi.Comment = sqlDataReader["comment"].ToString();
-                            poi.Image = sqlDataReader["image"].ToString();
-                            poi.Longitude = sqlDataReader["longitude"].ToString();
-                            poi.Latitude = sqlDataReader["latitude"].ToString();
-                            poiList.Add(poi);
+                            while (sqlDataReader.Read())
+                            {
+                                POI poi = new POI();
+                                poi.Type = sqlDataReader["type"].ToString();
+                                poi.SubType = sqlDataReader["sub_type"].ToString();
+                                poi.Name = sqlDataReader["name"].ToString();
+                                poi.City = sqlDataReader["city"].ToString();
+                                poi.StreetName = sqlDataReader["street_name"].ToString();
+                                String houseNum = sqlDataReader["house_number"].ToString();
+                                if ("NULL".Equals(houseNum)) houseNum = "0";
+                                poi.HouseNumber = Convert.ToInt32(houseNum);
+                                poi.Comment = sqlDataReader["comment"].ToString();
+                                poi.Image = sqlDataReader["image"].ToString();
+                                poi.Longitude = sqlDataReader["longitude"].ToString();
+                                poi.Latitude = sqlDataReader["latitude"].ToString();
+                                poiList.Add(poi);
+                            }
                         }
-                    }
-                    else
-                    {
-                        return null;
+                        else
+                        {
+                            return null;
+                        }
                     }
                     return poiList;
                 }
@@ -357,32 +364,34 @@ namespace CityParkWS
                     String paramsSql = Utils.getParkingParams(payment, nolimit, withlock, tatkarkait, roof, toshav, criple);
                     String loginSql = String.Format(
                      @"DECLARE  @USER geography = geography::Point({0}, {1},4326) 
+                       DECLARE @Date DATETIME
+                        SET @Date = GETDATE()
                             SELECT top 200.*,
-                            CASE WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())< Weekday_OneTimeHour 
+                            CASE WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)< Weekday_OneTimeHour 
 		                    THEN (select WeekDay_FirstHourPrice)
-                            WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
+                            WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
 			                    THEN (select Weekday_OneTimePrice)
-                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())<Friday_OneTimeHour
+                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)<Friday_OneTimeHour
 		                        THEN (select Friday_FirstHourPrice)
-                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())>=Friday_OneTimeHour and Friday_OneTimeHour>1
+                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)>=Friday_OneTimeHour and Friday_OneTimeHour>1
 			                    THEN (select Friday_OneTimePrice)
-                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())<Saturday_FirstHourPrice
+                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)<Saturday_FirstHourPrice
 			                    THEN (select Saturday_FirstHourPrice)
-                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
+                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
 			                    THEN (select Saturday_OneTimePrice)
                            END AS FirstHourPrice,
        
-                           CASE WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())< Weekday_OneTimeHour
+                           CASE WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)< Weekday_OneTimeHour
 		                    THEN (select WeekDay_extraQuarterPrice)
-                            WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
+                            WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
 			                    THEN 0
-                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())<Friday_OneTimeHour
+                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)<Friday_OneTimeHour
 		                        THEN (select Friday_extraQuarterPrice)
-                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())>=Friday_OneTimeHour and Friday_OneTimeHour>1
+                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)>=Friday_OneTimeHour and Friday_OneTimeHour>1
 			                    THEN 0
-                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())<Saturday_FirstHourPrice
+                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)<Saturday_FirstHourPrice
 			                    THEN (select Saturday_extraQuarterPrice)
-                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
+                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
 			                    THEN 0
                             END AS extraQuarterPrice,
        
@@ -397,44 +406,47 @@ namespace CityParkWS
                     cmd.Connection = con;
                     cmd.CommandText = loginSql;
                     con.Open();
-                    SqlDataReader sqlDataReader = cmd.ExecuteReader();
+                    
                     List<Parking> parkingList = new List<Parking>();
-                    if (sqlDataReader.HasRows)
+                    using (SqlDataReader sqlDataReader = cmd.ExecuteReader())
                     {
-                        while (sqlDataReader.Read())
+                        if (sqlDataReader.HasRows)
                         {
-                            String parkingID = sqlDataReader["parkingID"].ToString();
-                            String qHouseNumber = sqlDataReader["house_number"].ToString();
-                            if ("NULL".Equals(qHouseNumber) || "".Equals(qHouseNumber.Trim())) qHouseNumber = "0";
-                            Parking parking = new Parking(Convert.ToInt32(parkingID),
-                                sqlDataReader["name"].ToString(),
-                                sqlDataReader["City"].ToString(),
-                                sqlDataReader["street_name"].ToString(),
-                                Convert.ToInt32(qHouseNumber),
-                                sqlDataReader["latitude"].ToString(),
-                                sqlDataReader["longitude"].ToString());
-                            parking.Comment = sqlDataReader["comment"].ToString();
-                            parking.Coupon_text = sqlDataReader["coupon_text"].ToString();
-                            parking.Current_Pnuyot = sqlDataReader["current_Pnuyot"].ToString();
-                            parking.Image = sqlDataReader["image"].ToString();
-                            parking.Image2 = sqlDataReader["image2"].ToString();
-                            parking.Withlock = sqlDataReader["Withlock"].ToString();
-                            parking.Underground = sqlDataReader["Underground"].ToString();
-                            parking.Nolimit = sqlDataReader["Nolimit"].ToString();
-                            parking.Roof = sqlDataReader["Roof"].ToString();
-                            parking.Criple = sqlDataReader["Criple"].ToString();
-                            parking.Toshav = sqlDataReader["toshav"].ToString();
-                            parking.Jenion = sqlDataReader["jenion"].ToString();
-                            parking.FirstHourPrice = sqlDataReader["firstHourPrice"].ToString();
-                            parking.ExtraQuarterPrice = sqlDataReader["extraQuarterPrice"].ToString();
-                            parking.AllDayPrice = sqlDataReader["allDayPrice"].ToString();
-                            
-                            parkingList.Add(parking);
+                            while (sqlDataReader.Read())
+                            {
+                                String parkingID = sqlDataReader["parkingID"].ToString();
+                                String qHouseNumber = sqlDataReader["house_number"].ToString();
+                                if ("NULL".Equals(qHouseNumber) || "".Equals(qHouseNumber.Trim())) qHouseNumber = "0";
+                                Parking parking = new Parking(Convert.ToInt32(parkingID),
+                                    sqlDataReader["name"].ToString(),
+                                    sqlDataReader["City"].ToString(),
+                                    sqlDataReader["street_name"].ToString(),
+                                    Convert.ToInt32(qHouseNumber),
+                                    sqlDataReader["latitude"].ToString(),
+                                    sqlDataReader["longitude"].ToString());
+                                parking.Comment = sqlDataReader["comment"].ToString();
+                                parking.Coupon_text = sqlDataReader["coupon_text"].ToString();
+                                parking.Current_Pnuyot = sqlDataReader["current_Pnuyot"].ToString();
+                                parking.Image = sqlDataReader["image"].ToString();
+                                parking.Image2 = sqlDataReader["image2"].ToString();
+                                parking.Withlock = sqlDataReader["Withlock"].ToString();
+                                parking.Underground = sqlDataReader["Underground"].ToString();
+                                parking.Nolimit = sqlDataReader["Nolimit"].ToString();
+                                parking.Roof = sqlDataReader["Roof"].ToString();
+                                parking.Criple = sqlDataReader["Criple"].ToString();
+                                parking.Toshav = sqlDataReader["toshav"].ToString();
+                                parking.Jenion = sqlDataReader["jenion"].ToString();
+                                parking.FirstHourPrice = sqlDataReader["firstHourPrice"].ToString();
+                                parking.ExtraQuarterPrice = sqlDataReader["extraQuarterPrice"].ToString();
+                                parking.AllDayPrice = sqlDataReader["allDayPrice"].ToString();
+
+                                parkingList.Add(parking);
+                            }
                         }
-                    }
-                    else
-                    {
-                        return null;
+                        else
+                        {
+                            return null;
+                        }
                     }
                     return parkingList;
                 }
@@ -470,32 +482,34 @@ namespace CityParkWS
                         where parkingTbl.parkingID='{0}' and parkingTbl.parkingID=priceTbl.parkId", parkingId); //This is the old SQL*/
 
                     String fetchDataSql = String.Format(
-                        @"SELECT top 1.*,
-                            CASE WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())< Weekday_OneTimeHour 
+                        @"DECLARE @Date DATETIME
+                            SET @Date = GETDATE()	
+                           SELECT top 1.*,
+                            CASE WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)< Weekday_OneTimeHour 
 		                    THEN (select WeekDay_FirstHourPrice)
-                            WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
+                            WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
 			                    THEN (select Weekday_OneTimePrice)
-                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())<Friday_OneTimeHour
+                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)<Friday_OneTimeHour
 		                        THEN (select Friday_FirstHourPrice)
-                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())>=Friday_OneTimeHour and Friday_OneTimeHour>1
+                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)>=Friday_OneTimeHour and Friday_OneTimeHour>1
 			                    THEN (select Friday_OneTimePrice)
-                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())<Saturday_FirstHourPrice
+                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)<Saturday_FirstHourPrice
 			                    THEN (select Saturday_FirstHourPrice)
-                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
+                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
 			                    THEN (select Saturday_OneTimePrice)
                            END AS FirstHourPrice,
        
-                           CASE WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())< Weekday_OneTimeHour
+                           CASE WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)< Weekday_OneTimeHour
 		                    THEN (select WeekDay_extraQuarterPrice)
-                            WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
+                            WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
 			                    THEN 0
-                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())<Friday_OneTimeHour
+                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)<Friday_OneTimeHour
 		                        THEN (select Friday_extraQuarterPrice)
-                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())>=Friday_OneTimeHour and Friday_OneTimeHour>1
+                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)>=Friday_OneTimeHour and Friday_OneTimeHour>1
 			                    THEN 0
-                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())<Saturday_FirstHourPrice
+                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)<Saturday_FirstHourPrice
 			                    THEN (select Saturday_extraQuarterPrice)
-                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
+                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
 			                    THEN 0
                             END AS extraQuarterPrice,
                             allDayPrice        
@@ -504,38 +518,40 @@ namespace CityParkWS
                     cmd.Connection = con;
                     cmd.CommandText = fetchDataSql;
                     con.Open();
-                    SqlDataReader sqlDataReader = cmd.ExecuteReader();
-                    if (sqlDataReader.HasRows)
+                    using (SqlDataReader sqlDataReader = cmd.ExecuteReader())
                     {
-                        while (sqlDataReader.Read())
+                        if (sqlDataReader.HasRows)
                         {
-                            String parkingID = sqlDataReader["parkingID"].ToString();
-                            String qHouseNumber = sqlDataReader["house_number"].ToString();
-                            if ("NULL".Equals(qHouseNumber) || "".Equals(qHouseNumber.Trim())) qHouseNumber = "0";
-                            int parkingIdInt = Convert.ToInt32(parkingID);
-                            int houseNumInt = Convert.ToInt32(qHouseNumber);
-                            parking = new Parking(parkingIdInt,
-                                sqlDataReader["name"].ToString(),
-                                sqlDataReader["City"].ToString(),
-                                sqlDataReader["street_name"].ToString(),
-                                houseNumInt,
-                                sqlDataReader["latitude"].ToString(),
-                                sqlDataReader["longitude"].ToString());
-                            parking.Comment = sqlDataReader["comment"].ToString();
-                            parking.Coupon_text = sqlDataReader["coupon_text"].ToString();
-                            parking.Current_Pnuyot = sqlDataReader["current_Pnuyot"].ToString();
-                            parking.Image = sqlDataReader["image"].ToString();
-                            parking.Image2 = sqlDataReader["image2"].ToString();
-                            parking.Withlock = sqlDataReader["Withlock"].ToString();
-                            parking.Underground = sqlDataReader["Underground"].ToString();
-                            parking.Nolimit = sqlDataReader["Nolimit"].ToString();
-                            parking.Roof = sqlDataReader["Roof"].ToString();
-                            parking.Criple = sqlDataReader["Criple"].ToString();
-                            parking.Toshav = sqlDataReader["toshav"].ToString();
-                            parking.Jenion = sqlDataReader["jenion"].ToString();
-                            parking.FirstHourPrice = sqlDataReader["firstHourPrice"].ToString();
-                            parking.ExtraQuarterPrice = sqlDataReader["extraQuarterPrice"].ToString();
-                            parking.AllDayPrice = sqlDataReader["allDayPrice"].ToString();
+                            while (sqlDataReader.Read())
+                            {
+                                String parkingID = sqlDataReader["parkingID"].ToString();
+                                String qHouseNumber = sqlDataReader["house_number"].ToString();
+                                if ("NULL".Equals(qHouseNumber) || "".Equals(qHouseNumber.Trim())) qHouseNumber = "0";
+                                int parkingIdInt = Convert.ToInt32(parkingID);
+                                int houseNumInt = Convert.ToInt32(qHouseNumber);
+                                parking = new Parking(parkingIdInt,
+                                    sqlDataReader["name"].ToString(),
+                                    sqlDataReader["City"].ToString(),
+                                    sqlDataReader["street_name"].ToString(),
+                                    houseNumInt,
+                                    sqlDataReader["latitude"].ToString(),
+                                    sqlDataReader["longitude"].ToString());
+                                parking.Comment = sqlDataReader["comment"].ToString();
+                                parking.Coupon_text = sqlDataReader["coupon_text"].ToString();
+                                parking.Current_Pnuyot = sqlDataReader["current_Pnuyot"].ToString();
+                                parking.Image = sqlDataReader["image"].ToString();
+                                parking.Image2 = sqlDataReader["image2"].ToString();
+                                parking.Withlock = sqlDataReader["Withlock"].ToString();
+                                parking.Underground = sqlDataReader["Underground"].ToString();
+                                parking.Nolimit = sqlDataReader["Nolimit"].ToString();
+                                parking.Roof = sqlDataReader["Roof"].ToString();
+                                parking.Criple = sqlDataReader["Criple"].ToString();
+                                parking.Toshav = sqlDataReader["toshav"].ToString();
+                                parking.Jenion = sqlDataReader["jenion"].ToString();
+                                parking.FirstHourPrice = sqlDataReader["firstHourPrice"].ToString();
+                                parking.ExtraQuarterPrice = sqlDataReader["extraQuarterPrice"].ToString();
+                                parking.AllDayPrice = sqlDataReader["allDayPrice"].ToString();
+                            }
                         }
                     }
                 }
@@ -581,47 +597,49 @@ namespace CityParkWS
                     cmd.Connection = con;
                     cmd.CommandText = loginSql;
                     con.Open();
-                    SqlDataReader sqlDataReader = cmd.ExecuteReader();
-                    if (sqlDataReader.HasRows)
+                    using (SqlDataReader sqlDataReader = cmd.ExecuteReader())
                     {
-                        sqlDataReader.Read();
-                        responseStr = sqlDataReader["Email"].ToString();
-                        id = Int32.Parse(sqlDataReader["Id"].ToString());
-                        String countSrt = sqlDataReader["count"].ToString();
-                        if (countSrt.Equals("") || countSrt.ToLower().Equals("null"))
+                        if (sqlDataReader.HasRows)
                         {
-                            count = 0;
-                        }
-                        else
-                        {
-                            try
+                            sqlDataReader.Read();
+                            responseStr = sqlDataReader["Email"].ToString();
+                            id = Int32.Parse(sqlDataReader["Id"].ToString());
+                            String countSrt = sqlDataReader["count"].ToString();
+                            if (countSrt.Equals("") || countSrt.ToLower().Equals("null"))
                             {
-                                count = Int32.Parse(countSrt);
+                                count = 0;
                             }
-                            catch (Exception ex)
+                            else
                             {
-                                log.Error(ex.Message);
+                                try
+                                {
+                                    count = Int32.Parse(countSrt);
+                                }
+                                catch (Exception ex)
+                                {
+                                    log.Error(ex.Message);
+                                }
                             }
                         }
                     }
-                    sqlDataReader.Close();
                     if (responseStr == USER_NOT_FOUND)
                     {
                         return new SessionData(USER_NOT_FOUND);
                     }
                 }
-                if (id != -1) //just double check                  
+                if (id != -1) //just double check 
+
                     using (SqlCommand updateCmd = new SqlCommand())
                     {
                         count = count + 1;
                         String updateSql = String.Format(
                             @"UPDATE USERS SET LastLogin =  CURRENT_TIMESTAMP , count={1} WHERE Id = '{0}'",
-                            id,count);
+                            id, count);
                         updateCmd.Connection = con;
                         updateCmd.CommandText = updateSql;
                         // Then connection is already opened so there is no need to do con.Open();
                         updateCmd.ExecuteNonQuery();
-                    }                   
+                    }
             }
 
             String sessionId = id.ToString() + "T" + DateTime.Now.Millisecond;
@@ -737,19 +755,21 @@ namespace CityParkWS
                     cmd.Connection = con;
                     cmd.CommandText = selectSql;
                     con.Open();
-                    SqlDataReader sqlDataReader = cmd.ExecuteReader();
-                    if (sqlDataReader.HasRows)
+                    using (SqlDataReader sqlDataReader = cmd.ExecuteReader())
                     {
-                        while (sqlDataReader.Read())
+                        if (sqlDataReader.HasRows)
                         {
-                            user.Name=sqlDataReader["Name"].ToString();
-                            user.Familyname = sqlDataReader["Familyname"].ToString();
-                            user.Usersname = sqlDataReader["Usersname"].ToString();
-                            user.Phone = sqlDataReader["Phone"].ToString();
-                            user.Email = sqlDataReader["Email"].ToString();
-                            user.LicensePlate = sqlDataReader["other1"].ToString();
-                            user.PaymentProvider = sqlDataReader["other7"].ToString();
-                            
+                            while (sqlDataReader.Read())
+                            {
+                                user.Name = sqlDataReader["Name"].ToString();
+                                user.Familyname = sqlDataReader["Familyname"].ToString();
+                                user.Usersname = sqlDataReader["Usersname"].ToString();
+                                user.Phone = sqlDataReader["Phone"].ToString();
+                                user.Email = sqlDataReader["Email"].ToString();
+                                user.LicensePlate = sqlDataReader["other1"].ToString();
+                                user.PaymentProvider = sqlDataReader["other7"].ToString();
+
+                            }
                         }
                     }
                 }
@@ -796,18 +816,20 @@ namespace CityParkWS
                     cmd.Connection = con;
                     cmd.CommandText = loginSql;
                     con.Open();
-                    SqlDataReader sqlDataReader = cmd.ExecuteReader();
-                    if (sqlDataReader.HasRows)
+                    using (SqlDataReader sqlDataReader = cmd.ExecuteReader())
                     {
-                        while (sqlDataReader.Read())
+                        if (sqlDataReader.HasRows)
                         {
-                            city = sqlDataReader["City"].ToString();
-                            street = sqlDataReader["Street"].ToString();
-                            houseNum = sqlDataReader["house_number"].ToString();
-                            parkingZone = sqlDataReader["Parking_Zone"].ToString();
-                            if ("NULL".Equals(parkingZone)||"".Equals(parkingZone)) parkingZone = "1";
-                            ret = new LocationData(city, street, houseNum, parkingZone, sqlDataReader["latitude"].ToString(),
-                                sqlDataReader["longitude"].ToString());
+                            while (sqlDataReader.Read())
+                            {
+                                city = sqlDataReader["City"].ToString();
+                                street = sqlDataReader["Street"].ToString();
+                                houseNum = sqlDataReader["house_number"].ToString();
+                                parkingZone = sqlDataReader["Parking_Zone"].ToString();
+                                if ("NULL".Equals(parkingZone) || "".Equals(parkingZone)) parkingZone = "1";
+                                ret = new LocationData(city, street, houseNum, parkingZone, sqlDataReader["latitude"].ToString(),
+                                    sqlDataReader["longitude"].ToString());
+                            }
                         }
                     }
                 }
@@ -1148,26 +1170,29 @@ namespace CityParkWS
                     cmd.Connection = con;
                     cmd.CommandText = sql;
                     con.Open();
-                    SqlDataReader sqlDataReader = cmd.ExecuteReader();
+                    
                     List<PaymentServiceProvider> pspList = new List<PaymentServiceProvider>();
-                    if (sqlDataReader.HasRows)
+                    using (SqlDataReader sqlDataReader = cmd.ExecuteReader())
                     {
-                        while (sqlDataReader.Read())
+                        if (sqlDataReader.HasRows)
                         {
-                            PaymentServiceProvider psp = new PaymentServiceProvider();
-                            psp.ServiceName = sqlDataReader["service_name"].ToString();
-                            psp.Phone = sqlDataReader["phone"].ToString();
-                            psp.Website = sqlDataReader["website"].ToString();
-                            psp.Description = sqlDataReader["description"].ToString();
-                            psp.Paymethod = sqlDataReader["paymethod"].ToString();
-                            psp.TemplateStart = sqlDataReader["templateStart"].ToString();
-                            psp.TemplateEnd = sqlDataReader["templateEnd"].ToString();
-                            pspList.Add(psp);
+                            while (sqlDataReader.Read())
+                            {
+                                PaymentServiceProvider psp = new PaymentServiceProvider();
+                                psp.ServiceName = sqlDataReader["service_name"].ToString();
+                                psp.Phone = sqlDataReader["phone"].ToString();
+                                psp.Website = sqlDataReader["website"].ToString();
+                                psp.Description = sqlDataReader["description"].ToString();
+                                psp.Paymethod = sqlDataReader["paymethod"].ToString();
+                                psp.TemplateStart = sqlDataReader["templateStart"].ToString();
+                                psp.TemplateEnd = sqlDataReader["templateEnd"].ToString();
+                                pspList.Add(psp);
+                            }
                         }
-                    }
-                    else
-                    {
-                        return null;
+                        else
+                        {
+                            return null;
+                        }
                     }
                     return pspList;
                 }
@@ -1194,32 +1219,34 @@ namespace CityParkWS
                     //see findAllGarageParkingDataByLatitudeLongitude commented sql for the old sql logic
                     String searchSql = String.Format(
                      @"DECLARE  @USER geography = geography::Point({0}, {1},4326) 
+                        DECLARE @Date DATETIME
+                        SET @Date = GETDATE()	
                             SELECT top 200.*,
-                            CASE WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())< Weekday_OneTimeHour 
+                            CASE WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)< Weekday_OneTimeHour 
 		                    THEN (select WeekDay_FirstHourPrice)
-                            WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
+                            WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
 			                    THEN (select Weekday_OneTimePrice)
-                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())<Friday_OneTimeHour
+                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)<Friday_OneTimeHour
 		                        THEN (select Friday_FirstHourPrice)
-                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())>=Friday_OneTimeHour and Friday_OneTimeHour>1
+                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)>=Friday_OneTimeHour and Friday_OneTimeHour>1
 			                    THEN (select Friday_OneTimePrice)
-                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())<Saturday_FirstHourPrice
+                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)<Saturday_FirstHourPrice
 			                    THEN (select Saturday_FirstHourPrice)
-                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
+                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
 			                    THEN (select Saturday_OneTimePrice)
                            END AS FirstHourPrice,
        
-                           CASE WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())< Weekday_OneTimeHour
+                           CASE WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)< Weekday_OneTimeHour
 		                    THEN (select WeekDay_extraQuarterPrice)
-                            WHEN DATEPART(dw, GETDATE()) BETWEEN 1 and 5 and DATENAME(hour, GETDATE())>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
+                            WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)>=Weekday_OneTimeHour and Weekday_OneTimeHour>1
 			                    THEN 0
-                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())<Friday_OneTimeHour
+                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)<Friday_OneTimeHour
 		                        THEN (select Friday_extraQuarterPrice)
-                            WHEN DATEPART(dw, GETDATE())=6 and DATENAME(hour, GETDATE())>=Friday_OneTimeHour and Friday_OneTimeHour>1
+                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)>=Friday_OneTimeHour and Friday_OneTimeHour>1
 			                    THEN 0
-                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())<Saturday_FirstHourPrice
+                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)<Saturday_FirstHourPrice
 			                    THEN (select Saturday_extraQuarterPrice)
-                            WHEN DATEPART(dw, GETDATE())=7 and DATENAME(hour, GETDATE())>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
+                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)>=Saturday_OneTimeHour and Saturday_OneTimeHour >1
 			                    THEN 0
                             END AS extraQuarterPrice,
        
@@ -1234,52 +1261,54 @@ namespace CityParkWS
                     cmd.CommandText = searchSql;
                     con.Open();
                     Boolean demo = userDemo.Equals(sessionMap[sessionId].sessionData.UserName);
-                    SqlDataReader sqlDataReader = cmd.ExecuteReader();
-                    List<Parking> parkingList = new List<Parking>();
-                    if (sqlDataReader.HasRows)
-                    {
-                        Random random = new Random();
-                        while (sqlDataReader.Read())
-                        {
-                            String parkingID = sqlDataReader["parkingID"].ToString();
-                            String qHouseNumber = sqlDataReader["house_number"].ToString();
-                            if ("NULL".Equals(qHouseNumber) || "".Equals(qHouseNumber.Trim())) qHouseNumber = "0";
-                            int parkingIdInt = Convert.ToInt32(parkingID);
-                            int houseNumInt = Convert.ToInt32(qHouseNumber);
-                            Parking parking = new Parking(parkingIdInt,
-                                sqlDataReader["name"].ToString(),
-                                sqlDataReader["City"].ToString(),
-                                sqlDataReader["street_name"].ToString(),
-                                houseNumInt,
-                                sqlDataReader["latitude"].ToString(),
-                                sqlDataReader["longitude"].ToString());
-                            //parking.Comment = sqlDataReader["comment"].ToString();
-                            //parking.Coupon_text = sqlDataReader["coupon_text"].ToString();
-                            parking.Current_Pnuyot = sqlDataReader["current_Pnuyot"].ToString();
-                            //parking.Image = sqlDataReader["image"].ToString();
-                            //parking.Image2 = sqlDataReader["image2"].ToString();
-                            //parking.Withlock = sqlDataReader["Withlock"].ToString();
-                            //parking.Underground = sqlDataReader["Underground"].ToString();
-                            //parking.Nolimit = sqlDataReader["Nolimit"].ToString();
-                            //parking.Roof = sqlDataReader["Roof"].ToString();
-                            parking.FirstHourPrice = sqlDataReader["firstHourPrice"].ToString();
-                            parking.ExtraQuarterPrice = sqlDataReader["extraQuarterPrice"].ToString();
-                            parking.AllDayPrice = sqlDataReader["allDayPrice"].ToString();
-                            if (demo)
-                            {
-                                parking.Current_Pnuyot = random.Next(-1, 10)+"";
-                                if (parking.FirstHourPrice == "" || parking.FirstHourPrice == "NULL" || parking.FirstHourPrice == "0")
-                                {
-                                    parking.FirstHourPrice = "25";
-                                }
-                            }
-                            parkingList.Add(parking);
-                        }
-                    }
-                    else
-                    {
-                        return null;
-                    }
+                     List<Parking> parkingList = new List<Parking>();
+                     using (SqlDataReader sqlDataReader = cmd.ExecuteReader())
+                     {
+                         if (sqlDataReader.HasRows)
+                         {
+                             Random random = new Random();
+                             while (sqlDataReader.Read())
+                             {
+                                 String parkingID = sqlDataReader["parkingID"].ToString();
+                                 String qHouseNumber = sqlDataReader["house_number"].ToString();
+                                 if ("NULL".Equals(qHouseNumber) || "".Equals(qHouseNumber.Trim())) qHouseNumber = "0";
+                                 int parkingIdInt = Convert.ToInt32(parkingID);
+                                 int houseNumInt = Convert.ToInt32(qHouseNumber);
+                                 Parking parking = new Parking(parkingIdInt,
+                                     sqlDataReader["name"].ToString(),
+                                     sqlDataReader["City"].ToString(),
+                                     sqlDataReader["street_name"].ToString(),
+                                     houseNumInt,
+                                     sqlDataReader["latitude"].ToString(),
+                                     sqlDataReader["longitude"].ToString());
+                                 //parking.Comment = sqlDataReader["comment"].ToString();
+                                 //parking.Coupon_text = sqlDataReader["coupon_text"].ToString();
+                                 parking.Current_Pnuyot = sqlDataReader["current_Pnuyot"].ToString();
+                                 //parking.Image = sqlDataReader["image"].ToString();
+                                 //parking.Image2 = sqlDataReader["image2"].ToString();
+                                 //parking.Withlock = sqlDataReader["Withlock"].ToString();
+                                 //parking.Underground = sqlDataReader["Underground"].ToString();
+                                 //parking.Nolimit = sqlDataReader["Nolimit"].ToString();
+                                 //parking.Roof = sqlDataReader["Roof"].ToString();
+                                 parking.FirstHourPrice = sqlDataReader["firstHourPrice"].ToString();
+                                 parking.ExtraQuarterPrice = sqlDataReader["extraQuarterPrice"].ToString();
+                                 parking.AllDayPrice = sqlDataReader["allDayPrice"].ToString();
+                                 if (demo)
+                                 {
+                                     parking.Current_Pnuyot = random.Next(-1, 10) + "";
+                                     if (parking.FirstHourPrice == "" || parking.FirstHourPrice == "NULL" || parking.FirstHourPrice == "0")
+                                     {
+                                         parking.FirstHourPrice = "25";
+                                     }
+                                 }
+                                 parkingList.Add(parking);
+                             }
+                         }
+                         else
+                         {
+                             return null;
+                         }
+                     }
                     return parkingList;
                 }
             }
@@ -1328,52 +1357,54 @@ namespace CityParkWS
                     cmd.Connection = con;
                     cmd.CommandText = sql;
                     con.Open();
-                    SqlDataReader sqlDataReader = cmd.ExecuteReader();
-                    if (sqlDataReader.HasRows)
+                    using (SqlDataReader sqlDataReader = cmd.ExecuteReader())
                     {
-                        Random random = new Random();
-                        while (sqlDataReader.Read())
+                        if (sqlDataReader.HasRows)
                         {
-                            StreetSegmentLine ssl = new StreetSegmentLine();
-                            ssl.StartLatitude = sqlDataReader["StartLatitude"].ToString();
-                            ssl.StartLongitude = sqlDataReader["StartLongitude"].ToString();
-                            ssl.EndLatitude = sqlDataReader["EndLatitude"].ToString();
-                            ssl.EndLongitude = sqlDataReader["EndLongitude"].ToString();
-                            ssl.SegmentUnique = sqlDataReader["SegmentUnique"].ToString();
-                            StreetSegment sSeg = null;
-                            foreach (StreetSegment ss in segList)
+                            Random random = new Random();
+                            while (sqlDataReader.Read())
                             {
-                                if (ss.SegmentUnique.Equals(ssl.SegmentUnique))
+                                StreetSegmentLine ssl = new StreetSegmentLine();
+                                ssl.StartLatitude = sqlDataReader["StartLatitude"].ToString();
+                                ssl.StartLongitude = sqlDataReader["StartLongitude"].ToString();
+                                ssl.EndLatitude = sqlDataReader["EndLatitude"].ToString();
+                                ssl.EndLongitude = sqlDataReader["EndLongitude"].ToString();
+                                ssl.SegmentUnique = sqlDataReader["SegmentUnique"].ToString();
+                                StreetSegment sSeg = null;
+                                foreach (StreetSegment ss in segList)
                                 {
-                                    sSeg = ss;
-                                    break;
+                                    if (ss.SegmentUnique.Equals(ssl.SegmentUnique))
+                                    {
+                                        sSeg = ss;
+                                        break;
+                                    }
                                 }
-                            }
-                            if (sSeg != null)
-                            {
-                                sSeg.add(ssl);
-                            }
-                            else
-                            {
-                                float SWT = segmentSessionMap.getSearchParkingSegment(ssl.SegmentUnique).SWT;
-                                if (SWT >= 0 || demo)
+                                if (sSeg != null)
                                 {
-                                    float USWT = -1;
-                                    if (!demo && segmentDistance.ContainsKey(ssl.SegmentUnique))
-                                    {
-                                        //3)for each segments in search radius return USWT[user,segment]=(distance from segment/radius)*SWT[segment]
-                                        USWT = (segmentDistance[ssl.SegmentUnique] / RADIUS) * SWT;
-                                    }
-                                    else //demo mode only!!
-                                    {
-                                        USWT = random.Next(0, 1800);
-                                    }
-                                    sSeg = new StreetSegment(ssl.SegmentUnique, USWT);
                                     sSeg.add(ssl);
-                                    segList.Add(sSeg);
                                 }
+                                else
+                                {
+                                    float SWT = segmentSessionMap.getSearchParkingSegment(ssl.SegmentUnique).SWT;
+                                    if (SWT >= 0 || demo)
+                                    {
+                                        float USWT = -1;
+                                        if (!demo && segmentDistance.ContainsKey(ssl.SegmentUnique))
+                                        {
+                                            //3)for each segments in search radius return USWT[user,segment]=(distance from segment/radius)*SWT[segment]
+                                            USWT = (segmentDistance[ssl.SegmentUnique] / RADIUS) * SWT;
+                                        }
+                                        else //demo mode only!!
+                                        {
+                                            USWT = random.Next(0, 1800);
+                                        }
+                                        sSeg = new StreetSegment(ssl.SegmentUnique, USWT);
+                                        sSeg.add(ssl);
+                                        segList.Add(sSeg);
+                                    }
+                                }
+
                             }
-                            
                         }
                     }
                 }
@@ -1434,16 +1465,18 @@ namespace CityParkWS
                         cmd.Connection = con;
                         cmd.CommandText = sql;
                         con.Open();
-                        SqlDataReader sqlDataReader = cmd.ExecuteReader();
-                        if (sqlDataReader.HasRows)
+                        using (SqlDataReader sqlDataReader = cmd.ExecuteReader())
                         {
-                            Random random = new Random();
-                            while (sqlDataReader.Read())
+                            if (sqlDataReader.HasRows)
                             {
-                                Parking p = new Parking();
-                                p.Latitude = sqlDataReader["StartLatitude"].ToString();
-                                p.Longitude = sqlDataReader["StartLongitude"].ToString();
-                                parkingList.Add(p);
+                                Random random = new Random();
+                                while (sqlDataReader.Read())
+                                {
+                                    Parking p = new Parking();
+                                    p.Latitude = sqlDataReader["StartLatitude"].ToString();
+                                    p.Longitude = sqlDataReader["StartLongitude"].ToString();
+                                    parkingList.Add(p);
+                                }
                             }
                         }
                     }
@@ -1484,23 +1517,24 @@ namespace CityParkWS
                     cmd.Connection = con;
                     cmd.CommandText = loginSql;
                     con.Open();
-                    SqlDataReader sqlDataReader = cmd.ExecuteReader();
-                    
-                    if (sqlDataReader.HasRows)
+                    using (SqlDataReader sqlDataReader = cmd.ExecuteReader())
                     {
-                        while (sqlDataReader.Read())
+                        if (sqlDataReader.HasRows)
                         {
-                            Parking parking = new Parking();
-                            parking.Latitude = sqlDataReader["latitude"].ToString();
-                            parking.Longitude = sqlDataReader["longitude"].ToString();
-                            /*parking.City = sqlDataReader["City"].ToString();
-                            parking.StreetName = sqlDataReader["Street"].ToString();
-                            String houseNum = sqlDataReader["House_Number"].ToString();                            
-                            if (!houseNum.Trim().Equals(""))
-                                parking.HouseNumber = Convert.ToInt32(houseNum);*/
-                            parkingList.Add(parking);
+                            while (sqlDataReader.Read())
+                            {
+                                Parking parking = new Parking();
+                                parking.Latitude = sqlDataReader["latitude"].ToString();
+                                parking.Longitude = sqlDataReader["longitude"].ToString();
+                                /*parking.City = sqlDataReader["City"].ToString();
+                                parking.StreetName = sqlDataReader["Street"].ToString();
+                                String houseNum = sqlDataReader["House_Number"].ToString();                            
+                                if (!houseNum.Trim().Equals(""))
+                                    parking.HouseNumber = Convert.ToInt32(houseNum);*/
+                                parkingList.Add(parking);
+                            }
                         }
-                    }                    
+                    }
                     return parkingList;
                 }
             }
@@ -1799,19 +1833,21 @@ namespace CityParkWS
                     cmd.Connection = con;
                     cmd.CommandText = sql;
                     con.Open();
-                    SqlDataReader sqlDataReader = cmd.ExecuteReader();
-                    if (sqlDataReader.HasRows)
+                    using (SqlDataReader sqlDataReader = cmd.ExecuteReader())
                     {
-                        while (sqlDataReader.Read())
+                        if (sqlDataReader.HasRows)
                         {
-                            StreetSegmentLine ssl = new StreetSegmentLine();
-                            ssl.StartLatitude = sqlDataReader["StartLatitude"].ToString();
-                            ssl.StartLongitude = sqlDataReader["StartLongitude"].ToString();
-                            ssl.EndLatitude = sqlDataReader["EndLatitude"].ToString();
-                            ssl.EndLongitude = sqlDataReader["EndLongitude"].ToString();
-                            ssl.SegmentUnique = sqlDataReader["SegmentUnique"].ToString();
-                            sps = new SearchParkingSegment(-1,ssl.SegmentUnique);
-                            break;
+                            while (sqlDataReader.Read())
+                            {
+                                StreetSegmentLine ssl = new StreetSegmentLine();
+                                ssl.StartLatitude = sqlDataReader["StartLatitude"].ToString();
+                                ssl.StartLongitude = sqlDataReader["StartLongitude"].ToString();
+                                ssl.EndLatitude = sqlDataReader["EndLatitude"].ToString();
+                                ssl.EndLongitude = sqlDataReader["EndLongitude"].ToString();
+                                ssl.SegmentUnique = sqlDataReader["SegmentUnique"].ToString();
+                                sps = new SearchParkingSegment(-1, ssl.SegmentUnique);
+                                break;
+                            }
                         }
                     }
                 }
@@ -1881,22 +1917,24 @@ namespace CityParkWS
                     cmd.Connection = con;
                     cmd.CommandText = sql;
                     con.Open();
-                    SqlDataReader sqlDataReader = cmd.ExecuteReader();
-                    if (sqlDataReader.HasRows)
-                    {                        
-                        while (sqlDataReader.Read())
+                    using (SqlDataReader sqlDataReader = cmd.ExecuteReader())
+                    {
+                        if (sqlDataReader.HasRows)
                         {
-                            try
+                            while (sqlDataReader.Read())
                             {
-                                String segUnqSql = sqlDataReader["SegmentUnique"].ToString();
-                                if (!segmentInRange.ContainsKey(segUnqSql))
+                                try
                                 {
-                                    segmentInRange.Add(segUnqSql, float.Parse(sqlDataReader["distance"].ToString()) * 1000);//in meters
+                                    String segUnqSql = sqlDataReader["SegmentUnique"].ToString();
+                                    if (!segmentInRange.ContainsKey(segUnqSql))
+                                    {
+                                        segmentInRange.Add(segUnqSql, float.Parse(sqlDataReader["distance"].ToString()) * 1000);//in meters
+                                    }
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                log.Error("Got error while creating segment in range map." + ex.Message);
+                                catch (Exception ex)
+                                {
+                                    log.Error("Got error while creating segment in range map." + ex.Message);
+                                }
                             }
                         }
                     }
