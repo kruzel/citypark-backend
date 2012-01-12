@@ -1954,28 +1954,57 @@ namespace CityParkWS
                 using (SqlCommand cmd = new SqlCommand())
                 {
 
-            /*        String sqlJoin = String.Format(
-                        @"DECLARE @UserLat float = {0}
+                    /*        String sqlJoin = String.Format(
+                                @"DECLARE @UserLat float = {0}
+                                    DECLARE @UserLong float = {1}
+                                    SELECT distinct seg.SegmentUnique ,
+                                            SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
+                                                + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) as distance,
+                                            seg.* 
+                                    FROM [CITYPARK].[dbo].[StreetSegmentLine] a
+                                        INNER JOIN [CITYPARK].[dbo].[Segment] as seg
+                                        ON a.SegmentUnique=seg.SegmentUnique
+                                    WHERE 
+                                            SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2)                             
+                                              + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) < {2}", lat, lon, distanceKm);
+             =================================================
+             
+                     SELECT distinct top 100 seg.SegmentUnique ,
+        min( SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2)  + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) )as distance
+        FROM [CITYPARK].[dbo].[StreetSegmentLine] a
+        INNER JOIN [CITYPARK].[dbo].[Segment] as seg
+        ON a.SegmentUnique=seg.SegmentUnique
+        WHERE SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2)                            
+          + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) < 0.5
+          group by seg.SegmentUnique
+          order by distance asc
+             ============================================
+                     
+                     * String sql = String.Format(@"DECLARE @UserLat float = {0}
                             DECLARE @UserLong float = {1}
-                            SELECT distinct seg.SegmentUnique ,
-                                    SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
-                                        + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) as distance,
-                                    seg.* 
-                            FROM [CITYPARK].[dbo].[StreetSegmentLine] a
-                                INNER JOIN [CITYPARK].[dbo].[Segment] as seg
-                                ON a.SegmentUnique=seg.SegmentUnique
-                            WHERE 
-                                    SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2)                             
-                                      + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) < {2}", lat, lon, distanceKm);*/
-
-                    String sql = String.Format(@"DECLARE @UserLat float = {0}
-                            DECLARE @UserLong float = {1}
-                            SELECT distinct a.*, {3} as prediction,
+                            SELECT distinct a.SegmentUnique, a.{3} as prediction,
                                 SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
                             + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) as distance
                             FROM [CITYPARK].[dbo].[SegmentAndStreetLineView] a
                             where SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
                             + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) < {2} order by distance", lat, lon,distanceKm,dayOfTheWeekColumn);
+             
+             
+                     */
+
+                    
+
+                    String sql = String.Format(@"DECLARE @UserLat float = {0}
+                            DECLARE @UserLong float = {1}
+                        SELECT distinct a.SegmentUnique, a.{3} as prediction,
+                           min( SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
+                        + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2))) as distance
+    
+                        FROM [CITYPARK].[dbo].[SegmentAndStreetLineView] a
+                        where SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
+                        + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) < {2} 
+                        group by a.SegmentUnique,a.{3}
+                        order by distance", lat, lon,distanceKm,dayOfTheWeekColumn);
                     cmd.Connection = con;
                     cmd.CommandText = sql;
                     con.Open();
