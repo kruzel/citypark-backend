@@ -24,6 +24,7 @@ namespace CityParkWS
     public class CityParkService : System.Web.Services.WebService
     {
         private static Timer timer = null;
+        private static Boolean PredictionAlgorithmEnabled = false;
         private static String userDemo = "demo@citypark.co.il";
 
         private static float TPhigh = 30 * 60;//in seconds
@@ -112,10 +113,14 @@ namespace CityParkWS
                     case "TPhigh":
                         TPhigh = Int32.Parse(value);
                         break;
+                    case "Algorithm":
+                        PredictionAlgorithmEnabled = Boolean.Parse(value);
+                        break;
                     default:
                         break;
                 }
                 list.Add("demo user:" + userDemo);
+                list.Add("Algorithm (PredictionAlgorithmEnabled):" + PredictionAlgorithmEnabled);
                 list.Add("RADIUS:" + RADIUS);
                 list.Add("TPhigh:" + TPhigh);
             }
@@ -925,10 +930,10 @@ namespace CityParkWS
             {
                 SearchParkingSegment searchParkingSegment = getParkingSegment(latitude, longitude);
                 reportStreetParkingStatus(latitude, longitude, false, searchParkingSegment.SegmentUnique);      
-                //todo: add data to algo table
+               //todo: Algo2 not calculate the segment on real time just once a day/week when we calculate the predication
                 try
                 {
-                    int count = calcSegmentParkingRate(searchParkingSegment);
+                    int count = -1;//this was the old algorithm data calcSegmentParkingRate(searchParkingSegment);
                     String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
                     using (SqlConnection con = new SqlConnection(conStr))
                     {
@@ -943,7 +948,8 @@ namespace CityParkWS
                                         ,[Day]
                                         ,[Hour]
                                         ,[Count]
-                                        ,[ReportDate])
+                                        ,[ReportDate]
+                                        ,[Success])
                                     VALUES
                                         ('{0}'
                                         ,'{1}'
@@ -951,7 +957,8 @@ namespace CityParkWS
                                         ,{3}
                                         ,{4}
                                         ,{5}
-                                        ,CURRENT_TIMESTAMP)", searchParkingSegment.SegmentUnique, latitude, longitude, (int)now.DayOfWeek/*0 for Sunday*/, now.Hour, count);
+                                        ,CURRENT_TIMESTAMP
+                                        ,'True')", searchParkingSegment.SegmentUnique, latitude, longitude, (int)now.DayOfWeek/*0 for Sunday*/, now.Hour, count);
 
                             cmd.Connection = con;
                             cmd.CommandText = insertSql;
@@ -965,7 +972,7 @@ namespace CityParkWS
                     log.Error ("reportStreetParkingByLat..Long.. add to algoData table failed, " + ex.Message);
                 }
                 //Algo:
-                calcSWT(searchParkingSegment, calcSegmentParkingRate(searchParkingSegment), RADIUS);
+                //removed due to new algorithm :calcSWT(searchParkingSegment, calcSegmentParkingRate(searchParkingSegment), RADIUS);
                 userStartParkingEvent(sessionId);
             }
             catch (Exception ex)
@@ -1020,13 +1027,13 @@ namespace CityParkWS
             {
                 log.Error("SessionId :" + sessionId + " ,reportLocation SQL Error:" + ex.Message);
             }
-           
+
             try
             {
-                //algo:                
+                //Algo2:                
                 SearchParkingSegment sps = getParkingSegment(latitude, longitude);
                 //1)Add to the session map the current location and the last location and current segment,keep the current and last timestamp
-                sd.setCurrentLocationAndUpdateTime(latitude, longitude);                
+                sd.setCurrentLocationAndUpdateTime(latitude, longitude);
                 //2) update lastVisit time for current
                 sps.LastVisit = DateTime.Now;
                 //3)if user changed segment 
@@ -1034,10 +1041,51 @@ namespace CityParkWS
                 {
                     //3.a)calc the segmentParking rate calcSegmentParkingRate()
                     SearchParkingSegment previousSegment = segmentSessionMap.getSearchParkingSegment(sd.PreviousSegment);
-                    int previousSegmentRate = calcSegmentParkingRate(previousSegment);
+                    int previousSegmentRate = -1;//this was the old algorithm data calcSegmentParkingRate(previousSegment);
+                    //old algorithm
                     //3.b)calculate SWT calcSWT(segment,rate) for the former segment
-                    calcSWT(previousSegment, previousSegmentRate,RADIUS);
-                }                                                            
+                    //calcSWT(previousSegment, previousSegmentRate,RADIUS);
+
+                    try
+                    {
+                        String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
+                        using (SqlConnection con = new SqlConnection(conStr))
+                        {
+                            using (SqlCommand cmd = new SqlCommand())
+                            {
+
+                                DateTime now = DateTime.Now;
+                                String insertSql = String.Format(@"INSERT INTO [CITYPARK].[dbo].[AlgoData]
+                                        ([SegmentUnique]
+                                        ,[Latitude]
+                                        ,[Longitude]
+                                        ,[Day]
+                                        ,[Hour]
+                                        ,[Count]
+                                        ,[ReportDate]
+                                        ,[Success])
+                                    VALUES
+                                        ('{0}'
+                                        ,'{1}'
+                                        ,'{2}'
+                                        ,{3}
+                                        ,{4}
+                                        ,{5}
+                                        ,CURRENT_TIMESTAMP
+                                        ,'False')", previousSegment.SegmentUnique, latitude, longitude, (int)now.DayOfWeek/*0 for Sunday*/, now.Hour, previousSegmentRate);
+
+                                cmd.Connection = con;
+                                cmd.CommandText = insertSql;
+                                con.Open();
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error("reportLocation..Long.. add to algoData table failed, " + ex.Message);
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -1065,19 +1113,18 @@ namespace CityParkWS
                 String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
 
                 using (SqlConnection con = new SqlConnection(conStr))
-                { 
-                        using (SqlCommand updateCmd = new SqlCommand())
-                        {
+                {
+                    using (SqlCommand updateCmd = new SqlCommand())
+                    {
 
-                            String updateSql = String.Format(
-                                @"UPDATE [citypark].[dbo].[Segment] SET Parking = 'PAID' WHERE SegmentUnique = '{0}'",
-                                sps.SegmentUnique);
-                            updateCmd.Connection = con;
-                            updateCmd.CommandText = updateSql;
-                            con.Open();
-                            updateCmd.ExecuteNonQuery();
-                        }
-                    
+                        String updateSql = String.Format(
+                            @"UPDATE [citypark].[dbo].[Segment] SET Parking = 'PAID' WHERE SegmentUnique = '{0}'",
+                            sps.SegmentUnique);
+                        updateCmd.Connection = con;
+                        updateCmd.CommandText = updateSql;
+                        con.Open();
+                        updateCmd.ExecuteNonQuery();
+                    }
                 }
             }
             catch (Exception ex)
@@ -1325,27 +1372,27 @@ namespace CityParkWS
                                     "401",
                                     "getStreetParkingPrediction");
             }
-            //Algo:
-            //1)Fetch all lines distinced by segmentUnique order by distance.
-            //2)register user on the waiting list foreach segmentUnique (counter logic only).
-            //  2.a) - when user should be removed from list/map:
-            //          2.a.1)timeout (20 min) - session managment
-            //          2.a.2)start parking
-            //          2.a.3)segment maintanence interval using the cleanSWT()
-
+                      
             float distanceKm = ((float)distance) / 1000f;
-            //get all segments and distance from current session and store on sessionData for cache usage
-            Dictionary<String, float> segmentDistance = getAllSegmentsInRange(latitude, longitude,distanceKm);
-            //assign this sessionData to each one of the segment
-            assignSessionToSegments(segmentDistance, sessionMap[sessionId]);
             Boolean demo = userDemo.Equals(sessionMap[sessionId].sessionData.UserName);
-            
             List<StreetSegment> segList = new List<StreetSegment>();
+            
+            //Algo2: 
+            if (!PredictionAlgorithmEnabled && !demo)//if not demo user and the prediction algo should not work 
+            {
+                return segList;
+            }
+            //get all segments and distance from current session and store on sessionData for cache usage
+            Dictionary<String, DistancePredictionWrapper> segmentDistance = getAllSegmentsInRange(latitude, longitude, distanceKm);
+            //Add user to SegementWaitingUsersList (only if not exist in waiting list)
+            assignSessionToSegments(segmentDistance, sessionMap[sessionId]);
+           
+
             String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
             using (SqlConnection con = new SqlConnection(conStr))
             {
                 using (SqlCommand cmd = new SqlCommand())
-                {//todo:This SQL should be as getAllSegmentsInRange() logic
+                {//todo:This SQL should be as getAllSegmentsInRange(..) logic or use the existing return value from getAllSegmentsInRange(..)
                     String sql = String.Format(@"DECLARE @UserLat float = {0}
                             DECLARE @UserLong float = {1}
                             SELECT * FROM [CITYPARK].[dbo].[StreetSegmentLine] a
@@ -1385,20 +1432,14 @@ namespace CityParkWS
                                 }
                                 else
                                 {
-                                    float SWT = segmentSessionMap.getSearchParkingSegment(ssl.SegmentUnique).SWT;
-                                    if (SWT >= 0 || demo)
-                                    {
-                                        float USWT = -1;
-                                        if (!demo && segmentDistance.ContainsKey(ssl.SegmentUnique))
+                                    float probability = segmentDistance[ssl.SegmentUnique].calcProbability();
+                                    if (probability >= 0 || demo)
+                                    {                                        
+                                        if(demo)
                                         {
-                                            //3)for each segments in search radius return USWT[user,segment]=(distance from segment/radius)*SWT[segment]
-                                            USWT = (segmentDistance[ssl.SegmentUnique] / RADIUS) * SWT;
+                                            probability = random.Next(0, 1800);
                                         }
-                                        else //demo mode only!!
-                                        {
-                                            USWT = random.Next(0, 1800);
-                                        }
-                                        sSeg = new StreetSegment(ssl.SegmentUnique, USWT);
+                                        sSeg = new StreetSegment(ssl.SegmentUnique, probability);
                                         sSeg.add(ssl);
                                         segList.Add(sSeg);
                                     }
@@ -1411,6 +1452,7 @@ namespace CityParkWS
             }
             return segList;
         }
+        
 
         [WebMethod(Description = "Add released parking spots")]
         public Boolean reportStreetParkingRelease(String sessionId, float latitude, float longitude)
@@ -1800,12 +1842,12 @@ namespace CityParkWS
         /// <returns></returns>
         protected void userStartParkingEvent(String sessionId)
         {
-            //Algo:
+            //Algo2:
             //1)remove user from  segment waiting list
             try
             {
                 SessionDataWrapper sdw =sessionMap[sessionId];
-                segmentSessionMap.removeSessionDataFromAll(sdw.sessionData.SessionId, new List<String>(sdw.SegmentDistanceMap.Keys));                
+                segmentSessionMap.removeSessionDataFromAll(sdw.sessionData.SessionId, new List<String>(sdw.SegmentDistanceAndPredictionMap.Keys));                
             }
             catch (Exception ex) 
             {
@@ -1897,23 +1939,43 @@ namespace CityParkWS
             segmentSessionMap.cleanTimeOutSegments();
         }
 
-        private Dictionary<String,float> getAllSegmentsInRange(float lat,float lon,float distanceKm)
+        /**
+         * Returns all segments in range sorted by distance and also the prediction value acording to the current hour and day
+         */
+        private Dictionary<String,DistancePredictionWrapper> getAllSegmentsInRange(float lat,float lon,float distanceKm)
         {
             //todo: make it better SQL
-            Dictionary<String, float> segmentInRange = new Dictionary<String, float>();
+            Dictionary<String, DistancePredictionWrapper> segmentInRange = new Dictionary<String, DistancePredictionWrapper>();
             String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
+        
+            String dayOfTheWeekColumn = (int)DateTime.Now.DayOfWeek <= 4 ? "wd_h" + DateTime.Now.Hour : "we_h" + DateTime.Now.Hour;
             using (SqlConnection con = new SqlConnection(conStr))
             {
                 using (SqlCommand cmd = new SqlCommand())
                 {
+
+            /*        String sqlJoin = String.Format(
+                        @"DECLARE @UserLat float = {0}
+                            DECLARE @UserLong float = {1}
+                            SELECT distinct seg.SegmentUnique ,
+                                    SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
+                                        + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) as distance,
+                                    seg.* 
+                            FROM [CITYPARK].[dbo].[StreetSegmentLine] a
+                                INNER JOIN [CITYPARK].[dbo].[Segment] as seg
+                                ON a.SegmentUnique=seg.SegmentUnique
+                            WHERE 
+                                    SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2)                             
+                                      + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) < {2}", lat, lon, distanceKm);*/
+
                     String sql = String.Format(@"DECLARE @UserLat float = {0}
                             DECLARE @UserLong float = {1}
-                            SELECT distinct SegmentUnique,
+                            SELECT distinct a.*, {3} as prediction,
                                 SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
                             + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) as distance
-                            FROM [CITYPARK].[dbo].[StreetSegmentLine] a
+                            FROM [CITYPARK].[dbo].[SegmentAndStreetLineView] a
                             where SQRT  ( POWER((a.StartLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
-                            + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) < {2}", lat, lon,distanceKm);
+                            + POWER((a.StartLongitude -@UserLong) * 40000 / 360, 2)) < {2} order by distance", lat, lon,distanceKm,dayOfTheWeekColumn);
                     cmd.Connection = con;
                     cmd.CommandText = sql;
                     con.Open();
@@ -1928,8 +1990,23 @@ namespace CityParkWS
                                     String segUnqSql = sqlDataReader["SegmentUnique"].ToString();
                                     if (!segmentInRange.ContainsKey(segUnqSql))
                                     {
-                                        segmentInRange.Add(segUnqSql, float.Parse(sqlDataReader["distance"].ToString()) * 1000);//in meters
+                                        String p = sqlDataReader["prediction"].ToString();
+                                        float prediction;
+                                        if ("NULL".Equals(p) || "".Equals(p.Trim()))
+                                        {
+                                            prediction = -1;
+                                        }
+                                        else
+                                        {
+                                            prediction = float.Parse(p);
+                                        }
+
+                                        if (!segmentInRange.ContainsKey(segUnqSql))
+                                        {
+                                            segmentInRange.Add(segUnqSql, new DistancePredictionWrapper(float.Parse(sqlDataReader["distance"].ToString()) * 1000, prediction));//in meters
+                                        }
                                     }
+                                   
                                 }
                                 catch (Exception ex)
                                 {
@@ -1943,12 +2020,12 @@ namespace CityParkWS
             return segmentInRange;
         }
 
-        private void assignSessionToSegments(Dictionary<String,float> segmentDistance,SessionDataWrapper sessionDataWrapper)
+        private void assignSessionToSegments(Dictionary<String, DistancePredictionWrapper> segmentDistance, SessionDataWrapper sessionDataWrapper)
         {/*add to sessionData list with distance!!, and assign to each segment*/
             //remove from each segment the session data                       
-            segmentSessionMap.removeSessionDataFromAll(sessionDataWrapper.sessionData.SessionId, new List<String>(sessionDataWrapper.SegmentDistanceMap.Keys));             
+            segmentSessionMap.removeSessionDataFromAll(sessionDataWrapper.sessionData.SessionId, new List<String>(sessionDataWrapper.SegmentDistanceAndPredictionMap.Keys));             
             //add to sessionData list with distance
-            sessionDataWrapper.SegmentDistanceMap = segmentDistance;
+            sessionDataWrapper.SegmentDistanceAndPredictionMap = segmentDistance;
             List<String> newSegments = new List<String>(segmentDistance.Keys);
             foreach (String key in newSegments)
             {
@@ -1975,10 +2052,10 @@ namespace CityParkWS
                 {
                     if (sessionMap.ContainsKey(sd))
                     {
-                        Dictionary <String,float> sdMap = sessionMap[sd].SegmentDistanceMap;
+                        Dictionary <String,DistancePredictionWrapper> sdMap = sessionMap[sd].SegmentDistanceAndPredictionMap;
                         if (sdMap != null && sdMap.ContainsKey(segment.SegmentUnique))
                         {
-                            float distance = sdMap[segment.SegmentUnique];
+                            float distance = sdMap[segment.SegmentUnique].distance;
                             tmpDistanceDivRadius += distance / radius;
                         }
                     }

@@ -7,11 +7,12 @@ namespace CityParkWS
     public class SessionDataWrapper
     {
         public SessionData sessionData { get; set; }
-        public Dictionary<String, float> SegmentDistanceMap { get; set; }//key:segmentUnique value:distance
+        public Dictionary<String, DistancePredictionWrapper> SegmentDistanceAndPredictionMap { get; set; }//key:segmentUnique value:distance
         public SessionDataWrapper(SessionData sd)
         {
             sessionData = sd;
-            SegmentDistanceMap = new Dictionary<string, float>();
+            SegmentDistanceAndPredictionMap = new Dictionary<string, DistancePredictionWrapper>();
         }
+
     }
 }
