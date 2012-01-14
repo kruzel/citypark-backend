@@ -1437,7 +1437,7 @@ namespace CityParkWS
                                     {                                        
                                         if(demo)
                                         {
-                                            probability = random.Next(0, 1800);
+                                            probability = random.Next(0, 100);
                                         }
                                         sSeg = new StreetSegment(ssl.SegmentUnique, probability);
                                         sSeg.add(ssl);

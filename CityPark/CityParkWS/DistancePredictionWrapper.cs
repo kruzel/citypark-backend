@@ -22,7 +22,7 @@ namespace CityParkWS
 
         public float calcProbability()
         {
-            return distance * prediction;
+            return  prediction;
         }
     }
 }
