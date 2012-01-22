@@ -28,6 +28,8 @@ namespace CityParkWS
             UserName = userNameStr;
             CurrentSegment = "";
             PreviousSegment = "";
+            CurrentLatitude = 0.0f;
+            CurrentLongitude = 0.0f;
         }
 
         public SessionData(String sessionIdStr) 
@@ -35,7 +37,9 @@ namespace CityParkWS
             LastUpdate = DateTime.Now;
             SessionId = sessionIdStr;
             CurrentSegment = "";
-            PreviousSegment = "";
+            PreviousSegment = ""; 
+            CurrentLatitude = 0.0f;
+            CurrentLongitude = 0.0f;
         }
 
         public SessionData() 
@@ -46,12 +50,23 @@ namespace CityParkWS
             UserName = "";
             CurrentSegment = "";
             PreviousSegment = "";
+            CurrentLatitude = 0.0f;
+            CurrentLongitude = 0.0f;
+
         }
 
         public void setCurrentLocationAndUpdateTime(float latitude, float longitude)
         {
-            LastLatitude = CurrentLatitude;
-            LastLongitude = CurrentLongitude;
+            if (CurrentLatitude == 0.0f && CurrentLongitude == 0.0f)
+            {
+                LastLatitude = latitude;
+                LastLongitude = longitude;
+            }
+            else
+            {
+                LastLatitude = CurrentLatitude;
+                LastLongitude = CurrentLongitude;
+            }
             CurrentLatitude = latitude;
             CurrentLongitude = longitude;
             PreviousUpdate = LastUpdate;
