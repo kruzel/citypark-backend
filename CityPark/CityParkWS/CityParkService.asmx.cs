@@ -26,6 +26,7 @@ namespace CityParkWS
         private static Timer timer = null;
         private static Boolean PredictionAlgorithmEnabled = false;
         private static String userDemo = "demo@citypark.co.il";
+        private static DateTime lastRan = DateTime.Now;
 
         private static float TPhigh = 30 * 60;//in seconds
         private static int RADIUS = 500;//in meter
@@ -69,15 +70,107 @@ namespace CityParkWS
             List<String> keys = new List<String>(sessionMap.Keys);
             for (int i = 0; i < keys.Count; i++)
             {
-                String sessionIdKey = keys[i];
-                DateTime dateTime = sessionMap[sessionIdKey].sessionData.LastUpdate;
-                if (DateTime.Now.Subtract(dateTime).TotalMinutes >= 10)
+                try
                 {
-                    //algo: remove user from segmentWaitList and from segments
-                    segmentSessionMap.removeSessionDataFromAllSegments(sessionIdKey);
-                    sessionMap.Remove(sessionIdKey);
+                    String sessionIdKey = keys[i];
+                    DateTime dateTime = sessionMap[sessionIdKey].sessionData.LastUpdate;
+                    if (DateTime.Now.Subtract(dateTime).TotalMinutes >= 10)
+                    {
+                        //algo: remove user from segmentWaitList and from segments
+                        segmentSessionMap.removeSessionDataFromAllSegments(sessionIdKey);
+                        sessionMap.Remove(sessionIdKey);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error(ex.Message);
                 }
             }
+
+            DateTime scheduledRun = DateTime.Today.AddHours(2);//2am aka 02:00
+            if (DateTime.Now > scheduledRun)
+            {
+                TimeSpan sinceLastRun = DateTime.Now - lastRan;
+                if (sinceLastRun.Hours > 23)
+                {
+                    try
+                    {
+                        callStoredProcedures();
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error("callStoredProcedures() :" + ex.Message);
+                    }
+                    lastRan = DateTime.Now;
+                }
+            }
+        }
+
+        private void callStoredProcedures()
+        {
+            log.Info("Starting the background process...");
+            String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
+            try
+            {
+                using (SqlConnection con = new SqlConnection(conStr))
+                {
+                    using (var command = new SqlCommand("[CITYPARK].[dbo].algoDataProcessAndMoveToHistory", con)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    })
+                    {
+                        con.Open();
+                        command.ExecuteNonQuery();
+                        con.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error("algoDataProcessAndMoveToHistory :"+ex.Message);
+            }
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(conStr))
+                {
+                    using (var command = new SqlCommand("[CITYPARK].[dbo].updateSegmentUsingAuditPayment", con)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    })
+                    {
+                        con.Open();
+                        command.ExecuteNonQuery();
+                        con.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error("updateSegmentUsingAuditPayment :" + ex.Message);
+            }
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(conStr))
+                {
+                    using (var command = new SqlCommand("[CITYPARK].[dbo].oldAlgoUpdateStreetParkingWithSegment", con)
+                    {
+                        CommandType = CommandType.StoredProcedure
+                    })
+                    {
+                        con.Open();
+                        command.ExecuteNonQuery();
+                        con.Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error("oldAlgoUpdateStreetParkingWithSegment :" + ex.Message);
+            }
+            log.Info("Finished the background process.");
+
         }
 
         private Boolean isDemoUser(String sessionId)
