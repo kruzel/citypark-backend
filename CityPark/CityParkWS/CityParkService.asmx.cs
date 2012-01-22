@@ -1082,7 +1082,7 @@ namespace CityParkWS
                                         ,{4}
                                         ,{5}
                                         ,CURRENT_TIMESTAMP
-                                        ,'False',
+                                        ,'False'
                                         ,'{6}')", "", sd.LastLatitude, sd.LastLongitude, (int)now.DayOfWeek/*0 for Sunday*/, now.Hour, previousSegmentRate, sessionId);
 
                                 cmd.Connection = con;
