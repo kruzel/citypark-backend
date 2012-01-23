@@ -175,8 +175,16 @@ namespace CityParkWS
 
         private Boolean isDemoUser(String sessionId)
         {
-            //return userDemo.Equals(sessionMap[sessionId].sessionData.UserName);
-            return true;
+            try
+            {
+                return userDemo.Equals(sessionMap[sessionId].sessionData.UserName);
+                //return true;
+            }
+            catch (Exception ex)
+            {
+                log.Error("Demo user error:" + ex.Message);
+                return false;
+            }
         }
 
         [WebMethod(Description = "Administration:Returns the sessionData")]

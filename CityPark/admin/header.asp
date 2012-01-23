@@ -36,10 +36,10 @@
 	<script type="text/javascript" src="jquery.jstree.js"></script>
 	
     <script type="text/javascript">
-		var sa = false;
-		var sb = false;
-		var sc = false;
-		var sd = false;
+		var sa = true;
+		var sb = true;
+		var sc = true;
+		var sd = true;
 		$(document).ready(function() {
 			
 			initTree();
