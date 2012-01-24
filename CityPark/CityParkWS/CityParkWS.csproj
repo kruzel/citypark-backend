@@ -74,6 +74,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AhuzotHoffApi.cs" />
     <Compile Include="DistancePredictionWrapper.cs" />
     <Compile Include="LocationData.cs" />
     <Compile Include="Parking.cs" />
