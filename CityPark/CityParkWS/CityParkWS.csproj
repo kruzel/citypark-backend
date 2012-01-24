@@ -47,6 +47,17 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="CityParkService.asmx" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\ahuzot.parkinfo\CarParkDynamicDetails.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\ahuzot.parkinfo\CarParkStaticDetails.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\ahuzot.parkinfo\cp.disco" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -56,6 +67,11 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
+    <None Include="Web References\ahuzot.parkinfo\cp.wsdl" />
+    <None Include="Web References\ahuzot.parkinfo\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DistancePredictionWrapper.cs" />
@@ -68,6 +84,11 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="SearchParkingSegment.cs" />
     <Compile Include="SegmentEqualityComparer.cs" />
     <Compile Include="SegmentSessionMap.cs" />
@@ -78,9 +99,30 @@
     <Compile Include="TweetReport.cs" />
     <Compile Include="User.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="Web References\ahuzot.parkinfo\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="http://parkinfo.ahuzot.co.il/cp.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\ahuzot.parkinfo\</RelPath>
+      <UpdateFromURL>http://parkinfo.ahuzot.co.il/cp.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>CityParkWS_ahuzot_parkinfo_CP</CachedSettingsPropName>
+    </WebReferenceUrl>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

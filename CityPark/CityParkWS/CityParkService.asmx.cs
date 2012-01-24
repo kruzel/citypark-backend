@@ -23,10 +23,17 @@ namespace CityParkWS
     [System.ComponentModel.ToolboxItem(false)]
     public class CityParkService : System.Web.Services.WebService
     {
-        private static Timer timer = null;
+        
         private static Boolean PredictionAlgorithmEnabled = false;
         private static String userDemo = "demo@citypark.co.il";
+
+        private static String ahuzotUser;
+        private static String ahuzotPassword;
+        
+        //Timer task properties
         private static DateTime lastRan = DateTime.Now;
+        private static Timer timer = null;
+        private static Boolean timerSPRunning = false;
 
         private static float TPhigh = 30 * 60;//in seconds
         private static int RADIUS = 500;//in meter
@@ -57,7 +64,7 @@ namespace CityParkWS
             }
             if (timer == null || !timer.Enabled)
             {
-                timer = new Timer(120000);//two minute
+                timer = new Timer(240000);//four minute
                 timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
                 timer.Start();
             }
@@ -86,7 +93,12 @@ namespace CityParkWS
                     log.Error(ex.Message);
                 }
             }
-
+            //if the stored procedures are still running
+            if (timerSPRunning)
+            {
+                log.Warn("The stored procedures are still running");
+                return;
+            }
             DateTime scheduledRun = DateTime.Today.AddHours(2);//2am aka 02:00
             if (DateTime.Now > scheduledRun)
             {
@@ -100,6 +112,7 @@ namespace CityParkWS
                     catch (Exception ex)
                     {
                         log.Error("callStoredProcedures() :" + ex.Message);
+                        timerSPRunning = false;
                     }
                     lastRan = DateTime.Now;
                 }
@@ -108,6 +121,7 @@ namespace CityParkWS
 
         private void callStoredProcedures()
         {
+            timerSPRunning = true;
             log.Info("Starting the background process...");
             String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
             try
@@ -127,7 +141,7 @@ namespace CityParkWS
             }
             catch (Exception ex)
             {
-                log.Error("algoDataProcessAndMoveToHistory :"+ex.Message);
+                log.Error("algoDataProcessAndMoveToHistory :" + ex.Message);
             }
 
             try
@@ -170,7 +184,7 @@ namespace CityParkWS
                 log.Error("oldAlgoUpdateStreetParkingWithSegment :" + ex.Message);
             }
             log.Info("Finished the background process.");
-
+            timerSPRunning = false;
         }
 
         private Boolean isDemoUser(String sessionId)
@@ -182,7 +196,7 @@ namespace CityParkWS
             }
             catch (Exception ex)
             {
-                log.Error("Demo user error:" + ex.Message);
+                log.Error("Demo user error:"+ex.Message);
                 return false;
             }
         }
@@ -206,10 +220,14 @@ namespace CityParkWS
         public List<String> config(String user, String pwd, String key, String value)
         {
             List<String> list = new List<String>();
-            if (user.Trim().Equals("ranbrandes") && pwd.Trim().Equals("assaf2-8-10"))
+            if (user.Trim().Equals("ranbrandes") && pwd.Trim().Equals("@ss@fB2-8-10pwd"))
             {
                 switch (key.Trim())
                 {
+                    case "ahuzotPassword":
+                        ahuzotPassword = value;
+                        list.Add("Ahuzot Hoff integration password has changed!");
+                        break;
                     case "RADIUS":
                         RADIUS = Int32.Parse(value);
                         break;
@@ -230,6 +248,9 @@ namespace CityParkWS
                 list.Add("Algorithm (PredictionAlgorithmEnabled):" + PredictionAlgorithmEnabled);
                 list.Add("RADIUS:" + RADIUS);
                 list.Add("TPhigh:" + TPhigh);
+                list.Add("timerSPRunning:" + timerSPRunning);
+                list.Add("last update time(SP):" + lastRan);
+                list.Add("Ahuzot Integration User:" + ahuzotUser);
             }
             return list;
         }

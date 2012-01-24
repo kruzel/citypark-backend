@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<discovery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/disco/">
+  <contractRef ref="http://parkinfo.ahuzot.co.il/cp.asmx?wsdl" docRef="http://parkinfo.ahuzot.co.il/cp.asmx" xmlns="http://schemas.xmlsoap.org/disco/scl/" />
+  <soap address="http://parkinfo.ahuzot.co.il/cp.asmx" xmlns:q1="http://Target/AhuzatDataDist/CP/" binding="q1:CPSoap" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+  <soap address="http://parkinfo.ahuzot.co.il/cp.asmx" xmlns:q2="http://Target/AhuzatDataDist/CP/" binding="q2:CPSoap12" xmlns="http://schemas.xmlsoap.org/disco/soap/" />
+</discovery>

@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://Target/AhuzatDataDist/CP/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://Target/AhuzatDataDist/CP/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://Target/AhuzatDataDist/CP/">
+      <s:element name="GetCarParkDetails">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="fAhuzotCode" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="fUserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fPassword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="tFault" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fWSPwd" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCarParkDetailsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetCarParkDetailsResult" type="tns:CarParkStaticDetails" />
+            <s:element minOccurs="0" maxOccurs="1" name="tFault" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="CarParkStaticDetails">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="AhuzotCode" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="ControllerID" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Address" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="GPSLattitude" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="GPSLongitude" type="s:decimal" />
+          <s:element minOccurs="0" maxOccurs="1" name="DaytimeFee" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DaytimeFeeWindow" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="NighttimeFee" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="NighttimeFeeWindow" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DailyFee" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DailyFeeWindow" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MonthFeeForDailySubscriber" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MonthFeeForDailySubscriberWindow" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MonthFeeForNightlySubscriber" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="MonthFeeForNightlySubscriberWindow" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FeeComments" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="OpenWindow" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="MaximumPublicOccupancy" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="MaximumSubscriberOccupancy" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Extra01" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Extra02" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Extra03" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Extra04" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Extra05" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetCarParkStatus">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="fAhuzotCode" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="fUserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fPassword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="tFault" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fWSPwd" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetCarParkStatusResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetCarParkStatusResult" type="tns:CarParkDynamicDetails" />
+            <s:element minOccurs="0" maxOccurs="1" name="tFault" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="CarParkDynamicDetails">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="AhuzotCode" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="InformationToShow" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="LastUpdateFromDambach" type="s:dateTime" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetAllCarParkDetails">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="fUserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fPassword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="tFault" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fWSPwd" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetAllCarParkDetailsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetAllCarParkDetailsResult" type="tns:ArrayOfCarParkStaticDetails" />
+            <s:element minOccurs="0" maxOccurs="1" name="tFault" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfCarParkStaticDetails">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="CarParkStaticDetails" nillable="true" type="tns:CarParkStaticDetails" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetAllCarParkStatus">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="fUserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fPassword" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="tFault" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fWSPwd" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetAllCarParkStatusResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetAllCarParkStatusResult" type="tns:ArrayOfCarParkDynamicDetails" />
+            <s:element minOccurs="0" maxOccurs="1" name="tFault" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfCarParkDynamicDetails">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="CarParkDynamicDetails" nillable="true" type="tns:CarParkDynamicDetails" />
+        </s:sequence>
+      </s:complexType>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="GetCarParkDetailsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetCarParkDetails" />
+  </wsdl:message>
+  <wsdl:message name="GetCarParkDetailsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetCarParkDetailsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetCarParkStatusSoapIn">
+    <wsdl:part name="parameters" element="tns:GetCarParkStatus" />
+  </wsdl:message>
+  <wsdl:message name="GetCarParkStatusSoapOut">
+    <wsdl:part name="parameters" element="tns:GetCarParkStatusResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetAllCarParkDetailsSoapIn">
+    <wsdl:part name="parameters" element="tns:GetAllCarParkDetails" />
+  </wsdl:message>
+  <wsdl:message name="GetAllCarParkDetailsSoapOut">
+    <wsdl:part name="parameters" element="tns:GetAllCarParkDetailsResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetAllCarParkStatusSoapIn">
+    <wsdl:part name="parameters" element="tns:GetAllCarParkStatus" />
+  </wsdl:message>
+  <wsdl:message name="GetAllCarParkStatusSoapOut">
+    <wsdl:part name="parameters" element="tns:GetAllCarParkStatusResponse" />
+  </wsdl:message>
+  <wsdl:portType name="CPSoap">
+    <wsdl:operation name="GetCarParkDetails">
+      <wsdl:input message="tns:GetCarParkDetailsSoapIn" />
+      <wsdl:output message="tns:GetCarParkDetailsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetCarParkStatus">
+      <wsdl:input message="tns:GetCarParkStatusSoapIn" />
+      <wsdl:output message="tns:GetCarParkStatusSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllCarParkDetails">
+      <wsdl:input message="tns:GetAllCarParkDetailsSoapIn" />
+      <wsdl:output message="tns:GetAllCarParkDetailsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetAllCarParkStatus">
+      <wsdl:input message="tns:GetAllCarParkStatusSoapIn" />
+      <wsdl:output message="tns:GetAllCarParkStatusSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="CPSoap" type="tns:CPSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetCarParkDetails">
+      <soap:operation soapAction="http://Target/AhuzatDataDist/CP/GetCarParkDetails" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCarParkStatus">
+      <soap:operation soapAction="http://Target/AhuzatDataDist/CP/GetCarParkStatus" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllCarParkDetails">
+      <soap:operation soapAction="http://Target/AhuzatDataDist/CP/GetAllCarParkDetails" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllCarParkStatus">
+      <soap:operation soapAction="http://Target/AhuzatDataDist/CP/GetAllCarParkStatus" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="CPSoap12" type="tns:CPSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetCarParkDetails">
+      <soap12:operation soapAction="http://Target/AhuzatDataDist/CP/GetCarParkDetails" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetCarParkStatus">
+      <soap12:operation soapAction="http://Target/AhuzatDataDist/CP/GetCarParkStatus" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllCarParkDetails">
+      <soap12:operation soapAction="http://Target/AhuzatDataDist/CP/GetAllCarParkDetails" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetAllCarParkStatus">
+      <soap12:operation soapAction="http://Target/AhuzatDataDist/CP/GetAllCarParkStatus" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="CP">
+    <wsdl:port name="CPSoap" binding="tns:CPSoap">
+      <soap:address location="http://parkinfo.ahuzot.co.il/cp.asmx" />
+    </wsdl:port>
+    <wsdl:port name="CPSoap12" binding="tns:CPSoap12">
+      <soap12:address location="http://parkinfo.ahuzot.co.il/cp.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
