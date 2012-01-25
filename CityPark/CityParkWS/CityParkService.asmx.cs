@@ -28,7 +28,7 @@ namespace CityParkWS
         private static String userDemo = "demo@citypark.co.il";
 
         private static String ahuzotUser = "wsu-ofer";
-        private static String ahuzotPassword = "Oferk@765";
+        private static String ahuzotPassword = "Oferk@756";
         private static String fWSPwd = "10fd90e7004c6499fe86146fc888eee62c2d1e1ae0bf7a1c34c3346cec15fada";
         
         //Timer task properties
