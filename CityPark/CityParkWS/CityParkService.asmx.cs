@@ -34,6 +34,7 @@ namespace CityParkWS
         //Timer task properties
         private static DateTime lastRan = DateTime.Today.AddHours(-24);
         private static Timer timer = null;
+        private static Timer updateDataTimer = null;
         private static Boolean timerSPRunning = false;
 
         private static float TPhigh = 30 * 60;//in seconds
@@ -68,6 +69,24 @@ namespace CityParkWS
                 timer = new Timer(240000);//four minute
                 timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
                 timer.Start();
+            }
+            if (updateDataTimer == null || !updateDataTimer.Enabled)
+            {
+                updateDataTimer = new Timer(900000);//15 minutes
+                updateDataTimer.Elapsed += new ElapsedEventHandler(updateDataFromIntegrations);
+                updateDataTimer.Start();
+            }
+        }
+
+        void updateDataFromIntegrations(object sender, ElapsedEventArgs e)
+        {
+            try
+            {
+                AhuzotHoffApi.updateAllCarParkStatus(ahuzotUser, ahuzotPassword, fWSPwd);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
             }
         }
 
@@ -225,6 +244,13 @@ namespace CityParkWS
         {
             if (user.Trim().Equals("ranbrandes") && pwd.Trim().Equals("@ss@fB2-8-10pwd"))
                 AhuzotHoffApi.getAllCarParkDetails(ahuzotUser,ahuzotPassword,fWSPwd);
+        }
+
+        [WebMethod(Description = "Administration:getAhouzot status")]
+        public void adminGetAhuzotHofStatus(String user, String pwd)
+        {
+            if (user.Trim().Equals("ranbrandes") && pwd.Trim().Equals("@ss@fB2-8-10pwd"))
+                AhuzotHoffApi.updateAllCarParkStatus(ahuzotUser, ahuzotPassword, fWSPwd);
         }
 
         [WebMethod(Description = "Administration:invoke SP")]

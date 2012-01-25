@@ -12,35 +12,95 @@ namespace CityParkWS
     {
         private static String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
         protected static readonly ILog log = LogManager.GetLogger(typeof(AhuzotHoffApi));
+        private readonly static int UNKNOWN = -1;
+        private readonly static int VACANT = 4;
+        private readonly static int OCCUPIED = 0;
+        private readonly static int CLOSED = 0;
+        private readonly static String ServiceProvider = "ahuzot";
 
 
+        private static int stateToNum(String state)
+        {
+            if (state == null || "".EndsWith(state))
+                return UNKNOWN;
+            switch (state)
+            {
+                case "פנוי":
+                    return VACANT;
+                case "מלא":
+                    return OCCUPIED;
+                case "מעט":
+                    return VACANT;
+                case "סגור":
+                    return CLOSED;
+                case "פעיל":
+                    return UNKNOWN;
+                case "חינם":
+                    return UNKNOWN;     
+                default:
+                    return UNKNOWN;
+            }
 
-        public static void getAllCarParkStatus(String ahuzotUser, String ahuzotPassword, String fWSPwd)
+        }
+
+        public static void updateAllCarParkStatus(String ahuzotUser, String ahuzotPassword, String fWSPwd)
         {
             ahuzot.parkinfo.CP ahuzotApi = new ahuzot.parkinfo.CP();
             String refStr = "";
             ahuzot.parkinfo.CarParkDynamicDetails[] data = ahuzotApi.GetAllCarParkStatus(ahuzotUser, ahuzotPassword, ref refStr, fWSPwd);
-            foreach (ahuzot.parkinfo.CarParkDynamicDetails parking in data)
+            try
             {
-                String parkingStatus = parking.InformationToShow;
-            }
-
-           /* using (SqlConnection con = new SqlConnection(conStr))
-            {
-                using (SqlCommand cmd = new SqlCommand())
+                log.Info("Updating all Ahuzot Hof parkings status.");
+                using (SqlConnection con = new SqlConnection(conStr))
                 {
-
-                    String sql = String.Format(
-                        @"SELECT COUNT(*)
-                            FROM CITYPARK.[dbo].[StreetParking] where Date > dateadd(hh, {0}, getdate())", 2);
-                    cmd.Connection = con;
-                    cmd.CommandType = CommandType.Text;
-                    cmd.CommandText = sql;
                     con.Open();
+                    using (SqlCommand updateCmd = new SqlCommand())
+                    {
+                        updateCmd.CommandTimeout = 600;
+                        foreach (ahuzot.parkinfo.CarParkDynamicDetails parking in data)
+                        {
+                            int parkingStatus = stateToNum(parking.InformationToShow);
+                            int externalId = parking.AhuzotCode;
+                            String updateSql = String.Format(
+                                @"UPDATE [citypark].[dbo].[Parking] SET Current_Pnuyot = {1} WHERE externalid = {0}"
+                            , externalId, parkingStatus);
 
+                            updateCmd.Connection = con;
+                            updateCmd.CommandText = updateSql;
+
+                            updateCmd.ExecuteNonQuery();
+                        }
+                    }
                 }
-            }*/
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                return;
+            }
+            log.Info("Finished updating ahuzot hof status.");
+            using (SqlConnection con = new SqlConnection(conStr))
+            {
+                using (SqlCommand insertCmd = new SqlCommand())
+                {
+                    insertCmd.CommandTimeout = 200;
+                    String updateSql = String.Format(
+                        @"INSERT INTO [CITYPARK].[dbo].[ServiceProviderLog]
+                                       ([ServiceProvider]
+                                       ,[API]
+                                       ,[AccessDate])
+                                 VALUES
+                                       ('{0}'
+                                       ,'{1}'
+                                       ,CURRENT_TIMESTAMP)", ServiceProvider, "GetAllCarParkStatus");
+                    insertCmd.Connection = con;
+                    insertCmd.CommandText = updateSql;
+                    con.Open();
+                    insertCmd.ExecuteNonQuery();
+                }
+            }
         }
+        
 
         public static void getAllCarParkDetails(String ahuzotUser, String ahuzotPassword, String fWSPwd)
         {
