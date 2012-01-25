@@ -8,6 +8,7 @@ namespace CityParkWS
     public class PaymentServiceProvider
     {
         private String serviceName;
+        public string Status { get; set; }
 
         public String ServiceName
         {
@@ -60,7 +61,9 @@ namespace CityParkWS
 
 
         public PaymentServiceProvider() { }
-    
 
+
+
+        
     }
 }

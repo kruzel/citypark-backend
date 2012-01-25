@@ -12,6 +12,7 @@ namespace CityParkWS
         public String ParkingZone { get; set; }
         public String Longitude { get; set; }
         public String Latitude { get; set; }
+        public String PaymentServiceStatus { get; set; }
 
         public LocationData() { }
 
@@ -24,6 +25,7 @@ namespace CityParkWS
             Latitude = lat;
             Longitude = longi;
         }
+
 
     }
 }

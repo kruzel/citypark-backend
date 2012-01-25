@@ -961,7 +961,7 @@ namespace CityParkWS
 
 
         [WebMethod(Description = "Gets the location data (City,Street,Parking zone..)")]
-        public LocationData getParkingAreaZone(String sessionId, float latitude, float longitude)
+        public LocationData getParkingAreaZone(String sessionId, float latitude, float longitude,String paymentServiceName)
         {
             if (!authenticateUser(sessionId))
             {
@@ -1012,6 +1012,11 @@ namespace CityParkWS
                             }
                         }
                     }
+                }
+                PaymentServiceProvider psp = getPaymentServices(paymentServiceName);
+                if (psp != null)
+                {
+                    ret.PaymentServiceStatus = psp.Status;
                 }
                 return ret;
             }
@@ -1415,6 +1420,7 @@ namespace CityParkWS
                                 psp.Paymethod = sqlDataReader["paymethod"].ToString();
                                 psp.TemplateStart = sqlDataReader["templateStart"].ToString();
                                 psp.TemplateEnd = sqlDataReader["templateEnd"].ToString();
+                                psp.Status = sqlDataReader["status"].ToString();
                                 pspList.Add(psp);
                             }
                         }
@@ -1424,6 +1430,49 @@ namespace CityParkWS
                         }
                     }
                     return pspList;
+                }
+            }
+        }
+
+        private PaymentServiceProvider getPaymentServices(String name)
+        {
+            String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
+            using (SqlConnection con = new SqlConnection(conStr))
+            {
+                using (SqlCommand cmd = new SqlCommand())
+                {
+
+                    String sql = String.Format(
+                        @"SELECT * FROM [citypark].[dbo].[PaymentService] where service_name = '{0}'",name);
+                    cmd.Connection = con;
+                    cmd.CommandText = sql;
+                    con.Open();
+
+                    
+                    using (SqlDataReader sqlDataReader = cmd.ExecuteReader())
+                    {
+                        if (sqlDataReader.HasRows)
+                        {
+                            while (sqlDataReader.Read())
+                            {
+                                PaymentServiceProvider psp = new PaymentServiceProvider();
+                                psp.ServiceName = sqlDataReader["service_name"].ToString();
+                                psp.Phone = sqlDataReader["phone"].ToString();
+                                psp.Website = sqlDataReader["website"].ToString();
+                                psp.Description = sqlDataReader["description"].ToString();
+                                psp.Paymethod = sqlDataReader["paymethod"].ToString();
+                                psp.TemplateStart = sqlDataReader["templateStart"].ToString();
+                                psp.TemplateEnd = sqlDataReader["templateEnd"].ToString();
+                                psp.Status = sqlDataReader["status"].ToString();
+                                return psp;
+                            }
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                    return null;
                 }
             }
         }
@@ -1572,6 +1621,7 @@ namespace CityParkWS
                                   SQRT  ( POWER((a.endLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
                             + POWER((a.endLongitude -@UserLong) * 40000 / 360, 2)) < {2} order by SegmentUnique", latitude, longitude, distanceKm);
                     cmd.Connection = con;
+                    cmd.CommandTimeout = 0;
                     cmd.CommandText = sql;
                     con.Open();
                     using (SqlDataReader sqlDataReader = cmd.ExecuteReader())
