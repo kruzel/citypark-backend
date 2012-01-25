@@ -27,12 +27,12 @@ namespace CityParkWS
         private static Boolean PredictionAlgorithmEnabled = false;
         private static String userDemo = "demo@citypark.co.il";
 
-        private static String ahuzotUser;
-        private static String ahuzotPassword;
+        private static String ahuzotUser = "wsu-ofer";
+        private static String ahuzotPassword = "Oferk@765";
         private static String fWSPwd = "10fd90e7004c6499fe86146fc888eee62c2d1e1ae0bf7a1c34c3346cec15fada";
         
         //Timer task properties
-        private static DateTime lastRan = DateTime.Now;
+        private static DateTime lastRan = DateTime.Today.AddHours(-24);
         private static Timer timer = null;
         private static Boolean timerSPRunning = false;
 
@@ -104,6 +104,7 @@ namespace CityParkWS
             if (DateTime.Now > scheduledRun)
             {
                 TimeSpan sinceLastRun = DateTime.Now - lastRan;
+                log.Info(sinceLastRun.Hours+" hours has passed since last SP.");
                 if (sinceLastRun.Hours > 23)
                 {
                     try
@@ -135,6 +136,7 @@ namespace CityParkWS
                     })
                     {
                         con.Open();
+                        command.CommandTimeout = 0;
                         command.ExecuteNonQuery();
                         con.Close();
                     }
@@ -155,6 +157,7 @@ namespace CityParkWS
                     })
                     {
                         con.Open();
+                        command.CommandTimeout = 0;
                         command.ExecuteNonQuery();
                         con.Close();
                     }
@@ -175,6 +178,7 @@ namespace CityParkWS
                     })
                     {
                         con.Open();
+                        command.CommandTimeout = 0;
                         command.ExecuteNonQuery();
                         con.Close();
                     }
@@ -206,7 +210,7 @@ namespace CityParkWS
         public List<SessionData> getSessionData(String user, String pwd)
         {
             List<SessionData> list = new List<SessionData>();
-            if (user.Trim().Equals("ranbrandes") && pwd.Trim().Equals("assaf2-8-10"))
+            if (user.Trim().Equals("ranbrandes") && pwd.Trim().Equals("@ss@fB2-8-10pwd"))
             {
                 foreach (SessionDataWrapper sd in sessionMap.Values)
                 {
@@ -214,6 +218,20 @@ namespace CityParkWS
                 }
             }
             return list;
+        }
+
+        [WebMethod(Description = "Administration:getAhouzot")]
+        public void adminGetAhuzotHofData(String user, String pwd)
+        {
+            if (user.Trim().Equals("ranbrandes") && pwd.Trim().Equals("@ss@fB2-8-10pwd"))
+                AhuzotHoffApi.getAllCarParkDetails(ahuzotUser,ahuzotPassword,fWSPwd);
+        }
+
+        [WebMethod(Description = "Administration:invoke SP")]
+        public void adminSPInvoke(String user, String pwd)
+        {
+            if (user.Trim().Equals("ranbrandes") && pwd.Trim().Equals("@ss@fB2-8-10pwd"))
+                callStoredProcedures();
         }
 
 
@@ -375,6 +393,7 @@ namespace CityParkWS
                                     sqlDataReader["latitude"].ToString(),
                                     sqlDataReader["longitude"].ToString());
                                 parking.Comment = sqlDataReader["comment"].ToString();
+                                parking.Owner = sqlDataReader["parkId"].ToString();
                                 parking.Coupon_text = sqlDataReader["coupon_text"].ToString();
                                 parking.Current_Pnuyot = sqlDataReader["current_Pnuyot"].ToString();
                                 parking.Image = sqlDataReader["image"].ToString();
@@ -1385,7 +1404,7 @@ namespace CityParkWS
 
 
         [WebMethod(Description = "Return all garages and off street parking at from current location in radius of the given distance")]
-        public List<Parking> findGarageParkingByLatitudeLongitude(String sessionId, float latitude, float longitude, int distance)
+        public List<ParkingPoint> findGarageParkingByLatitudeLongitude(String sessionId, float latitude, float longitude, int distance)
         {//and parkingtype='חניון בחינם' or parkingtype='חניון בתשלום'   
             if (!authenticateUser(sessionId))//sessionId.Equals(Session["userId"]))
             {
@@ -1445,7 +1464,7 @@ namespace CityParkWS
                     cmd.CommandText = searchSql;
                     con.Open();
                     Boolean demo =  isDemoUser(sessionId);
-                    List<Parking> parkingList = new List<Parking>();
+                    List<ParkingPoint> parkingList = new List<ParkingPoint>();
                     using (SqlDataReader sqlDataReader = cmd.ExecuteReader())
                     {
                         if (sqlDataReader.HasRows)
@@ -1458,31 +1477,19 @@ namespace CityParkWS
                                 if ("NULL".Equals(qHouseNumber) || "".Equals(qHouseNumber.Trim())) qHouseNumber = "0";
                                 int parkingIdInt = Convert.ToInt32(parkingID);
                                 int houseNumInt = Convert.ToInt32(qHouseNumber);
-                                Parking parking = new Parking(parkingIdInt,
-                                    sqlDataReader["name"].ToString(),
-                                    sqlDataReader["City"].ToString(),
-                                    sqlDataReader["street_name"].ToString(),
-                                    houseNumInt,
+                                ParkingPoint parking = new ParkingPoint(parkingIdInt,
+                                    sqlDataReader["name"].ToString(),                                   
                                     sqlDataReader["latitude"].ToString(),
                                     sqlDataReader["longitude"].ToString());
-                                //parking.Comment = sqlDataReader["comment"].ToString();
-                                //parking.Coupon_text = sqlDataReader["coupon_text"].ToString();
-                                parking.Current_Pnuyot = sqlDataReader["current_Pnuyot"].ToString();
-                                //parking.Image = sqlDataReader["image"].ToString();
-                                //parking.Image2 = sqlDataReader["image2"].ToString();
-                                //parking.Withlock = sqlDataReader["Withlock"].ToString();
-                                //parking.Underground = sqlDataReader["Underground"].ToString();
-                                //parking.Nolimit = sqlDataReader["Nolimit"].ToString();
-                                //parking.Roof = sqlDataReader["Roof"].ToString();
-                                parking.FirstHourPrice = sqlDataReader["firstHourPrice"].ToString();
-                                parking.ExtraQuarterPrice = sqlDataReader["extraQuarterPrice"].ToString();
-                                parking.AllDayPrice = sqlDataReader["allDayPrice"].ToString();
-                                if (demo)
+                                parking.availability = sqlDataReader["current_Pnuyot"].ToString();
+                                parking.owner = sqlDataReader["parkId"].ToString();
+                                parking.firstHourPrice = sqlDataReader["firstHourPrice"].ToString();
+                                 if (demo)
                                 {
-                                    parking.Current_Pnuyot = random.Next(-1, 10) + "";
-                                    if (parking.FirstHourPrice == "" || parking.FirstHourPrice == "NULL" || parking.FirstHourPrice == "0")
+                                    parking.availability = random.Next(-1, 10) + "";
+                                    if (parking.firstHourPrice == "" || parking.firstHourPrice == "NULL" || parking.firstHourPrice == "0")
                                     {
-                                        parking.FirstHourPrice = "25";
+                                        parking.firstHourPrice = "25";
                                     }
                                 }
                                 parkingList.Add(parking);

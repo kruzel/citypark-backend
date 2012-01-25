@@ -78,6 +78,7 @@
     <Compile Include="DistancePredictionWrapper.cs" />
     <Compile Include="LocationData.cs" />
     <Compile Include="Parking.cs" />
+    <Compile Include="ParkingPoint.cs" />
     <Compile Include="PaymentServiceProvider.cs" />
     <Compile Include="POI.cs" />
     <Compile Include="CityParkService.asmx.cs">

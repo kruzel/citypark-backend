@@ -65,6 +65,7 @@ namespace CityParkWS
         private String firstHourPrice;
         private String extraQuarterPrice;
         private String allDayPrice;
+        private String owner;
 
        
         public Parking() { }
@@ -233,6 +234,12 @@ namespace CityParkWS
         {
             get { return latitude; }
             set { latitude = value; }
+        }
+
+        public String Owner
+        {
+            get { return owner; }
+            set { owner = value; }
         }
 
         public String Numberofparks
