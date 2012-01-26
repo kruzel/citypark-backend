@@ -100,6 +100,39 @@ namespace CityParkWS
                 }
             }
         }
+
+        public static void updateServiceProviderLog(String methodName, String sessionId, int externalId)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(conStr))
+                {
+                    using (SqlCommand insertCmd = new SqlCommand())
+                    {
+                        insertCmd.CommandTimeout = 200;
+                        String updateSql = String.Format(
+                            @"INSERT INTO [CITYPARK].[dbo].[ServiceProviderLog]
+                                       ([ServiceProvider]
+                                       ,[API]
+                                       ,[AccessDate]
+                                       ,[sessionId]
+                                        ,[externalId])
+                                 VALUES
+                                       ('{0}'
+                                       ,'{1}'
+                                       ,CURRENT_TIMESTAMP,'{2}',{3})", ServiceProvider, methodName, sessionId, externalId);
+                        insertCmd.Connection = con;
+                        insertCmd.CommandText = updateSql;
+                        con.Open();
+                        insertCmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error("Can not update ServiceProviderLog. "+ex.Message);
+            }
+        }
         
 
         public static void getAllCarParkDetails(String ahuzotUser, String ahuzotPassword, String fWSPwd)

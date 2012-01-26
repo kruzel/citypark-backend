@@ -12,6 +12,7 @@ using System.Timers;
 using System.Data;
 using log4net;
 using log4net.Core;
+using System.Threading;
 
 namespace CityParkWS
 {    
@@ -33,8 +34,8 @@ namespace CityParkWS
         
         //Timer task properties
         private static DateTime lastRan = DateTime.Today.AddHours(-24);
-        private static Timer timer = null;
-        private static Timer updateDataTimer = null;
+        private static System.Timers.Timer timer = null;
+        private static System.Timers.Timer updateDataTimer = null;
         private static Boolean timerSPRunning = false;
 
         private static float TPhigh = 30 * 60;//in seconds
@@ -66,13 +67,13 @@ namespace CityParkWS
             }
             if (timer == null || !timer.Enabled)
             {
-                timer = new Timer(240000);//four minute
+                timer = new System.Timers.Timer(240000);//four minute
                 timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
                 timer.Start();
             }
             if (updateDataTimer == null || !updateDataTimer.Enabled)
             {
-                updateDataTimer = new Timer(900000);//15 minutes
+                updateDataTimer = new System.Timers.Timer(900000);//15 minutes
                 updateDataTimer.Elapsed += new ElapsedEventHandler(updateDataFromIntegrations);
                 updateDataTimer.Start();
             }
@@ -435,6 +436,17 @@ namespace CityParkWS
                                 parking.FirstHourPrice = sqlDataReader["firstHourPrice"].ToString();
                                 parking.ExtraQuarterPrice = sqlDataReader["extraQuarterPrice"].ToString();
                                 parking.AllDayPrice = sqlDataReader["allDayPrice"].ToString();
+                                if ("ahuzot".Equals(parking.Owner))
+                                {
+                                    try
+                                    {
+                                        String externalIdStr = sqlDataReader["externalid "].ToString();
+                                        if ("NULL".Equals(externalIdStr) || "".Equals(externalIdStr.Trim())) externalIdStr = "-1";
+                                        int externalId = Convert.ToInt32(externalIdStr);
+                                        new Thread(() => AhuzotHoffApi.updateServiceProviderLog("findAllGarageParkingDataByLatitudeLongitude", sessionId, externalId)).Start();
+                                    }
+                                    catch (Exception) { }
+                                }
                                 if (demo)
                                 {
                                     parking.Current_Pnuyot = random.Next(-1, 10) + "";
@@ -620,6 +632,18 @@ namespace CityParkWS
                                 parking.FirstHourPrice = sqlDataReader["firstHourPrice"].ToString();
                                 parking.ExtraQuarterPrice = sqlDataReader["extraQuarterPrice"].ToString();
                                 parking.AllDayPrice = sqlDataReader["allDayPrice"].ToString();
+                                parking.Owner = sqlDataReader["parkId"].ToString();
+                                if ("ahuzot".Equals(parking.Owner))
+                                {
+                                    try
+                                    {
+                                        String externalIdStr = sqlDataReader["externalid "].ToString();
+                                        if ("NULL".Equals(externalIdStr) || "".Equals(externalIdStr.Trim())) externalIdStr = "-1";
+                                        int externalId = Convert.ToInt32(externalIdStr);
+                                        new Thread(() => AhuzotHoffApi.updateServiceProviderLog("findGarageParkingFilteredByParams", sessionId, externalId)).Start();
+                                    }
+                                    catch (Exception) { }
+                                }
 
                                 parkingList.Add(parking);
                             }
@@ -647,7 +671,7 @@ namespace CityParkWS
                                     "fetchGarageParkingById");
             }
             String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
-            Parking parking = null;
+            Parking parking = null;            
             using (SqlConnection con = new SqlConnection(conStr))
             {
                 using (SqlCommand cmd = new SqlCommand())
@@ -732,11 +756,22 @@ namespace CityParkWS
                                 parking.FirstHourPrice = sqlDataReader["firstHourPrice"].ToString();
                                 parking.ExtraQuarterPrice = sqlDataReader["extraQuarterPrice"].ToString();
                                 parking.AllDayPrice = sqlDataReader["allDayPrice"].ToString();
+                                if("ahuzot".Equals(parking.Owner))
+                                {
+                                    try
+                                    {
+                                        String externalIdStr = sqlDataReader["externalid "].ToString();
+                                        if ("NULL".Equals(externalIdStr) || "".Equals(externalIdStr.Trim())) externalIdStr = "-1";
+                                        int externalId = Convert.ToInt32(externalIdStr);
+                                        new Thread(() => AhuzotHoffApi.updateServiceProviderLog("fetchGarageParkingById", sessionId, externalId)).Start();
+                                    }
+                                    catch (Exception) { }
+                                }
                             }
                         }
                     }
                 }
-            }
+            }          
             return parking;
         }
 
@@ -1560,6 +1595,17 @@ namespace CityParkWS
                                 parking.availability = sqlDataReader["current_Pnuyot"].ToString();
                                 parking.owner = sqlDataReader["parkId"].ToString();
                                 parking.firstHourPrice = sqlDataReader["firstHourPrice"].ToString();
+                                if (parking.owner.Equals("ahuzot"))
+                                {
+                                    try
+                                    {
+                                        String externalIdStr = sqlDataReader["externalid "].ToString();
+                                        if ("NULL".Equals(externalIdStr) || "".Equals(externalIdStr.Trim())) externalIdStr = "-1";
+                                        int externalId = Convert.ToInt32(externalIdStr);
+                                        new Thread(() => AhuzotHoffApi.updateServiceProviderLog("fetchGarageParkingById", sessionId, externalId)).Start();
+                                    }
+                                    catch (Exception) { }
+                                }
                                  if (demo)
                                 {
                                     parking.availability = random.Next(-1, 10) + "";
