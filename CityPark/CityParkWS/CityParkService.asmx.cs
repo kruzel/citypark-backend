@@ -120,11 +120,12 @@ namespace CityParkWS
                 return;
             }
             DateTime scheduledRun = DateTime.Today.AddHours(2);//2am aka 02:00
-            if (DateTime.Now > scheduledRun)
+            DateTime scheduledRunTop = DateTime.Today.AddHours(4);
+            if (DateTime.Now > scheduledRun && DateTime.Now < scheduledRunTop)
             {
-                TimeSpan sinceLastRun = DateTime.Now - lastRan;
-                log.Info(sinceLastRun.Hours+" hours has passed since last SP.");
-                if (sinceLastRun.Hours > 23)
+                double sinceLastRun = DateTime.Now.Subtract(lastRan).TotalHours;
+                log.Info(sinceLastRun+" hours has passed since last SP.");
+                if (sinceLastRun > 23)
                 {
                     try
                     {
@@ -155,7 +156,7 @@ namespace CityParkWS
                     })
                     {
                         con.Open();
-                        command.CommandTimeout = 0;
+                        command.CommandTimeout = 1800;
                         command.ExecuteNonQuery();
                         con.Close();
                     }
@@ -176,7 +177,7 @@ namespace CityParkWS
                     })
                     {
                         con.Open();
-                        command.CommandTimeout = 0;
+                        command.CommandTimeout = 1800;
                         command.ExecuteNonQuery();
                         con.Close();
                     }
@@ -197,7 +198,7 @@ namespace CityParkWS
                     })
                     {
                         con.Open();
-                        command.CommandTimeout = 0;
+                        command.CommandTimeout = 1800;
                         command.ExecuteNonQuery();
                         con.Close();
                     }
@@ -1621,7 +1622,7 @@ namespace CityParkWS
                                   SQRT  ( POWER((a.endLatitude - @UserLat) * COS(@UserLat/180) * 40000 / 360, 2) 
                             + POWER((a.endLongitude -@UserLong) * 40000 / 360, 2)) < {2} order by SegmentUnique", latitude, longitude, distanceKm);
                     cmd.Connection = con;
-                    cmd.CommandTimeout = 0;
+                    cmd.CommandTimeout = 1200;
                     cmd.CommandText = sql;
                     con.Open();
                     using (SqlDataReader sqlDataReader = cmd.ExecuteReader())
