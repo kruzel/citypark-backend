@@ -55,10 +55,13 @@ namespace CityParkWS
         protected static readonly ILog log = LogManager.GetLogger(typeof(CityParkService));
 
         public CityParkService()
-        {
-            log4net.Config.XmlConfigurator.Configure();
+        {            
             if (segmentSessionMap == null)
             {
+                log4net.Config.XmlConfigurator.Configure();//need to be just once
+                log.Info("--------------------------------");
+                log.Info("Application init ...");
+                
                 segmentSessionMap = new SegmentSessionMap();
             }
             if (sessionMap == null)
@@ -67,15 +70,18 @@ namespace CityParkWS
             }
             if (timer == null || !timer.Enabled)
             {
+                log.Info("Create timer ...");
                 timer = new System.Timers.Timer(240000);//four minute
                 timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
                 timer.Start();
             }
             if (updateDataTimer == null || !updateDataTimer.Enabled)
             {
+                log.Info("Create integration timer ...");
                 updateDataTimer = new System.Timers.Timer(900000);//15 minutes
                 updateDataTimer.Elapsed += new ElapsedEventHandler(updateDataFromIntegrations);
                 updateDataTimer.Start();
+                log.Info("--------------------------------");
             }
         }
 
@@ -120,9 +126,10 @@ namespace CityParkWS
                 log.Warn("The stored procedures are still running");
                 return;
             }
-            DateTime scheduledRun = DateTime.Today.AddHours(2);//2am aka 02:00
-            DateTime scheduledRunTop = DateTime.Today.AddHours(4);
-            if (DateTime.Now > scheduledRun && DateTime.Now < scheduledRunTop)
+            DateTime scheduledRun = DateTime.Today.AddHours(1);//1am aka 01:00
+            DateTime scheduledRunTop = DateTime.Today.AddHours(4);//4am aka 04:00
+
+            if (DateTime.Now.CompareTo(scheduledRun) > 0 && DateTime.Now.CompareTo(scheduledRunTop) < 0)
             {
                 double sinceLastRun = DateTime.Now.Subtract(lastRan).TotalHours;
                 log.Info(sinceLastRun+" hours has passed since last SP.");
