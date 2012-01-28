@@ -1602,6 +1602,7 @@ namespace CityParkWS
                                 parking.availability = sqlDataReader["current_Pnuyot"].ToString();
                                 parking.owner = sqlDataReader["parkId"].ToString();
                                 parking.firstHourPrice = sqlDataReader["firstHourPrice"].ToString();
+                                if ("NULL".Equals(parking.firstHourPrice) || "".Equals(parking.firstHourPrice.Trim())) parking.firstHourPrice = sqlDataReader["allDayPrice"].ToString();
                                 if (parking.owner.Equals("ahuzot"))
                                 {
                                     try
