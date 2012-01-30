@@ -447,12 +447,15 @@ namespace CityParkWS
                                 {
                                     try
                                     {
-                                        String externalIdStr = sqlDataReader["externalid "].ToString();
+                                        String externalIdStr = sqlDataReader["externalid"].ToString();
                                         if ("NULL".Equals(externalIdStr) || "".Equals(externalIdStr.Trim())) externalIdStr = "-1";
                                         int externalId = Convert.ToInt32(externalIdStr);
                                         new Thread(() => AhuzotHoffApi.updateServiceProviderLog("findAllGarageParkingDataByLatitudeLongitude", sessionId, externalId)).Start();
                                     }
-                                    catch (Exception) { }
+                                    catch (Exception e)
+                                    {
+                                        log.Error(e.Message);
+                                    }
                                 }
                                 if (demo)
                                 {
@@ -644,12 +647,15 @@ namespace CityParkWS
                                 {
                                     try
                                     {
-                                        String externalIdStr = sqlDataReader["externalid "].ToString();
+                                        String externalIdStr = sqlDataReader["externalid"].ToString();
                                         if ("NULL".Equals(externalIdStr) || "".Equals(externalIdStr.Trim())) externalIdStr = "-1";
                                         int externalId = Convert.ToInt32(externalIdStr);
                                         new Thread(() => AhuzotHoffApi.updateServiceProviderLog("findGarageParkingFilteredByParams", sessionId, externalId)).Start();
                                     }
-                                    catch (Exception) { }
+                                    catch (Exception e) 
+                                    {
+                                        log.Error(e.Message);
+                                    }
                                 }
 
                                 parkingList.Add(parking);
@@ -767,12 +773,15 @@ namespace CityParkWS
                                 {
                                     try
                                     {
-                                        String externalIdStr = sqlDataReader["externalid "].ToString();
+                                        String externalIdStr = sqlDataReader["externalid"].ToString();
                                         if ("NULL".Equals(externalIdStr) || "".Equals(externalIdStr.Trim())) externalIdStr = "-1";
                                         int externalId = Convert.ToInt32(externalIdStr);
                                         new Thread(() => AhuzotHoffApi.updateServiceProviderLog("fetchGarageParkingById", sessionId, externalId)).Start();
                                     }
-                                    catch (Exception) { }
+                                    catch (Exception e) 
+                                    {
+                                        log.Error(e.Message);
+                                    }
                                 }
                             }
                         }
@@ -1603,16 +1612,19 @@ namespace CityParkWS
                                 parking.owner = sqlDataReader["parkId"].ToString();
                                 parking.firstHourPrice = sqlDataReader["firstHourPrice"].ToString();
                                 if ("NULL".Equals(parking.firstHourPrice) || "".Equals(parking.firstHourPrice.Trim())) parking.firstHourPrice = sqlDataReader["allDayPrice"].ToString();
-                                if (parking.owner.Equals("ahuzot"))
+                                if ("ahuzot".Equals(parking.owner))
                                 {
                                     try
                                     {
-                                        String externalIdStr = sqlDataReader["externalid "].ToString();
+                                        String externalIdStr = sqlDataReader["externalid"].ToString();
                                         if ("NULL".Equals(externalIdStr) || "".Equals(externalIdStr.Trim())) externalIdStr = "-1";
                                         int externalId = Convert.ToInt32(externalIdStr);
-                                        new Thread(() => AhuzotHoffApi.updateServiceProviderLog("fetchGarageParkingById", sessionId, externalId)).Start();
+                                        new Thread(() => AhuzotHoffApi.updateServiceProviderLog("findGarageParkingByLatitudeLongitude", sessionId, externalId)).Start();
                                     }
-                                    catch (Exception) { }
+                                    catch (Exception e) 
+                                    {
+                                        log.Error(e.Message);
+                                    }
                                 }
                                  if (demo)
                                 {
