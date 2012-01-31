@@ -66,6 +66,7 @@ namespace CityParkWS
         private String extraQuarterPrice;
         private String allDayPrice;
         private String owner;
+        private int distance;
 
        
         public Parking() { }
@@ -199,6 +200,11 @@ namespace CityParkWS
             set { parkingId = value; }
         }
 
+        public int Distance
+        {
+            get { return distance; }
+            set { distance = value; }
+        }
         public String Name
         {
             get { return name; }

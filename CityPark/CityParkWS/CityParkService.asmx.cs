@@ -398,7 +398,7 @@ namespace CityParkWS
 			                    THEN 0
                             END AS extraQuarterPrice,
        
-                             @USER.STDistance(geography::Point(latitude,longitude,4326)) as Distance,
+                             ROUND(@USER.STDistance(geography::Point(latitude,longitude,4326)),0) as Distance,
                              allDayPrice
         
                            FROM [CITYPARK].[dbo].[Parking]
@@ -443,6 +443,7 @@ namespace CityParkWS
                                 parking.FirstHourPrice = sqlDataReader["firstHourPrice"].ToString();
                                 parking.ExtraQuarterPrice = sqlDataReader["extraQuarterPrice"].ToString();
                                 parking.AllDayPrice = sqlDataReader["allDayPrice"].ToString();
+                                parking.Distance = Convert.ToInt32(sqlDataReader["Distance"].ToString());
                                 if ("ahuzot".Equals(parking.Owner))
                                 {
                                     try
