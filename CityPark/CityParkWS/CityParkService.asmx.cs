@@ -793,6 +793,49 @@ namespace CityParkWS
         }
 
 
+        [WebMethod(Description = "Set parking status")]
+        public int udpateGarageStatus(String sessionId,int parkingId ,int status)
+        {
+            if (!authenticateUser(sessionId))
+            {
+                throw Utils.RaiseException(Context.Request.Url.AbsoluteUri,
+                                    "udpateGarageStatus",
+                                    USER_NOT_AUTHENTICATE,
+                                    "401",
+                                    "udpateGarageStatus");
+            }
+            try
+            {
+                String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
+                using (SqlConnection con = new SqlConnection(conStr))
+                {
+
+                    using (SqlCommand updateCmd = new SqlCommand())
+                    {
+                        String updateSql = String.Format(
+                            @"UPDATE [CITYPARK].[dbo].[Parking]
+                               SET [Current_Pnuyot] = {1}     
+                                WHERE parkingID ='{0}'",
+                            parkingId, status);
+                        updateCmd.Connection = con;
+                        updateCmd.CommandText = updateSql;
+                        con.Open();
+                        updateCmd.ExecuteNonQuery();
+                    }
+                }
+                log.Info("User:" + sessionId + ", parkingID:" + parkingId + ", status:" + status);
+                return status;
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                return -1;
+            }
+            
+        }
+
+
+
 
         [WebMethod(Description = "Login to CityPark WebService")]
         public SessionData login(String username, String password)
