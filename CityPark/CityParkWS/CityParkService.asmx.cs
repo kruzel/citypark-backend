@@ -309,9 +309,16 @@ namespace CityParkWS
             return list;
         }
 
+        private String getLanguage(String language)
+        {
+            if (language == null||"".Equals(language.Trim()))
+                return "he";
+            return language;
+        }
+
 
         [WebMethod(Description = "Return all garages data within the current location in radius of the given distance")]
-        public List<Parking> findAllGarageParkingDataByLatitudeLongitude(String sessionId, float latitude, float longitude, int distance)
+        public List<Parking> findAllGarageParkingDataByLatitudeLongitude(String sessionId, float latitude, float longitude, int distance, String language)
         {//and parkingtype='חניון בחינם' or parkingtype='חניון בתשלום'   
             if (!authenticateUser(sessionId))//sessionId.Equals(Session["userId"]))
             {
@@ -322,6 +329,7 @@ namespace CityParkWS
                                     "401",
                                     "findAllGarageParkingDataByLatitudeLongitude");
             }
+            language = getLanguage(language);   
             Boolean demo = isDemoUser(sessionId);
             Random random = null;
             if (demo)
@@ -481,7 +489,7 @@ namespace CityParkWS
 
 
         [WebMethod(Description = "Return all POI within the current location in radius of the given distance")]
-        public List<POI> findPOIByLatitudeLongitude(String sessionId, float latitude, float longitude, int distance, String type, String subType)
+        public List<POI> findPOIByLatitudeLongitude(String sessionId, float latitude, float longitude, int distance, String type, String subType,String language)
         {
             if (!authenticateUser(sessionId))
             {
@@ -491,6 +499,7 @@ namespace CityParkWS
                                     "401",
                                     "findPOIByLatitudeLongitude");
             }
+            language = getLanguage(language);   
             String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
             using (SqlConnection con = new SqlConnection(conStr))
             {
@@ -550,7 +559,7 @@ namespace CityParkWS
 
         [WebMethod(Description = "Return filtered list of all garages within the current location in radius of the given distance")]
         public List<Parking> findGarageParkingFilteredByParams(String sessionId, float latitude, float longitude, int distance,
-            String payment, String nolimit, String withlock, String tatkarkait, String roof, String toshav, String criple)
+            String payment, String nolimit, String withlock, String tatkarkait, String roof, String toshav, String criple,String language)
         {
             if (!authenticateUser(sessionId))
             {
@@ -560,6 +569,7 @@ namespace CityParkWS
                                     "401",
                                     "findGarageParkingFilteredByParams");
             }
+            language = getLanguage(language);   
             String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
             using (SqlConnection con = new SqlConnection(conStr))
             {
@@ -674,7 +684,7 @@ namespace CityParkWS
 
 
         [WebMethod(Description = "Returns data for a specific parking garage")]
-        public Parking fetchGarageParkingById(String sessionId, int parkingId)
+        public Parking fetchGarageParkingById(String sessionId, int parkingId,String language)
         {
             if (!authenticateUser(sessionId))
             {
@@ -684,6 +694,7 @@ namespace CityParkWS
                                     "401",
                                     "fetchGarageParkingById");
             }
+            language = getLanguage(language);   
             String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
             Parking parking = null;            
             using (SqlConnection con = new SqlConnection(conStr))
@@ -1057,7 +1068,7 @@ namespace CityParkWS
 
 
         [WebMethod(Description = "Gets the location data (City,Street,Parking zone..)")]
-        public LocationData getParkingAreaZone(String sessionId, float latitude, float longitude,String paymentServiceName)
+        public LocationData getParkingAreaZone(String sessionId, float latitude, float longitude,String paymentServiceName,String language)
         {
             if (!authenticateUser(sessionId))
             {
@@ -1067,6 +1078,7 @@ namespace CityParkWS
                                    "401",
                                    "getLocationData");
             }
+            language = getLanguage(language);   
             String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
 
             String city = null;
@@ -1109,7 +1121,7 @@ namespace CityParkWS
                         }
                     }
                 }
-                PaymentServiceProvider psp = getPaymentServices(paymentServiceName);
+                PaymentServiceProvider psp = getPaymentServices(paymentServiceName,language);
                 if (psp != null)
                 {
                     ret.PaymentServiceStatus = psp.Status;
@@ -1487,8 +1499,9 @@ namespace CityParkWS
         }
 
         [WebMethod(Description = "Get all payment services")]
-        public List<PaymentServiceProvider> getAllPaymentServices()
+        public List<PaymentServiceProvider> getAllPaymentServices(String language)
         {
+            language = getLanguage(language);   
             String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
             using (SqlConnection con = new SqlConnection(conStr))
             {
@@ -1530,7 +1543,7 @@ namespace CityParkWS
             }
         }
 
-        private PaymentServiceProvider getPaymentServices(String name)
+        private PaymentServiceProvider getPaymentServices(String name,String language)
         {
             String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
             using (SqlConnection con = new SqlConnection(conStr))
@@ -1575,7 +1588,7 @@ namespace CityParkWS
 
 
         [WebMethod(Description = "Return all garages and off street parking at from current location in radius of the given distance")]
-        public List<ParkingPoint> findGarageParkingByLatitudeLongitude(String sessionId, float latitude, float longitude, int distance)
+        public List<ParkingPoint> findGarageParkingByLatitudeLongitude(String sessionId, float latitude, float longitude, int distance,String language)
         {//and parkingtype='חניון בחינם' or parkingtype='חניון בתשלום'   
             if (!authenticateUser(sessionId))//sessionId.Equals(Session["userId"]))
             {
@@ -1585,6 +1598,7 @@ namespace CityParkWS
                                     "401",
                                     "findParkingByLatitudeLongitude");
             }
+            language = getLanguage(language);   
             String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
             using (SqlConnection con = new SqlConnection(conStr))
             {
@@ -1810,7 +1824,7 @@ namespace CityParkWS
 
 
         [WebMethod(Description = "List of lately (2 min) released parking spots")]
-        public List<Parking> getParkingReleases(String sessionId, float latitude, float longitude, int distance)
+        public List<Parking> getParkingReleases(String sessionId, float latitude, float longitude, int distance,String language)
         {
             if (!authenticateUser(sessionId))
             {
@@ -1820,6 +1834,7 @@ namespace CityParkWS
                                     "401",
                                     "getParkingReleases");
             }
+            language = getLanguage(language);   
             List<Parking> parkingList = new List<Parking>();
             Boolean demo = isDemoUser(sessionId);
             String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
