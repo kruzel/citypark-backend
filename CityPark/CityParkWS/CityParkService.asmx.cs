@@ -78,7 +78,7 @@ namespace CityParkWS
             if (updateDataTimer == null || !updateDataTimer.Enabled)
             {
                 log.Info("Create integration timer ...");
-                updateDataTimer = new System.Timers.Timer(900000);//15 minutes
+                updateDataTimer = new System.Timers.Timer(600000);//10 minutes
                 updateDataTimer.Elapsed += new ElapsedEventHandler(updateDataFromIntegrations);
                 updateDataTimer.Start();
                 log.Info("--------------------------------");
