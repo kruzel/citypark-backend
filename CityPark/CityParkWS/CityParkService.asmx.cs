@@ -89,11 +89,19 @@ namespace CityParkWS
         {
             try
             {
+                resetGarages();
+            }
+            catch (Exception ex)
+            {
+                log.Error("Error while reset the current_pnuyot in DB:" + ex.Message);
+            }
+            try
+            {
                 AhuzotHoffApi.updateAllCarParkStatus(ahuzotUser, ahuzotPassword, fWSPwd);
             }
             catch (Exception ex)
             {
-                log.Error(ex.Message);
+                log.Error("updateAllCarParkStatus error: "+ ex.Message);
             }
         }
 
@@ -117,7 +125,7 @@ namespace CityParkWS
                 }
                 catch (Exception ex)
                 {
-                    log.Error(ex.Message);
+                    log.Error("removeSessionDataFromAllSegments error: "+ex.Message);
                 }
             }
             //if the stored procedures are still running
@@ -231,6 +239,49 @@ namespace CityParkWS
             {
                 log.Error("Demo user error:"+ex.Message);
                 return false;
+            }
+        }
+
+        [WebMethod(Description = "Administration:updade garages reset")]
+        public String resetGarageStatus(String user, String pwd)
+        {
+            try
+            {
+                if (user.Trim().Equals("ranbrandes") && pwd.Trim().Equals("@ss@fB2-8-10pwd"))
+                {
+                    return resetGarages();
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex.Message);
+                return "Error";
+            }
+            return "Nothing !";
+        }
+
+        private String resetGarages()
+        {
+            String conStr = ConfigurationManager.ConnectionStrings["CityParkCS"].ConnectionString;
+            using (SqlConnection con = new SqlConnection(conStr))
+            {
+
+                using (SqlCommand updateCmd = new SqlCommand())
+                {
+                    String updateSql =
+                        @"declare  @DD DATETIME
+                            SET @DD = DateADD(mi, -30, Current_TimeStamp)
+                            UPDATE [CITYPARK].[dbo].[Parking]
+                               SET [Current_Pnuyot] = -1 ,[Editdate] = CURRENT_TIMESTAMP
+                             WHERE  Current_Pnuyot >= 1
+                                and Editdate > DateADD(mi, -5, Current_TimeStamp)
+                                and (parkid is null or parkId not in ('ahuzot','centralpark'))";
+                    updateCmd.Connection = con;
+                    updateCmd.CommandText = updateSql;
+                    con.Open();
+                    updateCmd.ExecuteNonQuery();
+                    return "Done";
+                }
             }
         }
 
@@ -825,7 +876,7 @@ namespace CityParkWS
                     {
                         String updateSql = String.Format(
                             @"UPDATE [CITYPARK].[dbo].[Parking]
-                               SET [Current_Pnuyot] = {1}     
+                               SET [Current_Pnuyot] = {1} , [Editdate] = CURRENT_TIMESTAMP    
                                 WHERE parkingID ='{0}'",
                             parkingId, status);
                         updateCmd.Connection = con;
