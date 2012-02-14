@@ -62,7 +62,7 @@ namespace CityParkWS
                             int parkingStatus = stateToNum(parking.InformationToShow);
                             int externalId = parking.AhuzotCode;
                             String updateSql = String.Format(
-                                @"UPDATE [citypark].[dbo].[Parking] SET Current_Pnuyot = {1} WHERE externalid = {0}"
+                                @"UPDATE [citypark].[dbo].[Parking] SET Current_Pnuyot = {1} ,[Editdate] = CURRENT_TIMESTAMP WHERE externalid = {0}"
                             , externalId, parkingStatus);
 
                             updateCmd.Connection = con;

@@ -89,19 +89,21 @@ namespace CityParkWS
         {
             try
             {
+                //Update Ahuzot hoff parking lots status
+                AhuzotHoffApi.updateAllCarParkStatus(ahuzotUser, ahuzotPassword, fWSPwd);
+            }
+            catch (Exception ex)
+            {
+                log.Error("updateAllCarParkStatus error: " + ex.Message);
+            }
+            try
+            {
+                //Reset all parking lots ,except of Ahozot Hoff and CenteralPrak, to UNKNOWN status
                 resetGarages();
             }
             catch (Exception ex)
             {
                 log.Error("Error while reset the current_pnuyot in DB:" + ex.Message);
-            }
-            try
-            {
-                AhuzotHoffApi.updateAllCarParkStatus(ahuzotUser, ahuzotPassword, fWSPwd);
-            }
-            catch (Exception ex)
-            {
-                log.Error("updateAllCarParkStatus error: "+ ex.Message);
             }
         }
 
@@ -270,16 +272,17 @@ namespace CityParkWS
                 {
                     String updateSql =
                         @"declare  @DD DATETIME
-                            SET @DD = DateADD(mi, -30, Current_TimeStamp)
+                            SET @DD = DateADD(mi, -5, Current_TimeStamp)
                             UPDATE [CITYPARK].[dbo].[Parking]
                                SET [Current_Pnuyot] = -1 ,[Editdate] = CURRENT_TIMESTAMP
-                             WHERE  Current_Pnuyot >= 1
-                                and Editdate > DateADD(mi, -5, Current_TimeStamp)
+                             WHERE  Current_Pnuyot >= 0
+                                and Editdate < @DD
                                 and (parkid is null or parkId not in ('ahuzot','centralpark'))";
                     updateCmd.Connection = con;
                     updateCmd.CommandText = updateSql;
                     con.Open();
                     updateCmd.ExecuteNonQuery();
+                    log.Info("Finished executing reset garages status.");
                     return "Done";
                 }
             }
@@ -364,7 +367,7 @@ namespace CityParkWS
         {
             if (language == null||"".Equals(language.Trim()))
                 return "he";
-            return language;
+            return language.ToLower();
         }
 
 
@@ -885,7 +888,7 @@ namespace CityParkWS
                         updateCmd.ExecuteNonQuery();
                     }
                 }
-                log.Info("User:" + sessionId + ", parkingID:" + parkingId + ", status:" + status);
+                log.Info("Udpate garage status - User:" + sessionId + ", parkingID:" + parkingId + ", status:" + status);
                 return status;
             }
             catch (Exception ex)
@@ -983,8 +986,7 @@ namespace CityParkWS
             String sessionId = id.ToString() + "T" + DateTime.Now.Millisecond;
             SessionData sessionData = new SessionData(responseStr, id, sessionId);
             sessionMap.Add(sessionId, new SessionDataWrapper(sessionData));
-            log.Info("info");
-            log.Debug("debug");
+            log.Info("User "+username +" has created a new session :"+sessionId);
             return sessionData;
         }
 
