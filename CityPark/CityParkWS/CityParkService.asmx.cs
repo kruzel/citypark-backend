@@ -173,6 +173,7 @@ namespace CityParkWS
                         CommandType = CommandType.StoredProcedure
                     })
                     {
+                        log.Info("Execute SP - algoDataProcessAndMoveToHistory");
                         con.Open();
                         command.CommandTimeout = 1800;
                         command.ExecuteNonQuery();
@@ -194,6 +195,7 @@ namespace CityParkWS
                         CommandType = CommandType.StoredProcedure
                     })
                     {
+                        log.Info("Execute SP - updateSegmentUsingAuditPayment");
                         con.Open();
                         command.CommandTimeout = 1800;
                         command.ExecuteNonQuery();
@@ -215,6 +217,7 @@ namespace CityParkWS
                         CommandType = CommandType.StoredProcedure
                     })
                     {
+                        log.Info("Execute SP - oldAlgoUpdateStreetParkingWithSegment");
                         con.Open();
                         command.CommandTimeout = 1800;
                         command.ExecuteNonQuery();
