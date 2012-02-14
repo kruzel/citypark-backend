@@ -175,7 +175,7 @@ namespace CityParkWS
                     {
                         log.Info("Execute SP - algoDataProcessAndMoveToHistory");
                         con.Open();
-                        command.CommandTimeout = 1800;
+                        command.CommandTimeout = 3600;
                         command.ExecuteNonQuery();
                         con.Close();
                     }
@@ -197,7 +197,7 @@ namespace CityParkWS
                     {
                         log.Info("Execute SP - updateSegmentUsingAuditPayment");
                         con.Open();
-                        command.CommandTimeout = 1800;
+                        command.CommandTimeout = 3600;
                         command.ExecuteNonQuery();
                         con.Close();
                     }
@@ -219,7 +219,7 @@ namespace CityParkWS
                     {
                         log.Info("Execute SP - oldAlgoUpdateStreetParkingWithSegment");
                         con.Open();
-                        command.CommandTimeout = 1800;
+                        command.CommandTimeout = 3600;
                         command.ExecuteNonQuery();
                         con.Close();
                     }
