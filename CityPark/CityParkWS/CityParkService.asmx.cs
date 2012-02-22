@@ -485,10 +485,25 @@ namespace CityParkWS
                                 if ("NULL".Equals(qHouseNumber) || "".Equals(qHouseNumber.Trim())) qHouseNumber = "0";
                                 int parkingIdInt = Convert.ToInt32(parkingID);
                                 int houseNumInt = Convert.ToInt32(qHouseNumber);
+                                String name;
+                                String street;
+                                String city;
+                                if (language.Equals("en"))
+                                {
+                                    name = sqlDataReader["parkingNameEnglish"].ToString();
+                                    street = sqlDataReader["addressEnglish"].ToString();
+                                    city = sqlDataReader["cityEnglish"].ToString();
+                                }
+                                else
+                                {
+                                    name = sqlDataReader["name"].ToString();
+                                    street = sqlDataReader["street_name"].ToString();
+                                    city = sqlDataReader["City"].ToString();
+                                }
                                 Parking parking = new Parking(parkingIdInt,
-                                    sqlDataReader["name"].ToString(),
-                                    sqlDataReader["City"].ToString(),
-                                    sqlDataReader["street_name"].ToString(),
+                                    name,
+                                    city,
+                                    street,
                                     houseNumInt,
                                     sqlDataReader["latitude"].ToString(),
                                     sqlDataReader["longitude"].ToString());
@@ -688,10 +703,25 @@ namespace CityParkWS
                                 String parkingID = sqlDataReader["parkingID"].ToString();
                                 String qHouseNumber = sqlDataReader["house_number"].ToString();
                                 if ("NULL".Equals(qHouseNumber) || "".Equals(qHouseNumber.Trim())) qHouseNumber = "0";
+                                String name;
+                                String street;
+                                String city;
+                                if (language.Equals("en"))
+                                {
+                                    name = sqlDataReader["parkingNameEnglish"].ToString();
+                                    street = sqlDataReader["addressEnglish"].ToString();
+                                    city = sqlDataReader["cityEnglish"].ToString();
+                                }
+                                else
+                                {
+                                    name = sqlDataReader["name"].ToString();
+                                    street = sqlDataReader["street_name"].ToString();
+                                    city = sqlDataReader["City"].ToString();
+                                }
                                 Parking parking = new Parking(Convert.ToInt32(parkingID),
-                                    sqlDataReader["name"].ToString(),
-                                    sqlDataReader["City"].ToString(),
-                                    sqlDataReader["street_name"].ToString(),
+                                    name,
+                                    city,
+                                    street,
                                     Convert.ToInt32(qHouseNumber),
                                     sqlDataReader["latitude"].ToString(),
                                     sqlDataReader["longitude"].ToString());
@@ -816,10 +846,25 @@ namespace CityParkWS
                                 if ("NULL".Equals(qHouseNumber) || "".Equals(qHouseNumber.Trim())) qHouseNumber = "0";
                                 int parkingIdInt = Convert.ToInt32(parkingID);
                                 int houseNumInt = Convert.ToInt32(qHouseNumber);
+                                String name;
+                                String street;
+                                String city;
+                                if (language.Equals("en"))
+                                {
+                                    name = sqlDataReader["parkingNameEnglish"].ToString();
+                                    street = sqlDataReader["addressEnglish"].ToString();
+                                    city = sqlDataReader["cityEnglish"].ToString();
+                                }
+                                else
+                                {
+                                    name = sqlDataReader["name"].ToString();
+                                    street = sqlDataReader["street_name"].ToString();
+                                    city = sqlDataReader["City"].ToString();
+                                }
                                 parking = new Parking(parkingIdInt,
-                                    sqlDataReader["name"].ToString(),
-                                    sqlDataReader["City"].ToString(),
-                                    sqlDataReader["street_name"].ToString(),
+                                    name,
+                                    city,
+                                    street,
                                     houseNumInt,
                                     sqlDataReader["latitude"].ToString(),
                                     sqlDataReader["longitude"].ToString());
@@ -1718,8 +1763,17 @@ namespace CityParkWS
                                 if ("NULL".Equals(qHouseNumber) || "".Equals(qHouseNumber.Trim())) qHouseNumber = "0";
                                 int parkingIdInt = Convert.ToInt32(parkingID);
                                 int houseNumInt = Convert.ToInt32(qHouseNumber);
+                                String name;
+                                if (language.Equals("he"))
+                                {
+                                    name = sqlDataReader["name"].ToString();
+                                }
+                                else
+                                {
+                                    name = sqlDataReader["parkingNameEnglish"].ToString();
+                                }
                                 ParkingPoint parking = new ParkingPoint(parkingIdInt,
-                                    sqlDataReader["name"].ToString(),                                   
+                                    name,                                   
                                     sqlDataReader["latitude"].ToString(),
                                     sqlDataReader["longitude"].ToString());
                                 parking.availability = sqlDataReader["current_Pnuyot"].ToString();
