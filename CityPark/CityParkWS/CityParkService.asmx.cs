@@ -439,32 +439,29 @@ namespace CityParkWS
                             SELECT top 200.*,
                             CASE WHEN @CURRENTDAY BETWEEN 1 and 5 and @CURRENTHOUR<Weekday_OneTimeHour
 		                    THEN (select WeekDay_FirstHourPrice)
-                            WHEN @CURRENTDAY BETWEEN 1 and 5  and @CURRENTHOUR>=Weekday_OneTimeHour  and Weekday_OneTimeHour between 12 and 24
+                            WHEN @CURRENTDAY BETWEEN 1 and 5  and @CURRENTHOUR>=Weekday_OneTimeHour
 			                   THEN (select Weekday_OneTimePrice)
                             WHEN @CURRENTDAY=6 and @CURRENTHOUR<Friday_OneTimeHour
 		                        THEN (select Friday_FirstHourPrice)
-                            WHEN @CURRENTDAY=6 and @CURRENTHOUR>=Friday_OneTimeHour and Friday_OneTimeHour between 12 and 24
+                            WHEN @CURRENTDAY=6 and @CURRENTHOUR>=Friday_OneTimeHour
 			                    THEN (select Friday_OneTimePrice)
                             WHEN @CURRENTDAY=7 and @CURRENTHOUR<Saturday_FirstHourPrice
 			                    THEN (select Saturday_FirstHourPrice)
-                            WHEN @CURRENTDAY=7 and @CURRENTHOUR>=Saturday_OneTimeHour and Saturday_OneTimeHour  between 12 and 24
+                            WHEN @CURRENTDAY=7 and @CURRENTHOUR>=Saturday_OneTimeHour
 			                    THEN (select Saturday_OneTimePrice)
 			               ELSE WeekDay_FirstHourPrice     
 			                    
                            END AS FirstHourPrice,
        
-                           CASE WHEN @CURRENTDAY BETWEEN 1 and 5 and @CURRENTHOUR<Weekday_OneTimeHour
+                           CASE WHEN @CURRENTDAY BETWEEN 1 and 5
 		                    THEN (select WeekDay_extraQuarterPrice)
-                            WHEN @CURRENTDAY BETWEEN 1 and 5 and @CURRENTHOUR>=Weekday_OneTimeHour and  Weekday_OneTimeHour between 12 and 24
-			                    THEN 0
-                            WHEN @CURRENTDAY=6 and @CURRENTHOUR<Friday_OneTimeHour
+                            
+                            WHEN @CURRENTDAY=6
 		                        THEN (select Friday_extraQuarterPrice)
-                            WHEN @CURRENTDAY=6 and @CURRENTHOUR>=Friday_OneTimeHour and Friday_OneTimeHour between 12 and 24
-			                    THEN 0
-                            WHEN @CURRENTDAY=7 and @CURRENTHOUR<Saturday_FirstHourPrice
+                            
+                            WHEN @CURRENTDAY=7
 			                    THEN (select Saturday_extraQuarterPrice)
-                            WHEN @CURRENTDAY=7 and @CURRENTHOUR>=Saturday_OneTimeHour and Saturday_OneTimeHour between 12 and 24
-			                    THEN 0
+                            
 			                ELSE WeekDay_extraQuarterPrice     
                             END AS extraQuarterPrice,
                              ROUND(@USER.STDistance(geography::Point(latitude,longitude,4326)),0) as Distance,
@@ -659,30 +656,27 @@ namespace CityParkWS
                             SELECT top 200.*,
                             CASE WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)< Weekday_OneTimeHour 
 		                    THEN (select WeekDay_FirstHourPrice)
-                            WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)>=Weekday_OneTimeHour and Weekday_OneTimeHour between 12 and 24
+                            WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)>=Weekday_OneTimeHour 
 			                    THEN (select Weekday_OneTimePrice)
                             WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)<Friday_OneTimeHour
 		                        THEN (select Friday_FirstHourPrice)
-                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)>=Friday_OneTimeHour and Friday_OneTimeHour between 12 and 24
+                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)>=Friday_OneTimeHour 
 			                    THEN (select Friday_OneTimePrice)
                             WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)<Saturday_FirstHourPrice
 			                    THEN (select Saturday_FirstHourPrice)
-                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)>=Saturday_OneTimeHour and Saturday_OneTimeHour between 12 and 24
+                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)>=Saturday_OneTimeHour
 			                    THEN (select Saturday_OneTimePrice)
                            END AS FirstHourPrice,
        
-                           CASE WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)< Weekday_OneTimeHour
+                           CASE WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 
 		                    THEN (select WeekDay_extraQuarterPrice)
-                            WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)>=Weekday_OneTimeHour and Weekday_OneTimeHour between 12 and 24
-			                    THEN 0
-                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)<Friday_OneTimeHour
+                            
+                            WHEN DATEPART(dw, @Date)=6 
 		                        THEN (select Friday_extraQuarterPrice)
-                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)>=Friday_OneTimeHour and Friday_OneTimeHour between 12 and 24
-			                    THEN 0
-                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)<Saturday_FirstHourPrice
+                            
+                            WHEN DATEPART(dw, @Date)=7 
 			                    THEN (select Saturday_extraQuarterPrice)
-                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)>=Saturday_OneTimeHour and Saturday_OneTimeHour between 12 and 24
-			                    THEN 0
+                           
                             ELSE WeekDay_extraQuarterPrice
                             END AS extraQuarterPrice,
        
@@ -809,30 +803,25 @@ namespace CityParkWS
                            SELECT top 1.*,
                             CASE WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)< Weekday_OneTimeHour 
 		                    THEN (select WeekDay_FirstHourPrice)
-                            WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)>=Weekday_OneTimeHour and Weekday_OneTimeHour between 12 and 24
+                            WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)>=Weekday_OneTimeHour 
 			                    THEN (select Weekday_OneTimePrice)
                             WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)<Friday_OneTimeHour
 		                        THEN (select Friday_FirstHourPrice)
-                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)>=Friday_OneTimeHour and Friday_OneTimeHour between 12 and 24
+                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)>=Friday_OneTimeHour 
 			                    THEN (select Friday_OneTimePrice)
                             WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)<Saturday_FirstHourPrice
 			                    THEN (select Saturday_FirstHourPrice)
-                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)>=Saturday_OneTimeHour and Saturday_OneTimeHour between 12 and 24
+                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)>=Saturday_OneTimeHour
 			                    THEN (select Saturday_OneTimePrice)
+                            ELSE WeekDay_FirstHourPrice
                            END AS FirstHourPrice,
        
-                           CASE WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)< Weekday_OneTimeHour
+                           CASE WHEN DATEPART(dw, @Date) BETWEEN 1 and 5
 		                    THEN (select WeekDay_extraQuarterPrice)
-                            WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)>=Weekday_OneTimeHour and Weekday_OneTimeHour between 12 and 24
-			                    THEN 0
-                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)<Friday_OneTimeHour
+                            WHEN DATEPART(dw, @Date)=6 
 		                        THEN (select Friday_extraQuarterPrice)
-                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)>=Friday_OneTimeHour and Friday_OneTimeHour between 12 and 24
-			                    THEN 0
-                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)<Saturday_FirstHourPrice
+                            WHEN DATEPART(dw, @Date)=7 
 			                    THEN (select Saturday_extraQuarterPrice)
-                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)>=Saturday_OneTimeHour and Saturday_OneTimeHour between 12 and 24
-			                    THEN 0
                             ELSE WeekDay_extraQuarterPrice
                             END AS extraQuarterPrice,
                             allDayPrice        
@@ -1719,31 +1708,28 @@ namespace CityParkWS
                             SELECT top 200.*,
                             CASE WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)< Weekday_OneTimeHour 
 		                    THEN (select WeekDay_FirstHourPrice)
-                            WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)>=Weekday_OneTimeHour and Weekday_OneTimeHour between 12 and 24
+                            WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)>=Weekday_OneTimeHour
 			                    THEN (select Weekday_OneTimePrice)
                             WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)<Friday_OneTimeHour
 		                        THEN (select Friday_FirstHourPrice)
-                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)>=Friday_OneTimeHour and Friday_OneTimeHour between 12 and 24
+                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)>=Friday_OneTimeHour
 			                    THEN (select Friday_OneTimePrice)
                             WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)<Saturday_FirstHourPrice
 			                    THEN (select Saturday_FirstHourPrice)
-                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)>=Saturday_OneTimeHour and Saturday_OneTimeHour between 12 and 24
+                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)>=Saturday_OneTimeHour
 			                    THEN (select Saturday_OneTimePrice)
 			               ELSE WeekDay_FirstHourPrice
                            END AS FirstHourPrice,
        
-                           CASE WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)< Weekday_OneTimeHour
+                           CASE WHEN DATEPART(dw, @Date) BETWEEN 1 and 5
 		                    THEN (select WeekDay_extraQuarterPrice)
-                            WHEN DATEPART(dw, @Date) BETWEEN 1 and 5 and DATENAME(hour, @Date)>=Weekday_OneTimeHour and Weekday_OneTimeHour between 12 and 24
-			                    THEN 0
-                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)<Friday_OneTimeHour
+                           
+                            WHEN DATEPART(dw, @Date)=6
 		                        THEN (select Friday_extraQuarterPrice)
-                            WHEN DATEPART(dw, @Date)=6 and DATENAME(hour, @Date)>=Friday_OneTimeHour and Friday_OneTimeHour between 12 and 24
-			                    THEN 0
-                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)<Saturday_FirstHourPrice
+                            
+                            WHEN DATEPART(dw, @Date)=7
 			                    THEN (select Saturday_extraQuarterPrice)
-                            WHEN DATEPART(dw, @Date)=7 and DATENAME(hour, @Date)>=Saturday_OneTimeHour and Saturday_OneTimeHour between 12 and 24
-			                    THEN 0
+                            
 			                ELSE WeekDay_extraQuarterPrice
                             END AS extraQuarterPrice,
        
